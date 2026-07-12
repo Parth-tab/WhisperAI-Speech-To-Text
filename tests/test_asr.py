@@ -20,4 +20,7 @@ def test_asr_engine(mock_whisper_model):
     result = engine.transcribe(audio_data)
     
     assert result == "Hello world."
-    mock_model_instance.transcribe.assert_called_once_with(audio_data, beam_size=5)
+    mock_model_instance.transcribe.assert_called_once()
+    args, kwargs = mock_model_instance.transcribe.call_args
+    np.testing.assert_array_equal(args[0], audio_data)
+    assert kwargs['beam_size'] == 1

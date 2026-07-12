@@ -4,7 +4,7 @@ import urllib.request
 from pathlib import Path
 
 class VADEngine:
-    def __init__(self, threshold: float = 0.5, min_silence_duration_ms: int = 2000, sample_rate: int = 16000):
+    def __init__(self, threshold: float = 0.3, min_silence_duration_ms: int = 3500, sample_rate: int = 16000):
         self.threshold = threshold
         self.min_silence_duration_ms = min_silence_duration_ms
         self.sample_rate = sample_rate
@@ -29,6 +29,11 @@ class VADEngine:
         self._state = np.zeros((2, 1, 128)).astype('float32')
         
     def process_chunk(self, audio_chunk: np.ndarray) -> bool:
+        if len(audio_chunk) > 512:
+            audio_chunk = audio_chunk[:512]
+        elif len(audio_chunk) < 512:
+            audio_chunk = np.pad(audio_chunk, (0, 512 - len(audio_chunk)))
+            
         inputs = {
             'input': audio_chunk.reshape(1, -1).astype(np.float32),
             'state': self._state,
