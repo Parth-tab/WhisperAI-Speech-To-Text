@@ -1,7 +1,7 @@
 import sys
 import os
 from pathlib import Path
-from llama_cpp import Llama
+from llama_cpp import Llama, LlamaRAMCache
 
 # Resolve model directory relative to ~/.whisperai so it works both
 # from source and from a PyInstaller frozen bundle.
@@ -61,24 +61,27 @@ class LLMEngine:
             model_path=self.model_path,
             n_ctx=n_ctx,
             n_threads=n_threads,
+            n_gpu_layers=-1,
             verbose=False,
         )
+        # Implement context caching for the LLM
+        self.llm.set_cache(LlamaRAMCache(capacity_bytes=2 << 30))
 
     def clean_text(self, text: str, context: str = "") -> str:
         """
         Clean the provided transcript using the LLM.
         Removes filler words, fixes grammar, and formats for the target context.
         """
-        system_prompt = (
-            "You are a professional transcription editor. "
-            "Your job is to clean up raw voice dictation by:\n"
-            "1. Removing filler words and sounds (um, uh, ah, er, like, you know, I mean, etc.)\n"
-            "2. Fixing grammar and punctuation\n"
-            "3. Removing false starts and repetitions\n"
-            "4. Preserving the speaker's original intent and meaning\n"
-            "5. Adapting tone to the context provided\n"
-            "Return ONLY the cleaned text, with no explanations or meta-commentary."
-        )
+        from src.llm.prompts import FORMATTING_SYSTEM_PROMPT
+        from src.llm.formatter import Formatter
+        
+        try:
+            Formatter().check_repetition(text)
+        except ValueError as e:
+            print(e)
+            return text
+            
+        system_prompt = FORMATTING_SYSTEM_PROMPT
 
         user_prompt = (
             f"Context: {context}\n"
@@ -92,11 +95,55 @@ class LLMEngine:
             f"<|im_start|>assistant\n"
         )
 
-        response = self.llm(
-            prompt,
-            max_tokens=512,
-            stop=["<|im_end|>"],
-            echo=False,
-            temperature=0.1,
+        import time
+        from src.core.telemetry import telemetry
+
+        start_t = time.time()
+        try:
+            response = self.llm(
+                prompt,
+                max_tokens=512,
+                stop=["<|im_end|>"],
+                echo=False,
+                temperature=0.1,
+            )
+            end_t = time.time()
+            
+            tokens = response.get("usage", {}).get("completion_tokens", 1)
+            speed = tokens / max(end_t - start_t, 0.001)
+            telemetry.log_token_generation_speed(speed)
+            
+            return response["choices"][0]["text"].strip()
+        except Exception as e:
+            print(f"[LLMEngine] Error during clean_text: {e}")
+            return text
+
+    def execute_command(self, command: str, text: str, context: str = "") -> str:
+        system_prompt = (
+            "You are an AI assistant editing text for a user. "
+            "You will be given the currently selected text and a command to execute on it. "
+            "Return ONLY the modified text, with no explanations or meta-commentary."
         )
-        return response["choices"][0]["text"].strip()
+        user_prompt = (
+            f"Context: {context}\n"
+            f"Original Text: {text}\n"
+            f"Command: {command}\n\n"
+            f"Modified text:"
+        )
+        prompt = (
+            f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
+            f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
+            f"<|im_start|>assistant\n"
+        )
+        try:
+            response = self.llm(
+                prompt,
+                max_tokens=1024,
+                stop=["<|im_end|>"],
+                echo=False,
+                temperature=0.1,
+            )
+            return response["choices"][0]["text"].strip()
+        except Exception as e:
+            print(f"[LLMEngine] Error during execute_command: {e}")
+            return text

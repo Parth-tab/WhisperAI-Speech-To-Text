@@ -1,7 +1,10 @@
 import numpy as np
 import onnxruntime
 import urllib.request
+import scipy.io.wavfile
 from pathlib import Path
+
+DEBUG_BYPASS_VAD = True
 
 class VADEngine:
     def __init__(self, threshold: float = 0.3, min_silence_duration_ms: int = 3500, sample_rate: int = 16000):
@@ -29,6 +32,19 @@ class VADEngine:
         self._state = np.zeros((2, 1, 128)).astype('float32')
         
     def process_chunk(self, audio_chunk: np.ndarray) -> bool:
+        if DEBUG_BYPASS_VAD:
+            if not hasattr(self, '_debug_chunks'):
+                self._debug_chunks = []
+            self._debug_chunks.append(audio_chunk.copy())
+            total_samples = sum(len(c) for c in self._debug_chunks)
+            if total_samples >= 5 * self.sample_rate:
+                full_audio = np.concatenate(self._debug_chunks)
+                # Keep exactly 5 seconds
+                full_audio = full_audio[:int(5 * self.sample_rate)]
+                scipy.io.wavfile.write("debug_dump.wav", self.sample_rate, full_audio)
+                return True
+            return False
+
         if len(audio_chunk) > 512:
             audio_chunk = audio_chunk[:512]
         elif len(audio_chunk) < 512:

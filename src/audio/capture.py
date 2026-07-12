@@ -11,7 +11,7 @@ from src.audio.vad import VADEngine
 class AudioCaptureEngine:
     SAMPLE_RATE = 16000
     CHANNELS = 1
-    DTYPE = 'float32'
+    DTYPE = 'int16'
     BLOCKSIZE = 512
     SILENCE_TIMEOUT_MS = 3500
 
@@ -37,10 +37,28 @@ class AudioCaptureEngine:
         self._debug_buffer = []
         
         try:
+            print("Querying audio devices:")
+            print(sd.query_devices())
+            
+            # Force primary WASAPI or DirectSound
+            hostapi_idx = None
+            for i, api in enumerate(sd.query_hostapis()):
+                if 'WASAPI' in api['name']:
+                    hostapi_idx = i
+                    break
+            if hostapi_idx is None:
+                for i, api in enumerate(sd.query_hostapis()):
+                    if 'DirectSound' in api['name']:
+                        hostapi_idx = i
+                        break
+            if hostapi_idx is not None:
+                sd.default.hostapi = hostapi_idx
+
             device_info = sd.query_devices(sd.default.device[0], 'input')
             self.device_samplerate = int(device_info['default_samplerate'])
             self.device_channels = min(2, int(device_info['max_input_channels']))
-        except Exception:
+        except Exception as e:
+            print(f"Error querying devices: {e}")
             self.device_samplerate = self.SAMPLE_RATE
             self.device_channels = self.CHANNELS
 
@@ -113,22 +131,22 @@ class AudioCaptureEngine:
 
     def _audio_callback(self, indata, frames, time_info, status):
         if indata.shape[1] > 1:
-            chunk = np.mean(indata, axis=1, dtype=self.DTYPE)
+            audio_int16 = np.mean(indata, axis=1, dtype=self.DTYPE)
         else:
-            chunk = indata[:, 0].copy()
+            audio_int16 = indata[:, 0].copy()
+            
+        audio_float32 = audio_int16.astype(np.float32) / 32768.0
+        
+        if np.max(np.abs(audio_float32)) < 0.001:
+            print("CRITICAL: AUDIO BUFFER IS SILENT.")
+            
+        chunk = audio_float32
             
         if self.device_samplerate != self.SAMPLE_RATE:
             num_samples = int(len(chunk) * self.SAMPLE_RATE / self.device_samplerate)
-            chunk = scipy.signal.resample(chunk, num_samples).astype(self.DTYPE)
+            chunk = scipy.signal.resample(chunk, num_samples).astype(np.float32)
             
         with self.lock:
-            if not self._debug_dumped:
-                self._debug_buffer.append(chunk)
-                if sum(len(c) for c in self._debug_buffer) >= 3 * self.SAMPLE_RATE:
-                    debug_audio = np.concatenate(self._debug_buffer)[:3 * self.SAMPLE_RATE]
-                    scipy.io.wavfile.write('debug_dump.wav', self.SAMPLE_RATE, debug_audio)
-                    self._debug_dumped = True
-
             self.audio_buffer.append(chunk)
             self._streaming_buffer.append(chunk)
             
