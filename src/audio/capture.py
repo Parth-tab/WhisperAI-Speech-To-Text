@@ -55,11 +55,11 @@ class AudioCaptureEngine:
                 sd.default.hostapi = hostapi_idx
 
             device_info = sd.query_devices(sd.default.device[0], 'input')
-            self.device_samplerate = int(device_info['default_samplerate'])
+            self.device_samplerate = 48000
             self.device_channels = min(2, int(device_info['max_input_channels']))
         except Exception as e:
             print(f"Error querying devices: {e}")
-            self.device_samplerate = self.SAMPLE_RATE
+            self.device_samplerate = 48000
             self.device_channels = self.CHANNELS
 
     def start_recording(self):
@@ -86,14 +86,20 @@ class AudioCaptureEngine:
                 self.vad_thread = threading.Thread(target=self._vad_worker, daemon=True)
                 self.vad_thread.start()
             
+            if self._stream:
+                self._stream.stop()
+                self._stream.close()
+                self._stream = None
+                
             try:
                 self._stream = sd.InputStream(
-                    samplerate=self.device_samplerate,
+                    samplerate=48000,
                     channels=self.device_channels,
                     dtype=self.DTYPE,
-                    blocksize=0,
+                    blocksize=1536,
                     callback=self._audio_callback
                 )
+                self.device_samplerate = 48000
                 self._stream.start()
             except Exception as e:
                 print(f"Error starting audio stream: {e}")
@@ -112,10 +118,10 @@ class AudioCaptureEngine:
                 
             self.is_recording = False
             
-        if self._stream:
-            self._stream.stop()
-            self._stream.close()
-            self._stream = None
+            if self._stream:
+                self._stream.stop()
+                self._stream.close()
+                self._stream = None
             
         full_audio = None
         chunk_data = None

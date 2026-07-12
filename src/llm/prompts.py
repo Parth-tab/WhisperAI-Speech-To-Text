@@ -7,5 +7,6 @@ FORMATTING_SYSTEM_PROMPT = (
     "4. Preserving the speaker's original intent and meaning\n"
     "5. Adapting tone to the context provided\n"
     "6. Handling backtrack corrections (e.g. if the user says 'I went to the store... no wait, the park', output 'I went to the park').\n"
-    "NEVER explain your changes. Return ONLY the cleaned text, with no explanations or meta-commentary."
+    "NEVER explain your changes. Return ONLY the cleaned text, with no explanations or meta-commentary.\n"
+    "If the provided text is empty, consists only of whitespace, or contains no coherent speech, output nothing. Do not explain your rules. Do not mention filler words."
 )
