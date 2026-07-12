@@ -34,9 +34,9 @@ class ASREngine:
         import time
         from src.core.telemetry import telemetry
 
-        initial_prompt = "Here is the dictated text:"
+        initial_prompt = None
         if dictionary:
-            initial_prompt += " " + ", ".join(dictionary)
+            initial_prompt = ", ".join(dictionary)
             
         audio_data = audio_data.astype(np.float32).flatten()
         max_val = np.abs(audio_data).max()
@@ -44,13 +44,19 @@ class ASREngine:
             audio_data = audio_data / max_val
 
         start_t = time.time()
+        
+        kwargs = {
+            "beam_size": 1,
+            "language": "en",
+            "condition_on_previous_text": False,
+            "no_speech_threshold": 0.6,
+        }
+        if initial_prompt:
+            kwargs["initial_prompt"] = initial_prompt
+
         segments, info = self.model.transcribe(
             audio_data,
-            beam_size=1,
-            language="en",
-            condition_on_previous_text=False,
-            no_speech_threshold=0.6,
-            initial_prompt=initial_prompt
+            **kwargs
         )
         text = " ".join([segment.text for segment in segments])
         end_t = time.time()

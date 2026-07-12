@@ -86,14 +86,21 @@ class AudioCaptureEngine:
                 self.vad_thread = threading.Thread(target=self._vad_worker, daemon=True)
                 self.vad_thread.start()
             
-            self._stream = sd.InputStream(
-                samplerate=self.device_samplerate,
-                channels=self.device_channels,
-                dtype=self.DTYPE,
-                blocksize=0,
-                callback=self._audio_callback
-            )
-            self._stream.start()
+            try:
+                self._stream = sd.InputStream(
+                    samplerate=self.device_samplerate,
+                    channels=self.device_channels,
+                    dtype=self.DTYPE,
+                    blocksize=0,
+                    callback=self._audio_callback
+                )
+                self._stream.start()
+            except Exception as e:
+                print(f"Error starting audio stream: {e}")
+                self.is_recording = False
+                if self.on_recording_stopped:
+                    self.on_recording_stopped(np.array([], dtype=self.DTYPE))
+                return
             
             if self.on_recording_started:
                 self.on_recording_started()
@@ -130,17 +137,17 @@ class AudioCaptureEngine:
             self.on_recording_stopped(full_audio)
 
     def _audio_callback(self, indata, frames, time_info, status):
-        if indata.shape[1] > 1:
-            audio_int16 = np.mean(indata, axis=1, dtype=self.DTYPE)
-        else:
-            audio_int16 = indata[:, 0].copy()
-            
-        audio_float32 = audio_int16.astype(np.float32) / 32768.0
+        audio_float32 = indata.astype(np.float32) / 32768.0
         
-        if np.max(np.abs(audio_float32)) < 0.001:
+        if audio_float32.shape[1] > 1:
+            audio_mono = audio_float32.mean(axis=1)
+        else:
+            audio_mono = audio_float32[:, 0].copy()
+            
+        if np.max(np.abs(audio_mono)) < 0.001:
             print("CRITICAL: AUDIO BUFFER IS SILENT.")
             
-        chunk = audio_float32
+        chunk = audio_mono
             
         if self.device_samplerate != self.SAMPLE_RATE:
             num_samples = int(len(chunk) * self.SAMPLE_RATE / self.device_samplerate)
