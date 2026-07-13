@@ -73,7 +73,7 @@ class LLMEngine:
         Clean the provided transcript using the LLM.
         Removes filler words, fixes grammar, and formats for the target context.
         """
-        from src.llm.prompts import FORMATTING_SYSTEM_PROMPT
+        from src.llm.prompts import PromptBuilder
         from src.llm.style_profiles import get_style_prompt
         from src.llm.formatter import Formatter
         
@@ -84,9 +84,14 @@ class LLMEngine:
             return text
             
         style_addon = get_style_prompt(profile_id)
-        system_prompt = FORMATTING_SYSTEM_PROMPT
+        
+        builder = PromptBuilder()
         if style_addon:
-            system_prompt += f"\n\nSTYLE INSTRUCTIONS:\n{style_addon}"
+            builder.with_style(style_addon)
+        if profile_id == "technical":
+            builder.with_code_mode()
+            
+        system_prompt = builder.build()
 
         user_prompt = (
             f"Context: {context}\n"
