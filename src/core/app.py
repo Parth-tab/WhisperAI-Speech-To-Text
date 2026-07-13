@@ -226,7 +226,12 @@ class WhisperAIApp:
                 break
             audio_data, context_tuple = task
             try:
-                final_text = self.pipeline.process_audio(audio_data, context_tuple[0], context_tuple[1])
+                final_text = self.pipeline.process_audio(
+                    audio_data, 
+                    context=context_tuple[0], 
+                    profile_id=context_tuple[1],
+                    pid=context_tuple[2]
+                )
                 if final_text:
                     self.injector.inject_text(final_text)
                     duration_sec = len(audio_data) / 16000.0

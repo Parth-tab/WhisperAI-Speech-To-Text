@@ -14,7 +14,7 @@ class AIPipeline:
         self.llm_engine = llm_engine
         self.config_manager = config_manager or ConfigManager()
 
-    def process_audio(self, audio_data: np.ndarray, context: str = "", profile_id: str = "general") -> str:
+    def process_audio(self, audio_data: np.ndarray, context: str = "", profile_id: str = "general", pid: int = 0) -> str:
         if len(audio_data) == 0:
             print("[Pipeline] No audio data provided.")
             return ""
@@ -91,10 +91,12 @@ class AIPipeline:
             
         # Code Mode check
         if profile_id == "technical":
-            print("[Pipeline] Technical context detected. Applying syntax map...")
+            print("[Pipeline] Technical context detected. Applying syntax map and file tags...")
             from src.utils.syntax_map import apply_syntax_map
+            from src.injection.ide_bridge import ide_bridge
             regex_cleaned = apply_syntax_map(regex_cleaned)
-            print(f"[Pipeline] Syntax mapped: '{regex_cleaned}'")
+            regex_cleaned = ide_bridge.process_file_tags(regex_cleaned, pid)
+            print(f"[Pipeline] Code pre-processed: '{regex_cleaned}'")
             
         print("[Pipeline] Running LLM cleanup...")
         final_text = self.llm_engine.clean_text(regex_cleaned, context, profile_id)
