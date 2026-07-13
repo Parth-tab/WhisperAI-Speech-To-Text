@@ -19,7 +19,7 @@ def test_ai_pipeline():
     result = pipeline.process_audio(audio_data, context="context")
     
     assert result == "Hello world."
-    mock_asr.transcribe.assert_called_once_with(audio_data)
+    mock_asr.transcribe.assert_called_once_with(audio_data, dictionary=[])
     
     # pre_filter_text should have removed "uh" and "um"
-    mock_llm.clean_text.assert_called_once_with("hello world", context="context")
+    mock_llm.clean_text.assert_called_once_with("hello world", "context")

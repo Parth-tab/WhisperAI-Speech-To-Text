@@ -13,7 +13,7 @@ class AudioCaptureEngine:
     CHANNELS = 1
     DTYPE = 'int16'
     BLOCKSIZE = 512
-    SILENCE_TIMEOUT_MS = 3500
+    SILENCE_TIMEOUT_MS = 4000
 
     def __init__(self, use_vad: bool = True):
         self.use_vad = use_vad
@@ -24,15 +24,13 @@ class AudioCaptureEngine:
         self.lock = threading.Lock()
         self.vad_queue = queue.Queue()
         self.vad_thread = None
+        self._stop_event = threading.Event()
         
         self.on_recording_started: Optional[Callable[[], None]] = None
         self.on_audio_level_changed: Optional[Callable[[float], None]] = None
         self.on_recording_stopped: Optional[Callable[[np.ndarray], None]] = None
         self.on_audio_chunk: Optional[Callable[[np.ndarray], None]] = None
-        self._streaming_buffer = []
-        self._resample_buffer = np.array([], dtype=self.DTYPE)
-        self.chunk_duration = 2.0
-        self.chunk_samples = int(self.SAMPLE_RATE * self.chunk_duration)
+        self._resample_buffer = np.array([], dtype=np.float32)
         self._debug_dumped = False
         self._debug_buffer = []
         
@@ -63,13 +61,19 @@ class AudioCaptureEngine:
             self.device_channels = self.CHANNELS
 
     def start_recording(self):
+        # Clear stop event FIRST, before acquiring lock, to avoid race with previous cycle
+        self._stop_event.clear()
+        
+        # Join old VAD thread if it exists to prevent race conditions
+        if self.vad_thread and self.vad_thread.is_alive():
+            self.vad_thread.join(timeout=1.0)
+        
         with self.lock:
             if self.is_recording:
                 return
                 
             self.audio_buffer.clear()
-            self._streaming_buffer = []
-            self._resample_buffer = np.array([], dtype=self.DTYPE)
+            self._resample_buffer = np.array([], dtype=np.float32)
             self._debug_dumped = False
             self._debug_buffer = []
             if self.vad_engine:
@@ -112,46 +116,63 @@ class AudioCaptureEngine:
                 self.on_recording_started()
 
     def stop_recording(self):
+        # Phase 1: Under lock, set flags and grab stream reference
+        # Do NOT stop the stream here — that causes a deadlock because
+        # stream.stop() waits for the audio callback to finish, but the
+        # callback tries to acquire this same lock.
         with self.lock:
             if not self.is_recording:
                 return
                 
             self.is_recording = False
+            self._stop_event.set()
             
-            if self._stream:
-                self._stream.stop()
-                self._stream.close()
-                self._stream = None
+            # Drain the VAD queue to unblock any waiting thread
+            while not self.vad_queue.empty():
+                try:
+                    self.vad_queue.get_nowait()
+                except:
+                    break
             
-        full_audio = None
-        chunk_data = None
+            # Grab stream reference but don't stop it while holding the lock
+            stream_to_close = self._stream
+            self._stream = None
+        
+        # Phase 2: Stop stream OUTSIDE lock — no deadlock possible
+        if stream_to_close:
+            try:
+                stream_to_close.stop()
+                stream_to_close.close()
+            except Exception as e:
+                print(f"[AudioCapture] Error closing stream: {e}")
+        
+        # Phase 3: Read buffer after stream is fully stopped (no more callbacks)
         with self.lock:
             if self.audio_buffer:
                 full_audio = np.concatenate(list(self.audio_buffer))
             else:
-                full_audio = np.array([], dtype=self.DTYPE)
+                full_audio = np.array([], dtype=np.float32)
             
-            if self._streaming_buffer:
-                chunk_data = np.concatenate(self._streaming_buffer)
-                
-            self._streaming_buffer.clear()
-            
-        if chunk_data is not None and self.on_audio_chunk:
-            self.on_audio_chunk(chunk_data)
+        # Minimum audio length guard: reject recordings shorter than 0.5 seconds
+        if len(full_audio) < self.SAMPLE_RATE * 0.5:
+            print(f"[AudioCapture] Warning: Audio too short ({len(full_audio)} samples, need {int(self.SAMPLE_RATE * 0.5)}). Discarding.")
+            full_audio = np.array([], dtype=np.float32)
             
         if self.on_recording_stopped:
             self.on_recording_stopped(full_audio)
 
     def _audio_callback(self, indata, frames, time_info, status):
+        # Early exit if recording has been stopped — prevents the callback
+        # from blocking on the lock during shutdown
+        if not self.is_recording:
+            return
+            
         audio_float32 = indata.astype(np.float32) / 32768.0
         
         if audio_float32.shape[1] > 1:
             audio_mono = audio_float32.mean(axis=1)
         else:
             audio_mono = audio_float32[:, 0].copy()
-            
-        if np.max(np.abs(audio_mono)) < 0.001:
-            print("CRITICAL: AUDIO BUFFER IS SILENT.")
             
         chunk = audio_mono
             
@@ -161,7 +182,6 @@ class AudioCaptureEngine:
             
         with self.lock:
             self.audio_buffer.append(chunk)
-            self._streaming_buffer.append(chunk)
             
             if self.use_vad and self.vad_engine:
                 self._resample_buffer = np.concatenate([self._resample_buffer, chunk])
@@ -169,28 +189,21 @@ class AudioCaptureEngine:
                     vad_chunk = self._resample_buffer[:self.BLOCKSIZE]
                     self._resample_buffer = self._resample_buffer[self.BLOCKSIZE:]
                     self.vad_queue.put(vad_chunk)
-            
-            current_len = sum(len(c) for c in self._streaming_buffer)
-            chunk_data = None
-            if current_len >= self.chunk_samples:
-                chunk_data = np.concatenate(self._streaming_buffer)
-                self._streaming_buffer.clear()
-                
-        if chunk_data is not None and self.on_audio_chunk:
-            self.on_audio_chunk(chunk_data)
                     
         if self.on_audio_level_changed:
             rms = np.sqrt(np.mean(chunk**2))
             self.on_audio_level_changed(float(rms))
 
     def _vad_worker(self):
-        while self.is_recording:
+        while self.is_recording and not self._stop_event.is_set():
             try:
                 chunk = self.vad_queue.get(timeout=0.1)
                 if self.vad_engine and self.is_recording:
                     timeout_reached = self.vad_engine.process_chunk(chunk)
                     if timeout_reached:
+                        print("[AudioCapture] VAD silence timeout reached. Stopping recording.")
                         threading.Thread(target=self.stop_recording, daemon=True).start()
                         break
             except queue.Empty:
                 continue
+

@@ -39,5 +39,6 @@ class WindowDetector:
             return "", ""
 
     def get_context(self) -> str:
-        _, process_name = self.get_active_window_info()
-        return APP_CONTEXT_MAP.get(process_name.lower(), DEFAULT_CONTEXT)
+        window_title, process_name = self.get_active_window_info()
+        base_context = APP_CONTEXT_MAP.get(process_name.lower(), DEFAULT_CONTEXT)
+        return f"{base_context}. Active Window Title: '{window_title}'."

@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 from pathlib import Path
 from llama_cpp import Llama, LlamaRAMCache
 
@@ -86,7 +87,7 @@ class LLMEngine:
         user_prompt = (
             f"Context: {context}\n"
             f"Raw transcription: {text}\n\n"
-            f"Cleaned text:"
+            f"Output:"
         )
 
         prompt = (
@@ -103,7 +104,7 @@ class LLMEngine:
             response = self.llm(
                 prompt,
                 max_tokens=512,
-                stop=["<|im_end|>"],
+                stop=["<|im_end|>", "Cleaned text:", "cleaned text:", "Output:", "output:", "CLEANED TEXT:"],
                 echo=False,
                 temperature=0.1,
             )
@@ -113,7 +114,18 @@ class LLMEngine:
             speed = tokens / max(end_t - start_t, 0.001)
             telemetry.log_token_generation_speed(speed)
             
-            return response["choices"][0]["text"].strip()
+            result = response["choices"][0]["text"].strip()
+            
+            # Strip ALL occurrences of prompt-echo patterns
+            result = re.sub(r'(?i)(cleaned\s*text\s*:|output\s*:)', '', result).strip()
+            # Strip any leading/trailing quotes the LLM might add
+            result = result.strip('\'"')
+            
+            # If the LLM returned nothing meaningful, return the original text
+            if not result or len(result.strip()) < 2:
+                return text
+                
+            return result
         except Exception as e:
             print(f"[LLMEngine] Error during clean_text: {e}")
             return text

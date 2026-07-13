@@ -19,7 +19,8 @@ class ClipboardInjector:
         for _ in range(5):
             try:
                 pyperclip.copy(text)
-                break
+                if pyperclip.paste() == text:
+                    break
             except Exception as e:
                 print(f"[Injector] Failed to copy text: {e}")
                 time.sleep(0.1)
@@ -28,11 +29,12 @@ class ClipboardInjector:
         pyautogui.hotkey('ctrl', 'v')
 
         # Give slight delay to allow OS to process paste
-        time.sleep(0.05)
+        time.sleep(0.1)
 
-        for _ in range(5):
-            try:
-                pyperclip.copy(original_clipboard)
-                break
-            except Exception:
-                time.sleep(0.1)
+        if original_clipboard:
+            for _ in range(5):
+                try:
+                    pyperclip.copy(original_clipboard)
+                    break
+                except Exception:
+                    time.sleep(0.1)

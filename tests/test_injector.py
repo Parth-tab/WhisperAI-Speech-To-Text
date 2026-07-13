@@ -13,5 +13,5 @@ def test_injector(mock_sleep, mock_pyautogui, mock_pyperclip):
     
     mock_pyperclip.copy.assert_any_call("new_text")
     mock_pyautogui.hotkey.assert_called_once_with('ctrl', 'v')
-    mock_sleep.assert_called_once_with(0.05)
+    mock_sleep.assert_any_call(0.1)
     mock_pyperclip.copy.assert_any_call("old_clipboard")

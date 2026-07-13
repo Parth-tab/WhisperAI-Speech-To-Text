@@ -1,0 +1,1029 @@
+{
+  "status": "success",
+  "results_count": 1,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 2,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 3,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 4,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    },
+    {
+      "id": "2607.07409v1",
+      "title": "DeLS-Spec: Decoupled Long-Short Contexts for Parallel Speculative Drafting",
+      "pdf_url": "https://arxiv.org/pdf/2607.07409v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting multiple tokens and verifying them in parallel. Block-parallel drafters such as DFlash further improve drafting efficiency by predicting an entire block in one pass, but their position-wise predictions lack explicit intra-block causal conditioning. Recent methods such as Domino and DSpark attempt to introduce such causality into block-parallel drafting, but they require training the draft model from scratch, which limits their flexibility and increases training cost. We propose DeLS-Spec, a decoupled long-short context speculative decoding method. DeLS-Spec treats the fixed DFlash model as a long-context expert and introduces a lightweight local head as a short-context expert. The local head can be trained independently with a standard next-token prediction objective, without joint training with the target model or the DFlash backbone, leading to extremely low training cost. At inference time, DeLS-Spec combines long-context and short-context logits, and the local head is not tied to a specific DFlash checkpoint, making the method more modular and flexible. Experiments on Qwen3 models show that DeLS-Spec consistently improves speedup and average acceptance length over DFlash across math, code, and dialogue benchmarks.",
+      "published": "2026-07-08T13:41:52Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Hong-Kai Zheng",
+        "Piji Li"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 5,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    },
+    {
+      "id": "2607.07409v1",
+      "title": "DeLS-Spec: Decoupled Long-Short Contexts for Parallel Speculative Drafting",
+      "pdf_url": "https://arxiv.org/pdf/2607.07409v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting multiple tokens and verifying them in parallel. Block-parallel drafters such as DFlash further improve drafting efficiency by predicting an entire block in one pass, but their position-wise predictions lack explicit intra-block causal conditioning. Recent methods such as Domino and DSpark attempt to introduce such causality into block-parallel drafting, but they require training the draft model from scratch, which limits their flexibility and increases training cost. We propose DeLS-Spec, a decoupled long-short context speculative decoding method. DeLS-Spec treats the fixed DFlash model as a long-context expert and introduces a lightweight local head as a short-context expert. The local head can be trained independently with a standard next-token prediction objective, without joint training with the target model or the DFlash backbone, leading to extremely low training cost. At inference time, DeLS-Spec combines long-context and short-context logits, and the local head is not tied to a specific DFlash checkpoint, making the method more modular and flexible. Experiments on Qwen3 models show that DeLS-Spec consistently improves speedup and average acceptance length over DFlash across math, code, and dialogue benchmarks.",
+      "published": "2026-07-08T13:41:52Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Hong-Kai Zheng",
+        "Piji Li"
+      ]
+    },
+    {
+      "id": "2607.06763v1",
+      "title": "Trees from Marginals: Autoregressive drafting with factorized priors",
+      "pdf_url": "https://arxiv.org/pdf/2607.06763v1",
+      "summary": "Speculative decoding greatly increases the interactivity of autoregressive language models by trading off computation for extra tokens generated in a single forward pass. Factorized draft models are especially efficient because they predict future-token marginals in parallel, but their independence assumption causes acceptance rates to degrade sharply as the speculative budget grows. We analyze this limitation and introduce Weaver, a lightweight autoregressive adapter that constructs proposal trees from the top-K marginals of a factorized drafter. Weaver restores conditional dependencies between proposed tokens while avoiding a full-vocabulary projection. To support fast verification for models with Gated Delta Net layers, we derive a rollback-free tree-verification algorithm and implement optimized CUDA kernels in SGLang. By combining these model and systems contributions we achieve a 4.37-fold speedup over autoregressive decoding, and outperform a highly optimized DFlash baseline by 24.7%.",
+      "published": "2026-07-07T19:48:36Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Yuma Oda",
+        "Ryan Mathieu",
+        "Roman Knyazhitskiy",
+        "Artur Chakhvadze"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 6,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    },
+    {
+      "id": "2607.07409v1",
+      "title": "DeLS-Spec: Decoupled Long-Short Contexts for Parallel Speculative Drafting",
+      "pdf_url": "https://arxiv.org/pdf/2607.07409v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting multiple tokens and verifying them in parallel. Block-parallel drafters such as DFlash further improve drafting efficiency by predicting an entire block in one pass, but their position-wise predictions lack explicit intra-block causal conditioning. Recent methods such as Domino and DSpark attempt to introduce such causality into block-parallel drafting, but they require training the draft model from scratch, which limits their flexibility and increases training cost. We propose DeLS-Spec, a decoupled long-short context speculative decoding method. DeLS-Spec treats the fixed DFlash model as a long-context expert and introduces a lightweight local head as a short-context expert. The local head can be trained independently with a standard next-token prediction objective, without joint training with the target model or the DFlash backbone, leading to extremely low training cost. At inference time, DeLS-Spec combines long-context and short-context logits, and the local head is not tied to a specific DFlash checkpoint, making the method more modular and flexible. Experiments on Qwen3 models show that DeLS-Spec consistently improves speedup and average acceptance length over DFlash across math, code, and dialogue benchmarks.",
+      "published": "2026-07-08T13:41:52Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Hong-Kai Zheng",
+        "Piji Li"
+      ]
+    },
+    {
+      "id": "2607.06763v1",
+      "title": "Trees from Marginals: Autoregressive drafting with factorized priors",
+      "pdf_url": "https://arxiv.org/pdf/2607.06763v1",
+      "summary": "Speculative decoding greatly increases the interactivity of autoregressive language models by trading off computation for extra tokens generated in a single forward pass. Factorized draft models are especially efficient because they predict future-token marginals in parallel, but their independence assumption causes acceptance rates to degrade sharply as the speculative budget grows. We analyze this limitation and introduce Weaver, a lightweight autoregressive adapter that constructs proposal trees from the top-K marginals of a factorized drafter. Weaver restores conditional dependencies between proposed tokens while avoiding a full-vocabulary projection. To support fast verification for models with Gated Delta Net layers, we derive a rollback-free tree-verification algorithm and implement optimized CUDA kernels in SGLang. By combining these model and systems contributions we achieve a 4.37-fold speedup over autoregressive decoding, and outperform a highly optimized DFlash baseline by 24.7%.",
+      "published": "2026-07-07T19:48:36Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Yuma Oda",
+        "Ryan Mathieu",
+        "Roman Knyazhitskiy",
+        "Artur Chakhvadze"
+      ]
+    },
+    {
+      "id": "2607.05722v1",
+      "title": "Nemotron-Labs-Diffusion: A Tri-Mode Language Model Unifying Autoregressive, Diffusion, and Self-Speculation Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.05722v1",
+      "summary": "We introduce Nemotron-Labs-Diffusion, a tri-mode language model (LM) that unifies AR, diffusion, and self-speculation decoding within a single architecture. Trained with a joint AR-diffusion objective, Nemotron-Labs-Diffusion can switch modes to sustain high throughput across deployment settings and concurrency levels. Our study shows that (1) AR and diffusion objectives are complementary: diffusion improves lookahead planning, while AR provides left-to-right linguistic priors. (2) In self-speculation mode, diffusion drafts while AR verifies, outperforming multi-token prediction (MTP) methods in both acceptance rate and real-device efficiency. (3) A speed-of-light analysis further demonstrates diffusion's long-term potential, with up to 76.5% more tokens per forward pass than self-speculation under an optimal sampler. Scaling to 3B, 8B, and 14B parameters, our Nemotron-Labs-Diffusion family, including base, instruct, and vision-language models, consistently outperforms state-of-the-art open-source AR and diffusion LMs in both accuracy and speed. For example, Nemotron-Labs-Diffusion-8B decodes 6x more tokens per forward than Qwen3-8B with comparable accuracy, translating to 4x higher throughput on SPEED-Bench with SGLang on a GB200 GPU.",
+      "published": "2026-07-07T01:09:54Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Yonggan Fu",
+        "Lexington Whalen",
+        "Abhinav Garg",
+        "Chengyue Wu",
+        "Maksim Khadkevich",
+        "Nicolai Oswald",
+        "Enze Xie",
+        "Daniel Egert",
+        "Sharath Turuvekere Sreenivas",
+        "Shizhe Diao",
+        "Chenhan Yu",
+        "Ye Yu",
+        "Weijia Chen",
+        "Sajad Norouzi",
+        "Jingyu Liu",
+        "Shiyi Lan",
+        "Ligeng Zhu",
+        "Jin Wang",
+        "Jindong Jiang",
+        "Morteza Mardani",
+        "Mehran Maghoumi",
+        "Song Han",
+        "Ante Juki\u0107",
+        "Nima Tajbakhsh",
+        "Jan Kautz",
+        "Pavlo Molchanov"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 7,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    },
+    {
+      "id": "2607.07409v1",
+      "title": "DeLS-Spec: Decoupled Long-Short Contexts for Parallel Speculative Drafting",
+      "pdf_url": "https://arxiv.org/pdf/2607.07409v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting multiple tokens and verifying them in parallel. Block-parallel drafters such as DFlash further improve drafting efficiency by predicting an entire block in one pass, but their position-wise predictions lack explicit intra-block causal conditioning. Recent methods such as Domino and DSpark attempt to introduce such causality into block-parallel drafting, but they require training the draft model from scratch, which limits their flexibility and increases training cost. We propose DeLS-Spec, a decoupled long-short context speculative decoding method. DeLS-Spec treats the fixed DFlash model as a long-context expert and introduces a lightweight local head as a short-context expert. The local head can be trained independently with a standard next-token prediction objective, without joint training with the target model or the DFlash backbone, leading to extremely low training cost. At inference time, DeLS-Spec combines long-context and short-context logits, and the local head is not tied to a specific DFlash checkpoint, making the method more modular and flexible. Experiments on Qwen3 models show that DeLS-Spec consistently improves speedup and average acceptance length over DFlash across math, code, and dialogue benchmarks.",
+      "published": "2026-07-08T13:41:52Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Hong-Kai Zheng",
+        "Piji Li"
+      ]
+    },
+    {
+      "id": "2607.06763v1",
+      "title": "Trees from Marginals: Autoregressive drafting with factorized priors",
+      "pdf_url": "https://arxiv.org/pdf/2607.06763v1",
+      "summary": "Speculative decoding greatly increases the interactivity of autoregressive language models by trading off computation for extra tokens generated in a single forward pass. Factorized draft models are especially efficient because they predict future-token marginals in parallel, but their independence assumption causes acceptance rates to degrade sharply as the speculative budget grows. We analyze this limitation and introduce Weaver, a lightweight autoregressive adapter that constructs proposal trees from the top-K marginals of a factorized drafter. Weaver restores conditional dependencies between proposed tokens while avoiding a full-vocabulary projection. To support fast verification for models with Gated Delta Net layers, we derive a rollback-free tree-verification algorithm and implement optimized CUDA kernels in SGLang. By combining these model and systems contributions we achieve a 4.37-fold speedup over autoregressive decoding, and outperform a highly optimized DFlash baseline by 24.7%.",
+      "published": "2026-07-07T19:48:36Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Yuma Oda",
+        "Ryan Mathieu",
+        "Roman Knyazhitskiy",
+        "Artur Chakhvadze"
+      ]
+    },
+    {
+      "id": "2607.05722v1",
+      "title": "Nemotron-Labs-Diffusion: A Tri-Mode Language Model Unifying Autoregressive, Diffusion, and Self-Speculation Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.05722v1",
+      "summary": "We introduce Nemotron-Labs-Diffusion, a tri-mode language model (LM) that unifies AR, diffusion, and self-speculation decoding within a single architecture. Trained with a joint AR-diffusion objective, Nemotron-Labs-Diffusion can switch modes to sustain high throughput across deployment settings and concurrency levels. Our study shows that (1) AR and diffusion objectives are complementary: diffusion improves lookahead planning, while AR provides left-to-right linguistic priors. (2) In self-speculation mode, diffusion drafts while AR verifies, outperforming multi-token prediction (MTP) methods in both acceptance rate and real-device efficiency. (3) A speed-of-light analysis further demonstrates diffusion's long-term potential, with up to 76.5% more tokens per forward pass than self-speculation under an optimal sampler. Scaling to 3B, 8B, and 14B parameters, our Nemotron-Labs-Diffusion family, including base, instruct, and vision-language models, consistently outperforms state-of-the-art open-source AR and diffusion LMs in both accuracy and speed. For example, Nemotron-Labs-Diffusion-8B decodes 6x more tokens per forward than Qwen3-8B with comparable accuracy, translating to 4x higher throughput on SPEED-Bench with SGLang on a GB200 GPU.",
+      "published": "2026-07-07T01:09:54Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Yonggan Fu",
+        "Lexington Whalen",
+        "Abhinav Garg",
+        "Chengyue Wu",
+        "Maksim Khadkevich",
+        "Nicolai Oswald",
+        "Enze Xie",
+        "Daniel Egert",
+        "Sharath Turuvekere Sreenivas",
+        "Shizhe Diao",
+        "Chenhan Yu",
+        "Ye Yu",
+        "Weijia Chen",
+        "Sajad Norouzi",
+        "Jingyu Liu",
+        "Shiyi Lan",
+        "Ligeng Zhu",
+        "Jin Wang",
+        "Jindong Jiang",
+        "Morteza Mardani",
+        "Mehran Maghoumi",
+        "Song Han",
+        "Ante Juki\u0107",
+        "Nima Tajbakhsh",
+        "Jan Kautz",
+        "Pavlo Molchanov"
+      ]
+    },
+    {
+      "id": "2607.05147v1",
+      "title": "DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation",
+      "pdf_url": "https://arxiv.org/pdf/2607.05147v1",
+      "summary": "Speculative decoding accelerates Large Language Model (LLM) inference by decoupling draft generation from target verification. While recent parallel drafters efficiently propose long token sequences in a single forward pass, they suffer from rapid acceptance decay due to a lack of inter-token dependencies. Furthermore, indiscriminately verifying these extended blocks wastes critical batch capacity on tokens with high rejection risks, severely degrading throughput in high-concurrency serving systems. We introduce DSpark, a speculative decoding framework that unifies high-throughput parallel generation with adaptive, load-aware verification. To maintain draft quality, DSpark utilizes a semi-autoregressive architecture, coupling a parallel backbone with a lightweight sequential module, to introduce intra-block dependency modeling and mitigate suffix decay. To optimize system efficiency, DSpark employs confidence-scheduled verification, dynamically tailoring the verification length for each request based on estimated prefix survival probabilities and engine-specific throughput profiles. On offline benchmarks across diverse domains, DSpark substantially improves the accepted length over state-of-the-art autoregressive and parallel drafters. When deployed within the DeepSeek-V4 serving system under live user traffic, DSpark successfully mitigates verification waste. Compared to the established production baseline (MTP-1), DSpark accelerates per-user generation speeds by 60 to 85 percent at matched throughput levels. More importantly, by preventing severe throughput degradation under strict interactivity constraints, it enables performance tiers that were previously unattainable, shifting the Pareto frontier of our serving system.",
+      "published": "2026-07-06T14:28:06Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Xin Cheng",
+        "Xingkai Yu",
+        "Chenze Shao",
+        "Jiashi Li",
+        "Yunfan Xiong",
+        "Yi Qian",
+        "Jiaqi Zhu",
+        "Shirong Ma",
+        "Xiaokang Zhang",
+        "Jiasheng Ye",
+        "Qinyu Chen",
+        "Chengqi Deng",
+        "Jiping Yu",
+        "Damai Dai",
+        "Zhengyan Zhang",
+        "Yixuan Wei",
+        "Yixuan Tan",
+        "Wenkai Yang",
+        "Runxin Xu",
+        "Yu Wu",
+        "Zhean Xu",
+        "Xuanyu Wang",
+        "Muyang Chen",
+        "Rui Tian",
+        "Xiao Bi",
+        "Zhewen Hao",
+        "Shaoyuan Chen",
+        "Huanqi Cao",
+        "Wentao Zhang",
+        "Anyi Xu",
+        "Huishuai Zhang",
+        "Dongyan Zhao",
+        "Wenfeng Liang"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 8,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    },
+    {
+      "id": "2607.07409v1",
+      "title": "DeLS-Spec: Decoupled Long-Short Contexts for Parallel Speculative Drafting",
+      "pdf_url": "https://arxiv.org/pdf/2607.07409v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting multiple tokens and verifying them in parallel. Block-parallel drafters such as DFlash further improve drafting efficiency by predicting an entire block in one pass, but their position-wise predictions lack explicit intra-block causal conditioning. Recent methods such as Domino and DSpark attempt to introduce such causality into block-parallel drafting, but they require training the draft model from scratch, which limits their flexibility and increases training cost. We propose DeLS-Spec, a decoupled long-short context speculative decoding method. DeLS-Spec treats the fixed DFlash model as a long-context expert and introduces a lightweight local head as a short-context expert. The local head can be trained independently with a standard next-token prediction objective, without joint training with the target model or the DFlash backbone, leading to extremely low training cost. At inference time, DeLS-Spec combines long-context and short-context logits, and the local head is not tied to a specific DFlash checkpoint, making the method more modular and flexible. Experiments on Qwen3 models show that DeLS-Spec consistently improves speedup and average acceptance length over DFlash across math, code, and dialogue benchmarks.",
+      "published": "2026-07-08T13:41:52Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Hong-Kai Zheng",
+        "Piji Li"
+      ]
+    },
+    {
+      "id": "2607.06763v1",
+      "title": "Trees from Marginals: Autoregressive drafting with factorized priors",
+      "pdf_url": "https://arxiv.org/pdf/2607.06763v1",
+      "summary": "Speculative decoding greatly increases the interactivity of autoregressive language models by trading off computation for extra tokens generated in a single forward pass. Factorized draft models are especially efficient because they predict future-token marginals in parallel, but their independence assumption causes acceptance rates to degrade sharply as the speculative budget grows. We analyze this limitation and introduce Weaver, a lightweight autoregressive adapter that constructs proposal trees from the top-K marginals of a factorized drafter. Weaver restores conditional dependencies between proposed tokens while avoiding a full-vocabulary projection. To support fast verification for models with Gated Delta Net layers, we derive a rollback-free tree-verification algorithm and implement optimized CUDA kernels in SGLang. By combining these model and systems contributions we achieve a 4.37-fold speedup over autoregressive decoding, and outperform a highly optimized DFlash baseline by 24.7%.",
+      "published": "2026-07-07T19:48:36Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Yuma Oda",
+        "Ryan Mathieu",
+        "Roman Knyazhitskiy",
+        "Artur Chakhvadze"
+      ]
+    },
+    {
+      "id": "2607.05722v1",
+      "title": "Nemotron-Labs-Diffusion: A Tri-Mode Language Model Unifying Autoregressive, Diffusion, and Self-Speculation Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.05722v1",
+      "summary": "We introduce Nemotron-Labs-Diffusion, a tri-mode language model (LM) that unifies AR, diffusion, and self-speculation decoding within a single architecture. Trained with a joint AR-diffusion objective, Nemotron-Labs-Diffusion can switch modes to sustain high throughput across deployment settings and concurrency levels. Our study shows that (1) AR and diffusion objectives are complementary: diffusion improves lookahead planning, while AR provides left-to-right linguistic priors. (2) In self-speculation mode, diffusion drafts while AR verifies, outperforming multi-token prediction (MTP) methods in both acceptance rate and real-device efficiency. (3) A speed-of-light analysis further demonstrates diffusion's long-term potential, with up to 76.5% more tokens per forward pass than self-speculation under an optimal sampler. Scaling to 3B, 8B, and 14B parameters, our Nemotron-Labs-Diffusion family, including base, instruct, and vision-language models, consistently outperforms state-of-the-art open-source AR and diffusion LMs in both accuracy and speed. For example, Nemotron-Labs-Diffusion-8B decodes 6x more tokens per forward than Qwen3-8B with comparable accuracy, translating to 4x higher throughput on SPEED-Bench with SGLang on a GB200 GPU.",
+      "published": "2026-07-07T01:09:54Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Yonggan Fu",
+        "Lexington Whalen",
+        "Abhinav Garg",
+        "Chengyue Wu",
+        "Maksim Khadkevich",
+        "Nicolai Oswald",
+        "Enze Xie",
+        "Daniel Egert",
+        "Sharath Turuvekere Sreenivas",
+        "Shizhe Diao",
+        "Chenhan Yu",
+        "Ye Yu",
+        "Weijia Chen",
+        "Sajad Norouzi",
+        "Jingyu Liu",
+        "Shiyi Lan",
+        "Ligeng Zhu",
+        "Jin Wang",
+        "Jindong Jiang",
+        "Morteza Mardani",
+        "Mehran Maghoumi",
+        "Song Han",
+        "Ante Juki\u0107",
+        "Nima Tajbakhsh",
+        "Jan Kautz",
+        "Pavlo Molchanov"
+      ]
+    },
+    {
+      "id": "2607.05147v1",
+      "title": "DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation",
+      "pdf_url": "https://arxiv.org/pdf/2607.05147v1",
+      "summary": "Speculative decoding accelerates Large Language Model (LLM) inference by decoupling draft generation from target verification. While recent parallel drafters efficiently propose long token sequences in a single forward pass, they suffer from rapid acceptance decay due to a lack of inter-token dependencies. Furthermore, indiscriminately verifying these extended blocks wastes critical batch capacity on tokens with high rejection risks, severely degrading throughput in high-concurrency serving systems. We introduce DSpark, a speculative decoding framework that unifies high-throughput parallel generation with adaptive, load-aware verification. To maintain draft quality, DSpark utilizes a semi-autoregressive architecture, coupling a parallel backbone with a lightweight sequential module, to introduce intra-block dependency modeling and mitigate suffix decay. To optimize system efficiency, DSpark employs confidence-scheduled verification, dynamically tailoring the verification length for each request based on estimated prefix survival probabilities and engine-specific throughput profiles. On offline benchmarks across diverse domains, DSpark substantially improves the accepted length over state-of-the-art autoregressive and parallel drafters. When deployed within the DeepSeek-V4 serving system under live user traffic, DSpark successfully mitigates verification waste. Compared to the established production baseline (MTP-1), DSpark accelerates per-user generation speeds by 60 to 85 percent at matched throughput levels. More importantly, by preventing severe throughput degradation under strict interactivity constraints, it enables performance tiers that were previously unattainable, shifting the Pareto frontier of our serving system.",
+      "published": "2026-07-06T14:28:06Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Xin Cheng",
+        "Xingkai Yu",
+        "Chenze Shao",
+        "Jiashi Li",
+        "Yunfan Xiong",
+        "Yi Qian",
+        "Jiaqi Zhu",
+        "Shirong Ma",
+        "Xiaokang Zhang",
+        "Jiasheng Ye",
+        "Qinyu Chen",
+        "Chengqi Deng",
+        "Jiping Yu",
+        "Damai Dai",
+        "Zhengyan Zhang",
+        "Yixuan Wei",
+        "Yixuan Tan",
+        "Wenkai Yang",
+        "Runxin Xu",
+        "Yu Wu",
+        "Zhean Xu",
+        "Xuanyu Wang",
+        "Muyang Chen",
+        "Rui Tian",
+        "Xiao Bi",
+        "Zhewen Hao",
+        "Shaoyuan Chen",
+        "Huanqi Cao",
+        "Wentao Zhang",
+        "Anyi Xu",
+        "Huishuai Zhang",
+        "Dongyan Zhao",
+        "Wenfeng Liang"
+      ]
+    },
+    {
+      "id": "2607.04244v2",
+      "title": "Quantize the Target, Quantize the Drafter: Efficient Inference with Qwen3.5-4B",
+      "pdf_url": "https://arxiv.org/pdf/2607.04244v2",
+      "summary": "This report describes our approach to the Efficient Qwen Competition, where the goal is to enable low-latency serving of Qwen3.5-4B on a resource-constrained NVIDIA A10G GPU. Our system combines a quantized target model with speculative decoding. To recover accuracy, we apply quantization-aware distillation to the target model while retaining the original quantization grid. To speed up decoding, a block-diffusion drafter specialized for the quantized target model is trained using a two-stage procedure: first learning from the high-precision target and then adapting to the low-precision target. Because the drafter is invoked at every speculative decoding step, we further reduce its overhead with quantization and sliding-window attention, preserving draft-token acceptance while improving long-context decoding latency. As a result, our submission achieves a 6.978$\\times$ average speedup over the baseline while satisfying the required quality thresholds, ranking 3rd overall. We hope these results provide useful insights for practical LLM inference. The code and resources are available at https://github.com/nota-github/adaptfm-quant-dflash",
+      "published": "2026-07-05T11:44:45Z",
+      "comment": "All authors contributed equally. Our submission to Efficient Qwen Competition, ICML 2026 Workshop on AdaptFM",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Jaeyeon Kim",
+        "Jewon Lee",
+        "Bo-Kyeong Kim"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 9,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    },
+    {
+      "id": "2607.07409v1",
+      "title": "DeLS-Spec: Decoupled Long-Short Contexts for Parallel Speculative Drafting",
+      "pdf_url": "https://arxiv.org/pdf/2607.07409v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting multiple tokens and verifying them in parallel. Block-parallel drafters such as DFlash further improve drafting efficiency by predicting an entire block in one pass, but their position-wise predictions lack explicit intra-block causal conditioning. Recent methods such as Domino and DSpark attempt to introduce such causality into block-parallel drafting, but they require training the draft model from scratch, which limits their flexibility and increases training cost. We propose DeLS-Spec, a decoupled long-short context speculative decoding method. DeLS-Spec treats the fixed DFlash model as a long-context expert and introduces a lightweight local head as a short-context expert. The local head can be trained independently with a standard next-token prediction objective, without joint training with the target model or the DFlash backbone, leading to extremely low training cost. At inference time, DeLS-Spec combines long-context and short-context logits, and the local head is not tied to a specific DFlash checkpoint, making the method more modular and flexible. Experiments on Qwen3 models show that DeLS-Spec consistently improves speedup and average acceptance length over DFlash across math, code, and dialogue benchmarks.",
+      "published": "2026-07-08T13:41:52Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Hong-Kai Zheng",
+        "Piji Li"
+      ]
+    },
+    {
+      "id": "2607.06763v1",
+      "title": "Trees from Marginals: Autoregressive drafting with factorized priors",
+      "pdf_url": "https://arxiv.org/pdf/2607.06763v1",
+      "summary": "Speculative decoding greatly increases the interactivity of autoregressive language models by trading off computation for extra tokens generated in a single forward pass. Factorized draft models are especially efficient because they predict future-token marginals in parallel, but their independence assumption causes acceptance rates to degrade sharply as the speculative budget grows. We analyze this limitation and introduce Weaver, a lightweight autoregressive adapter that constructs proposal trees from the top-K marginals of a factorized drafter. Weaver restores conditional dependencies between proposed tokens while avoiding a full-vocabulary projection. To support fast verification for models with Gated Delta Net layers, we derive a rollback-free tree-verification algorithm and implement optimized CUDA kernels in SGLang. By combining these model and systems contributions we achieve a 4.37-fold speedup over autoregressive decoding, and outperform a highly optimized DFlash baseline by 24.7%.",
+      "published": "2026-07-07T19:48:36Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Yuma Oda",
+        "Ryan Mathieu",
+        "Roman Knyazhitskiy",
+        "Artur Chakhvadze"
+      ]
+    },
+    {
+      "id": "2607.05722v1",
+      "title": "Nemotron-Labs-Diffusion: A Tri-Mode Language Model Unifying Autoregressive, Diffusion, and Self-Speculation Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.05722v1",
+      "summary": "We introduce Nemotron-Labs-Diffusion, a tri-mode language model (LM) that unifies AR, diffusion, and self-speculation decoding within a single architecture. Trained with a joint AR-diffusion objective, Nemotron-Labs-Diffusion can switch modes to sustain high throughput across deployment settings and concurrency levels. Our study shows that (1) AR and diffusion objectives are complementary: diffusion improves lookahead planning, while AR provides left-to-right linguistic priors. (2) In self-speculation mode, diffusion drafts while AR verifies, outperforming multi-token prediction (MTP) methods in both acceptance rate and real-device efficiency. (3) A speed-of-light analysis further demonstrates diffusion's long-term potential, with up to 76.5% more tokens per forward pass than self-speculation under an optimal sampler. Scaling to 3B, 8B, and 14B parameters, our Nemotron-Labs-Diffusion family, including base, instruct, and vision-language models, consistently outperforms state-of-the-art open-source AR and diffusion LMs in both accuracy and speed. For example, Nemotron-Labs-Diffusion-8B decodes 6x more tokens per forward than Qwen3-8B with comparable accuracy, translating to 4x higher throughput on SPEED-Bench with SGLang on a GB200 GPU.",
+      "published": "2026-07-07T01:09:54Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Yonggan Fu",
+        "Lexington Whalen",
+        "Abhinav Garg",
+        "Chengyue Wu",
+        "Maksim Khadkevich",
+        "Nicolai Oswald",
+        "Enze Xie",
+        "Daniel Egert",
+        "Sharath Turuvekere Sreenivas",
+        "Shizhe Diao",
+        "Chenhan Yu",
+        "Ye Yu",
+        "Weijia Chen",
+        "Sajad Norouzi",
+        "Jingyu Liu",
+        "Shiyi Lan",
+        "Ligeng Zhu",
+        "Jin Wang",
+        "Jindong Jiang",
+        "Morteza Mardani",
+        "Mehran Maghoumi",
+        "Song Han",
+        "Ante Juki\u0107",
+        "Nima Tajbakhsh",
+        "Jan Kautz",
+        "Pavlo Molchanov"
+      ]
+    },
+    {
+      "id": "2607.05147v1",
+      "title": "DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation",
+      "pdf_url": "https://arxiv.org/pdf/2607.05147v1",
+      "summary": "Speculative decoding accelerates Large Language Model (LLM) inference by decoupling draft generation from target verification. While recent parallel drafters efficiently propose long token sequences in a single forward pass, they suffer from rapid acceptance decay due to a lack of inter-token dependencies. Furthermore, indiscriminately verifying these extended blocks wastes critical batch capacity on tokens with high rejection risks, severely degrading throughput in high-concurrency serving systems. We introduce DSpark, a speculative decoding framework that unifies high-throughput parallel generation with adaptive, load-aware verification. To maintain draft quality, DSpark utilizes a semi-autoregressive architecture, coupling a parallel backbone with a lightweight sequential module, to introduce intra-block dependency modeling and mitigate suffix decay. To optimize system efficiency, DSpark employs confidence-scheduled verification, dynamically tailoring the verification length for each request based on estimated prefix survival probabilities and engine-specific throughput profiles. On offline benchmarks across diverse domains, DSpark substantially improves the accepted length over state-of-the-art autoregressive and parallel drafters. When deployed within the DeepSeek-V4 serving system under live user traffic, DSpark successfully mitigates verification waste. Compared to the established production baseline (MTP-1), DSpark accelerates per-user generation speeds by 60 to 85 percent at matched throughput levels. More importantly, by preventing severe throughput degradation under strict interactivity constraints, it enables performance tiers that were previously unattainable, shifting the Pareto frontier of our serving system.",
+      "published": "2026-07-06T14:28:06Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Xin Cheng",
+        "Xingkai Yu",
+        "Chenze Shao",
+        "Jiashi Li",
+        "Yunfan Xiong",
+        "Yi Qian",
+        "Jiaqi Zhu",
+        "Shirong Ma",
+        "Xiaokang Zhang",
+        "Jiasheng Ye",
+        "Qinyu Chen",
+        "Chengqi Deng",
+        "Jiping Yu",
+        "Damai Dai",
+        "Zhengyan Zhang",
+        "Yixuan Wei",
+        "Yixuan Tan",
+        "Wenkai Yang",
+        "Runxin Xu",
+        "Yu Wu",
+        "Zhean Xu",
+        "Xuanyu Wang",
+        "Muyang Chen",
+        "Rui Tian",
+        "Xiao Bi",
+        "Zhewen Hao",
+        "Shaoyuan Chen",
+        "Huanqi Cao",
+        "Wentao Zhang",
+        "Anyi Xu",
+        "Huishuai Zhang",
+        "Dongyan Zhao",
+        "Wenfeng Liang"
+      ]
+    },
+    {
+      "id": "2607.04244v2",
+      "title": "Quantize the Target, Quantize the Drafter: Efficient Inference with Qwen3.5-4B",
+      "pdf_url": "https://arxiv.org/pdf/2607.04244v2",
+      "summary": "This report describes our approach to the Efficient Qwen Competition, where the goal is to enable low-latency serving of Qwen3.5-4B on a resource-constrained NVIDIA A10G GPU. Our system combines a quantized target model with speculative decoding. To recover accuracy, we apply quantization-aware distillation to the target model while retaining the original quantization grid. To speed up decoding, a block-diffusion drafter specialized for the quantized target model is trained using a two-stage procedure: first learning from the high-precision target and then adapting to the low-precision target. Because the drafter is invoked at every speculative decoding step, we further reduce its overhead with quantization and sliding-window attention, preserving draft-token acceptance while improving long-context decoding latency. As a result, our submission achieves a 6.978$\\times$ average speedup over the baseline while satisfying the required quality thresholds, ranking 3rd overall. We hope these results provide useful insights for practical LLM inference. The code and resources are available at https://github.com/nota-github/adaptfm-quant-dflash",
+      "published": "2026-07-05T11:44:45Z",
+      "comment": "All authors contributed equally. Our submission to Efficient Qwen Competition, ICML 2026 Workshop on AdaptFM",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Jaeyeon Kim",
+        "Jewon Lee",
+        "Bo-Kyeong Kim"
+      ]
+    },
+    {
+      "id": "2607.03876v1",
+      "title": "AdaptiveSD A Stability-Aware, Runtime-Adaptive Speculative Decoding Framework with Multi-Policy Orchestration for CPU-Constrained LLM Inference",
+      "pdf_url": "https://arxiv.org/pdf/2607.03876v1",
+      "summary": "With the rise of small quantized GGUF-based language models and their increasing use for on-device inference tasks, we have seen the growing need for an approach capable of reliably delivering these models at scale even under severe memory bandwidth constraints such as those imposed by pure CPU implementations. Fixed-depth speculative decoding has emerged as one promising technique, but in practice, it often leads to performance degradation due to either bandwidth saturation, instability, or even catastrophic resource exhaustion resulting in system failure. To overcome this problem, we introduce AdaptiveSD, a fully runtime-adaptive speculative decoding framework aimed at ensuring robust, reliable execution across the spectrum of model types and workloads. Our solution consists of four tightly-coupled components working together in a continuous feedback loop: a Runtime Monitoring Engine tracking multiple signals relevant to ongoing computation, an Adaptive Draft Controller enforcing an eleven rule policy hierarchy prioritizing system resource preservation over raw draft count, a Dynamic Policy Engine employing a suite of heuristic and reinforcement learning techniques to dynamically modify policies depending upon workload behavior, and finally, a KV Cache Coordination Layer managing cache states with fine-grained control through INT8 shadow buffers and position aware evictions. While conventional approaches focus solely on maximizing throughput, we instead assess the effectiveness of our approach based on several key metrics including wasted drafted compute and inter-token latency dispersion alongside standard measures of speculative efficiency.",
+      "published": "2026-07-04T13:39:40Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Sadra Saremi"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 10,
+  "papers": [
+    {
+      "id": "2607.08690v1",
+      "title": "A Practical Investigation of Training-free Relaxed Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08690v1",
+      "summary": "Speculative decoding accelerates sampling from an autoregressive LLM by using a faster auxiliary model to draft tokens which are then verified in parallel by the LLM. Standard speculative decoding is lossless: its rejection and resampling steps exactly preserve the LLM's sampling distribution. Recent work argues that relaxing this strict guarantee can yield further speed-ups, controlled capability-speed trade-offs, or even capability gains. We practically investigate training-free relaxed speculative decoding techniques, unify existing approaches within a shared framework, benchmark them on contemporary settings, and distil takeaways and empirical findings for practitioners. Important takeaways include: relaxation can require considerable capability evaluation unlike lossless speculative decoding, and many relaxed approaches rely on a drafter that is a good language model, making them unsuited for lightweight dedicated multi-token-prediction drafters.",
+      "published": "2026-07-09T16:50:41Z",
+      "comment": "preprint",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Guoxuan Xia",
+        "Luka Ribar",
+        "Paul Balanca"
+      ]
+    },
+    {
+      "id": "2607.08642v1",
+      "title": "DominoTree: Conditional Tree-Structured Drafting with Domino for Speculative Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.08642v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting several tokens and verifying them in parallel. Block-diffusion drafters such as DFlash produce   a draft block in one pass but model only per-position marginals; best-first tree methods such as DDTree expand candidate trees from those marginals. The   released Domino drafter adds a GRU-based causal correction that makes each draft token's distribution path-dependent, a structure DDTree's factorized   formulation cannot represent. We introduce DominoTree, a training-free best-first draft tree scored by Domino's conditional, non-factorized correction   along each root-to-node path, made practical by restricting the per-node correction to a candidate top-M. On Qwen3-4B across eight benchmarks, DominoTree   reaches up to 6.6x speedup over autoregressive decoding and the highest mean accept length of any evaluated method, up to 10.7 tokens per round, at every   temperature we test. DominoTree constructs its tree with a GPU-native, CUDA-graph builder that is bit-identical to a reference Python implementation, so   acceptance is unchanged, while keeping per-round tree construction cheap. With this builder as default, DominoTree wins throughput over the released   Domino decoder at every temperature, 9-10% overall on Qwen3-4B and up to +22% on Alpaca, and over DDTree/CaDDTree at every temperature we test. On Qwen3-   8B, DominoTree keeps the highest accepted length at every temperature and adds a decisive throughput win at T=0, +24% over DDTree; at higher temperature   that edge over DDTree/CaDDTree narrows to a tie and a small loss, while its Overall aggregate wins over DFlash and Domino persist.",
+      "published": "2026-07-09T16:16:35Z",
+      "comment": "23 pages, 2 figures, 11 tables. Code: https://github.com/slin-zhq/Domino-Tree",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Saw S. Lin",
+        "Jyh-Shing Roger Jang"
+      ]
+    },
+    {
+      "id": "2607.08365v1",
+      "title": "DaV-Gen: End-to-End Generative Retrieval via Draft-and-Verify",
+      "pdf_url": "https://arxiv.org/pdf/2607.08365v1",
+      "summary": "Mainstream industrial information retrieval systems (e.g., search and recommendation) are usually built upon Multi-Stage Cascade Architectures (MCAs), which balance effectiveness and efficiency through a coarse-to-fine ``retrieval-ranking'' pipeline. However, the optimization objectives across different stages are substantially inconsistent, propagating or even amplifying the early-stage errors that ultimately degrade the quality of final results. While emerging end-to-end generative models offer a potential solution by unifying the pipeline, their online serving performance is severely hindered by the auto-regressive process inherited from the standard decoder-only structure. To bridge this gap, we introduce \\textbf{DaV-Gen}, a novel unified solution designed to fundamentally refactor the paradigm for both search and recommendation via a ``Draft-and-Verify'' mechanism. Inspired by the process used by speculative decoding, our framework redesigns the generation task into two synergistic operations within a single model. During training, the model is concurrently optimized for both candidate drafting and fine-grained verification. This is achieved by a composite loss function that jointly trains the model on two distinct but related objectives: 1) a contrastive loss that structures the embedding space for efficient drafting, and 2) a fusion loss that combines generative likelihood with vector similarity to produce a superior verification score. This integrated training strategy equips the model with dual capabilities. At inference time, it first performs highly efficient vector-based drafting to generate a candidate set, and then verifies these candidates using the more powerful fused scoring function, thereby achieving both the speed of sparse drafting and the precision of advanced generative models within a unified, end-to-end architecture.",
+      "published": "2026-07-09T11:22:50Z",
+      "comment": "Accepted by IJCAI'26",
+      "primary_category": "cs.IR",
+      "authors": [
+        "Meng Zhao",
+        "Chunmei Liu",
+        "Qinyong Wang"
+      ]
+    },
+    {
+      "id": "2607.07409v1",
+      "title": "DeLS-Spec: Decoupled Long-Short Contexts for Parallel Speculative Drafting",
+      "pdf_url": "https://arxiv.org/pdf/2607.07409v1",
+      "summary": "Speculative decoding accelerates LLM inference by drafting multiple tokens and verifying them in parallel. Block-parallel drafters such as DFlash further improve drafting efficiency by predicting an entire block in one pass, but their position-wise predictions lack explicit intra-block causal conditioning. Recent methods such as Domino and DSpark attempt to introduce such causality into block-parallel drafting, but they require training the draft model from scratch, which limits their flexibility and increases training cost. We propose DeLS-Spec, a decoupled long-short context speculative decoding method. DeLS-Spec treats the fixed DFlash model as a long-context expert and introduces a lightweight local head as a short-context expert. The local head can be trained independently with a standard next-token prediction objective, without joint training with the target model or the DFlash backbone, leading to extremely low training cost. At inference time, DeLS-Spec combines long-context and short-context logits, and the local head is not tied to a specific DFlash checkpoint, making the method more modular and flexible. Experiments on Qwen3 models show that DeLS-Spec consistently improves speedup and average acceptance length over DFlash across math, code, and dialogue benchmarks.",
+      "published": "2026-07-08T13:41:52Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Hong-Kai Zheng",
+        "Piji Li"
+      ]
+    },
+    {
+      "id": "2607.06763v1",
+      "title": "Trees from Marginals: Autoregressive drafting with factorized priors",
+      "pdf_url": "https://arxiv.org/pdf/2607.06763v1",
+      "summary": "Speculative decoding greatly increases the interactivity of autoregressive language models by trading off computation for extra tokens generated in a single forward pass. Factorized draft models are especially efficient because they predict future-token marginals in parallel, but their independence assumption causes acceptance rates to degrade sharply as the speculative budget grows. We analyze this limitation and introduce Weaver, a lightweight autoregressive adapter that constructs proposal trees from the top-K marginals of a factorized drafter. Weaver restores conditional dependencies between proposed tokens while avoiding a full-vocabulary projection. To support fast verification for models with Gated Delta Net layers, we derive a rollback-free tree-verification algorithm and implement optimized CUDA kernels in SGLang. By combining these model and systems contributions we achieve a 4.37-fold speedup over autoregressive decoding, and outperform a highly optimized DFlash baseline by 24.7%.",
+      "published": "2026-07-07T19:48:36Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Yuma Oda",
+        "Ryan Mathieu",
+        "Roman Knyazhitskiy",
+        "Artur Chakhvadze"
+      ]
+    },
+    {
+      "id": "2607.05722v1",
+      "title": "Nemotron-Labs-Diffusion: A Tri-Mode Language Model Unifying Autoregressive, Diffusion, and Self-Speculation Decoding",
+      "pdf_url": "https://arxiv.org/pdf/2607.05722v1",
+      "summary": "We introduce Nemotron-Labs-Diffusion, a tri-mode language model (LM) that unifies AR, diffusion, and self-speculation decoding within a single architecture. Trained with a joint AR-diffusion objective, Nemotron-Labs-Diffusion can switch modes to sustain high throughput across deployment settings and concurrency levels. Our study shows that (1) AR and diffusion objectives are complementary: diffusion improves lookahead planning, while AR provides left-to-right linguistic priors. (2) In self-speculation mode, diffusion drafts while AR verifies, outperforming multi-token prediction (MTP) methods in both acceptance rate and real-device efficiency. (3) A speed-of-light analysis further demonstrates diffusion's long-term potential, with up to 76.5% more tokens per forward pass than self-speculation under an optimal sampler. Scaling to 3B, 8B, and 14B parameters, our Nemotron-Labs-Diffusion family, including base, instruct, and vision-language models, consistently outperforms state-of-the-art open-source AR and diffusion LMs in both accuracy and speed. For example, Nemotron-Labs-Diffusion-8B decodes 6x more tokens per forward than Qwen3-8B with comparable accuracy, translating to 4x higher throughput on SPEED-Bench with SGLang on a GB200 GPU.",
+      "published": "2026-07-07T01:09:54Z",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Yonggan Fu",
+        "Lexington Whalen",
+        "Abhinav Garg",
+        "Chengyue Wu",
+        "Maksim Khadkevich",
+        "Nicolai Oswald",
+        "Enze Xie",
+        "Daniel Egert",
+        "Sharath Turuvekere Sreenivas",
+        "Shizhe Diao",
+        "Chenhan Yu",
+        "Ye Yu",
+        "Weijia Chen",
+        "Sajad Norouzi",
+        "Jingyu Liu",
+        "Shiyi Lan",
+        "Ligeng Zhu",
+        "Jin Wang",
+        "Jindong Jiang",
+        "Morteza Mardani",
+        "Mehran Maghoumi",
+        "Song Han",
+        "Ante Juki\u0107",
+        "Nima Tajbakhsh",
+        "Jan Kautz",
+        "Pavlo Molchanov"
+      ]
+    },
+    {
+      "id": "2607.05147v1",
+      "title": "DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation",
+      "pdf_url": "https://arxiv.org/pdf/2607.05147v1",
+      "summary": "Speculative decoding accelerates Large Language Model (LLM) inference by decoupling draft generation from target verification. While recent parallel drafters efficiently propose long token sequences in a single forward pass, they suffer from rapid acceptance decay due to a lack of inter-token dependencies. Furthermore, indiscriminately verifying these extended blocks wastes critical batch capacity on tokens with high rejection risks, severely degrading throughput in high-concurrency serving systems. We introduce DSpark, a speculative decoding framework that unifies high-throughput parallel generation with adaptive, load-aware verification. To maintain draft quality, DSpark utilizes a semi-autoregressive architecture, coupling a parallel backbone with a lightweight sequential module, to introduce intra-block dependency modeling and mitigate suffix decay. To optimize system efficiency, DSpark employs confidence-scheduled verification, dynamically tailoring the verification length for each request based on estimated prefix survival probabilities and engine-specific throughput profiles. On offline benchmarks across diverse domains, DSpark substantially improves the accepted length over state-of-the-art autoregressive and parallel drafters. When deployed within the DeepSeek-V4 serving system under live user traffic, DSpark successfully mitigates verification waste. Compared to the established production baseline (MTP-1), DSpark accelerates per-user generation speeds by 60 to 85 percent at matched throughput levels. More importantly, by preventing severe throughput degradation under strict interactivity constraints, it enables performance tiers that were previously unattainable, shifting the Pareto frontier of our serving system.",
+      "published": "2026-07-06T14:28:06Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Xin Cheng",
+        "Xingkai Yu",
+        "Chenze Shao",
+        "Jiashi Li",
+        "Yunfan Xiong",
+        "Yi Qian",
+        "Jiaqi Zhu",
+        "Shirong Ma",
+        "Xiaokang Zhang",
+        "Jiasheng Ye",
+        "Qinyu Chen",
+        "Chengqi Deng",
+        "Jiping Yu",
+        "Damai Dai",
+        "Zhengyan Zhang",
+        "Yixuan Wei",
+        "Yixuan Tan",
+        "Wenkai Yang",
+        "Runxin Xu",
+        "Yu Wu",
+        "Zhean Xu",
+        "Xuanyu Wang",
+        "Muyang Chen",
+        "Rui Tian",
+        "Xiao Bi",
+        "Zhewen Hao",
+        "Shaoyuan Chen",
+        "Huanqi Cao",
+        "Wentao Zhang",
+        "Anyi Xu",
+        "Huishuai Zhang",
+        "Dongyan Zhao",
+        "Wenfeng Liang"
+      ]
+    },
+    {
+      "id": "2607.04244v2",
+      "title": "Quantize the Target, Quantize the Drafter: Efficient Inference with Qwen3.5-4B",
+      "pdf_url": "https://arxiv.org/pdf/2607.04244v2",
+      "summary": "This report describes our approach to the Efficient Qwen Competition, where the goal is to enable low-latency serving of Qwen3.5-4B on a resource-constrained NVIDIA A10G GPU. Our system combines a quantized target model with speculative decoding. To recover accuracy, we apply quantization-aware distillation to the target model while retaining the original quantization grid. To speed up decoding, a block-diffusion drafter specialized for the quantized target model is trained using a two-stage procedure: first learning from the high-precision target and then adapting to the low-precision target. Because the drafter is invoked at every speculative decoding step, we further reduce its overhead with quantization and sliding-window attention, preserving draft-token acceptance while improving long-context decoding latency. As a result, our submission achieves a 6.978$\\times$ average speedup over the baseline while satisfying the required quality thresholds, ranking 3rd overall. We hope these results provide useful insights for practical LLM inference. The code and resources are available at https://github.com/nota-github/adaptfm-quant-dflash",
+      "published": "2026-07-05T11:44:45Z",
+      "comment": "All authors contributed equally. Our submission to Efficient Qwen Competition, ICML 2026 Workshop on AdaptFM",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Jaeyeon Kim",
+        "Jewon Lee",
+        "Bo-Kyeong Kim"
+      ]
+    },
+    {
+      "id": "2607.03876v1",
+      "title": "AdaptiveSD A Stability-Aware, Runtime-Adaptive Speculative Decoding Framework with Multi-Policy Orchestration for CPU-Constrained LLM Inference",
+      "pdf_url": "https://arxiv.org/pdf/2607.03876v1",
+      "summary": "With the rise of small quantized GGUF-based language models and their increasing use for on-device inference tasks, we have seen the growing need for an approach capable of reliably delivering these models at scale even under severe memory bandwidth constraints such as those imposed by pure CPU implementations. Fixed-depth speculative decoding has emerged as one promising technique, but in practice, it often leads to performance degradation due to either bandwidth saturation, instability, or even catastrophic resource exhaustion resulting in system failure. To overcome this problem, we introduce AdaptiveSD, a fully runtime-adaptive speculative decoding framework aimed at ensuring robust, reliable execution across the spectrum of model types and workloads. Our solution consists of four tightly-coupled components working together in a continuous feedback loop: a Runtime Monitoring Engine tracking multiple signals relevant to ongoing computation, an Adaptive Draft Controller enforcing an eleven rule policy hierarchy prioritizing system resource preservation over raw draft count, a Dynamic Policy Engine employing a suite of heuristic and reinforcement learning techniques to dynamically modify policies depending upon workload behavior, and finally, a KV Cache Coordination Layer managing cache states with fine-grained control through INT8 shadow buffers and position aware evictions. While conventional approaches focus solely on maximizing throughput, we instead assess the effectiveness of our approach based on several key metrics including wasted drafted compute and inter-token latency dispersion alongside standard measures of speculative efficiency.",
+      "published": "2026-07-04T13:39:40Z",
+      "primary_category": "cs.LG",
+      "authors": [
+        "Sadra Saremi"
+      ]
+    },
+    {
+      "id": "2607.03333v1",
+      "title": "SPORK: Self-Speculative Forking to Accelerate Agentic LLM Inference",
+      "pdf_url": "https://arxiv.org/pdf/2607.03333v1",
+      "summary": "LLM agents are becoming a common interface for research, coding, and question answering, yet their Thought-Action-Observation loop is often serial: the model reasons, emits a tool call, then idles the GPU until the result returns. This wait consumes 16-37% of wall time in our workloads and 35-61% in prior reports. Speculative tool execution can hide this wait, but existing systems need auxiliary predictors, historical traces, or static workflow graphs, leaving a gap for training-free, day-one deployment. We observe that the model can be its own predictor: a probe forked at the start of generation predicts Qwen3-32B's upcoming tool name with 74.6-99.6% accuracy across five benchmarks. We present SPORK (Self-sPeculative fORKing), a training-free controller that dispatches the speculated tool call early, overlapping its execution with the remaining chain-of-thought decode. A cost model captures when speculation breaks even, and each component improves one of its terms: a prefix-cache fork cuts probe cost, a confidence gate filters mispredictions, and partial-token accept turns rejected probes into speculative-decoding drafts. On acceptance, the tool result is ready when reasoning ends; on rejection, SPORK falls back to serial execution with no correctness penalty. On real-tool benchmarks, SPORK cuts Qwen3-32B's GAIA P95 by 18% (131.9 to 108.1 s); the mechanism holds across model sizes from 4B to 32B and across dense and mixture-of-experts models, with task accuracy within 1 pp of baseline or better wherever measured. SPORK deploys as a thin controller over standard completion APIs (no retraining, no auxiliary models, no offline traces) and is orthogonal to token-level speculative decoding. SPORK is open source at https://github.com/baihuajun24/spork.",
+      "published": "2026-07-03T13:51:32Z",
+      "comment": "16 pages, 15 figures. Code: https://github.com/baihuajun24/spork",
+      "primary_category": "cs.DC",
+      "authors": [
+        "Huajun Bai",
+        "Weiwei Lv",
+        "Huichuan Zheng",
+        "Youyou Lu",
+        "Jiwu Shu"
+      ]
+    }
+  ]
+}

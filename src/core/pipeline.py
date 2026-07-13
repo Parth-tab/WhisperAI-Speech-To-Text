@@ -25,9 +25,10 @@ class AIPipeline:
         raw_text = self.asr_engine.transcribe(audio_data, dictionary=dictionary)
         print(f"[Pipeline] Raw transcription: '{raw_text}'")
         
+        # Strip whitespace and check length
         if not raw_text or len(raw_text.strip()) < 2:
-            print("[Pipeline] Transcript empty. Aborting LLM format.")
-            return ""
+            print("[Pipeline] Transcript empty. Bypassing LLM.")
+            return ""  # DO NOT call the LLM formatter
             
         print("[Pipeline] Running regex cleaner...")
         regex_cleaned = pre_filter_text(raw_text)

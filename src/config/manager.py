@@ -6,7 +6,9 @@ class ConfigManager:
     DEFAULT_CONFIG = {
         "hotkey": "<ctrl>+<alt>+w",
         "vad_threshold": 0.5,
-        "model_selection": "base"
+        "model_selection": "base",
+        "dictionary": [],
+        "snippets": {}
     }
 
     def __init__(self, config_path=None):
@@ -26,7 +28,12 @@ class ConfigManager:
                     data = json.load(f)
                     self.config.update(data)
             except Exception as e:
-                print(f"Error loading config: {e}")
+                print(f"Error loading config: {e}. Backing up corrupted file.")
+                import shutil
+                try:
+                    shutil.copy(self.config_path, str(self.config_path) + ".corrupt")
+                except Exception:
+                    pass
 
     def save(self):
         try:

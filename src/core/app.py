@@ -127,7 +127,11 @@ class WhisperAIApp:
                 self.llm_engine = future_llm.result()
 
             self.audio_engine.on_recording_stopped = self._on_recording_stopped
-            self.audio_engine.on_audio_chunk = self._on_audio_chunk
+            # NOTE: on_audio_chunk is intentionally NOT wired here.
+            # Streaming partial chunks to the pipeline caused each chunk to be
+            # independently transcribed and LLM-cleaned, producing garbled
+            # concatenated output. Only the final complete audio from
+            # _on_recording_stopped is now processed through the pipeline.
             self.audio_engine.on_audio_level_changed = self._on_audio_level_changed
 
             self.pipeline = AIPipeline(self.asr_engine, self.llm_engine, self.config_manager)
