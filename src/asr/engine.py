@@ -16,7 +16,7 @@ class ASREngine:
         "the end", "you", "bye bye", "okay", "so",
     }
 
-    def __init__(self, model_size: str = "small.en", compute_type: str = "default"):
+    def __init__(self, model_size: str = "tiny.en", compute_type: str = "default"):
         self.model_size = model_size
         self.compute_type = compute_type
         print(f"[ASREngine] Loading Whisper '{model_size}' model (compute_type={compute_type})...")
@@ -27,6 +27,7 @@ class ASREngine:
             device="auto",
             compute_type=compute_type,
             download_root=_WHISPER_CACHE,
+            cpu_threads=2,
         )
         print(f"[ASREngine] Model loaded successfully.")
 

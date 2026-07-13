@@ -7,9 +7,9 @@ from llama_cpp import Llama, LlamaRAMCache
 # Resolve model directory relative to ~/.whisperai so it works both
 # from source and from a PyInstaller frozen bundle.
 _MODELS_DIR = Path.home() / ".whisperai" / "models" / "llm"
-_MODEL_FILENAME = "qwen2.5-3b-instruct-q4_k_m.gguf"
-_HF_REPO = "Qwen/Qwen2.5-3B-Instruct-GGUF"
-_HF_FILE = "qwen2.5-3b-instruct-q4_k_m.gguf"
+_MODEL_FILENAME = "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+_HF_REPO = "Qwen/Qwen2.5-1.5B-Instruct-GGUF"
+_HF_FILE = "qwen2.5-1.5b-instruct-q4_k_m.gguf"
 
 
 def _ensure_model(model_dir: Path, filename: str) -> Path:
