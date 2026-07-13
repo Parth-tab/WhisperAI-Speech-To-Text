@@ -94,10 +94,13 @@ class WhisperAIApp:
             self.hotkey_listener.start()
             print(f"[App] Hotkey updated to: {new_hotkey}")
 
-        new_vad = new_settings.get("vad_threshold")
-        if new_vad is not None and self.audio_engine and self.audio_engine.vad_engine:
+        is_whisper = new_settings.get("whisper_mode", self.config_manager.get("whisper_mode", False))
+        base_vad = new_settings.get("vad_threshold", self.config_manager.get("vad_threshold", 0.5))
+        new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
+        
+        if self.audio_engine and self.audio_engine.vad_engine:
             self.audio_engine.vad_engine.threshold = new_vad
-            print(f"[App] VAD threshold updated to: {new_vad}")
+            print(f"[App] VAD threshold updated to: {new_vad} (Whisper Mode: {is_whisper})")
             
         print("[App] Settings saved!")
 
@@ -122,9 +125,17 @@ class WhisperAIApp:
                 future_asr = executor.submit(ASREngine)
                 future_llm = executor.submit(LLMEngine)
                 
-                self.audio_engine = future_audio.result()
-                self.asr_engine = future_asr.result()
-                self.llm_engine = future_llm.result()
+            self.audio_engine = future_audio.result()
+            
+            is_whisper = self.config_manager.get("whisper_mode", False)
+            base_vad = self.config_manager.get("vad_threshold", 0.5)
+            new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
+            if self.audio_engine.vad_engine:
+                self.audio_engine.vad_engine.threshold = new_vad
+                print(f"[App] VAD threshold initialized to: {new_vad} (Whisper Mode: {is_whisper})")
+            
+            self.asr_engine = future_asr.result()
+            self.llm_engine = future_llm.result()
 
             self.audio_engine.on_recording_stopped = self._on_recording_stopped
             # NOTE: on_audio_chunk is intentionally NOT wired here.

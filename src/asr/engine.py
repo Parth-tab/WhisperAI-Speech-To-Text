@@ -69,7 +69,7 @@ class ASREngine:
             return True
         return False
 
-    def transcribe(self, audio_data: np.ndarray, dictionary: list[str] = None) -> str:
+    def transcribe(self, audio_data: np.ndarray, dictionary: list[str] = None, whisper_mode: bool = False, trim_db: float = -40.0, rms_min: float = 0.01) -> str:
         """
         Transcribe the given audio numpy array (16kHz, mono, float32).
         Returns the full transcription as a string.
@@ -91,7 +91,7 @@ class ASREngine:
 
         # Trim leading/trailing silence to reduce hallucinations
         sr = 16000
-        audio_data = self._trim_silence(audio_data, sr=sr)
+        audio_data = self._trim_silence(audio_data, sr=sr, threshold_db=trim_db)
 
         # Skip if trimmed audio is too short (< 0.3 seconds)
         if len(audio_data) < sr * 0.3:
@@ -99,7 +99,7 @@ class ASREngine:
 
         # Skip if audio is mostly silence (very low RMS)
         rms = np.sqrt(np.mean(audio_data**2))
-        if rms < 0.01:
+        if rms < rms_min:
             return ""
 
         start_t = time.time()

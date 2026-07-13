@@ -43,6 +43,13 @@ class SettingsWindow(QWidget):
             self.model_input.setCurrentText(current_model)
         general_layout.addWidget(self.model_input)
         
+        from PySide6.QtWidgets import QCheckBox
+        self.whisper_mode_label = QLabel("Whisper Mode:")
+        general_layout.addWidget(self.whisper_mode_label)
+        self.whisper_mode_input = QCheckBox("Enable highly sensitive low-volume dictation")
+        self.whisper_mode_input.setChecked(self.config_manager.get("whisper_mode", False))
+        general_layout.addWidget(self.whisper_mode_input)
+        
         general_layout.addStretch()
         self.general_tab.setLayout(general_layout)
         self.tabs.addTab(self.general_tab, "General")
@@ -67,14 +74,17 @@ class SettingsWindow(QWidget):
         new_hotkey = self.hotkey_input.text()
         new_vad = self.vad_input.value()
         new_model = self.model_input.currentText()
+        new_whisper_mode = self.whisper_mode_input.isChecked()
         
         self.config_manager.set("hotkey", new_hotkey)
         self.config_manager.set("vad_threshold", new_vad)
         self.config_manager.set("model_selection", new_model)
+        self.config_manager.set("whisper_mode", new_whisper_mode)
         
         self.settings_saved.emit({
             "hotkey": new_hotkey,
             "vad_threshold": new_vad,
-            "model_selection": new_model
+            "model_selection": new_model,
+            "whisper_mode": new_whisper_mode
         })
         self.close()

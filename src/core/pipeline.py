@@ -22,7 +22,17 @@ class AIPipeline:
         dictionary = self.config_manager.get("dictionary", [])
         
         print("[Pipeline] Starting ASR transcription...")
-        raw_text = self.asr_engine.transcribe(audio_data, dictionary=dictionary)
+        is_whisper = self.config_manager.get("whisper_mode", False)
+        trim_db = self.config_manager.get("whisper_trim_db", -55.0) if is_whisper else -40.0
+        rms_min = self.config_manager.get("whisper_rms_min", 0.003) if is_whisper else 0.01
+        
+        raw_text = self.asr_engine.transcribe(
+            audio_data, 
+            dictionary=dictionary,
+            whisper_mode=is_whisper,
+            trim_db=trim_db,
+            rms_min=rms_min
+        )
         print(f"[Pipeline] Raw transcription: '{raw_text}'")
         
         # Strip whitespace and check length

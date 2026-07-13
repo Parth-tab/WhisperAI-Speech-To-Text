@@ -8,7 +8,11 @@ class ConfigManager:
         "vad_threshold": 0.5,
         "model_selection": "base",
         "dictionary": [],
-        "snippets": {}
+        "snippets": {},
+        "whisper_mode": False,
+        "whisper_vad_threshold": 0.2,
+        "whisper_trim_db": -55.0,
+        "whisper_rms_min": 0.003
     }
 
     def __init__(self, config_path=None):

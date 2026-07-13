@@ -211,7 +211,9 @@ class FlowBubble(QWidget):
             self.setWindowOpacity(1.0)
             self.waveform.show()
             self.spinner.hide()
-            self.icon_label.setStyleSheet("background-color: #EF4444; border-radius: 15px;")
+            is_whisper = self.config_manager.get("whisper_mode", False) if self.config_manager else False
+            color = "#A855F7" if is_whisper else "#EF4444"
+            self.icon_label.setStyleSheet(f"background-color: {color}; border-radius: 15px;")
             self.animate_size(150, 50)
         elif state == BubbleState.PROCESSING:
             self.setWindowOpacity(1.0)
