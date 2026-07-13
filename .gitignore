@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# Models
+models/
+*.gguf
+*.bin
+
+# Caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Scratch & Sandbox
+scratch/
+test_*.py
+*.json
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
