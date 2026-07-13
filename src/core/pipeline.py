@@ -89,6 +89,13 @@ class AIPipeline:
             print(f"[Pipeline] Command result: '{final_text}'")
             return final_text
             
+        # Code Mode check
+        if profile_id == "technical":
+            print("[Pipeline] Technical context detected. Applying syntax map...")
+            from src.utils.syntax_map import apply_syntax_map
+            regex_cleaned = apply_syntax_map(regex_cleaned)
+            print(f"[Pipeline] Syntax mapped: '{regex_cleaned}'")
+            
         print("[Pipeline] Running LLM cleanup...")
         final_text = self.llm_engine.clean_text(regex_cleaned, context, profile_id)
         print(f"[Pipeline] Final text: '{final_text}'")

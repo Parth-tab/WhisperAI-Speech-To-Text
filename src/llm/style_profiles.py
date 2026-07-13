@@ -18,8 +18,8 @@ STYLE_PROFILES = {
     },
     "technical": {
         "name": "Technical",
-        "description": "Preserve technical terms and formatting.",
-        "prompt_addon": "This is a technical context. Preserve all technical jargon, code terms, and accurate capitalization of technologies."
+        "description": "Code and technical dictation.",
+        "prompt_addon": "This is a technical/code context. Preserve all technical jargon and exact formatting. Convert natural language descriptions of code into correct syntax (e.g., symbols, indentations) where appropriate."
     },
     "email": {
         "name": "Email",
