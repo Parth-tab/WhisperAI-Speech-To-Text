@@ -18,6 +18,9 @@ class SystemTrayApp(QSystemTrayIcon):
         self.settings_action = self.menu.addAction("Settings")
         self.settings_action.triggered.connect(self.show_settings)
         
+        self.stats_action = self.menu.addAction("Usage Stats")
+        self.stats_action.triggered.connect(self.show_stats)
+        
         self.quit_action = self.menu.addAction("Quit")
         self.quit_action.triggered.connect(self.quit_app)
         
@@ -41,6 +44,11 @@ class SystemTrayApp(QSystemTrayIcon):
                 self.settings_window.settings_saved.connect(self.settings_callback)
         self.settings_window.show()
         self.settings_window.activateWindow()
+
+    def show_stats(self):
+        from src.gui.widgets.stats_dialog import StatsDialog
+        self.stats_dialog = StatsDialog()
+        self.stats_dialog.exec()
 
     def quit_app(self):
         self.quit_callback()

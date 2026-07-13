@@ -219,6 +219,7 @@ class WhisperAIApp:
         self.transcription_queue.put((audio_data, context_tuple))
 
     def _transcription_worker(self):
+        from src.data.stats_store import stats_store
         while True:
             task = self.transcription_queue.get()
             if task is None:
@@ -228,6 +229,8 @@ class WhisperAIApp:
                 final_text = self.pipeline.process_audio(audio_data, context_tuple[0], context_tuple[1])
                 if final_text:
                     self.injector.inject_text(final_text)
+                    duration_sec = len(audio_data) / 16000.0
+                    stats_store.log_session(duration_sec, final_text)
             except Exception as e:
                 print(f"[App] Error in pipeline: {e}")
             finally:
