@@ -38,7 +38,7 @@ class WhisperAIApp:
         hotkey_str = self.config_manager.get("hotkey", "<ctrl>+<alt>+w")
         print(f"[App] Hotkey configured as: {hotkey_str}")
         self.hotkey_listener = make_listener_from_config(hotkey_str)
-        self.window_detector = WindowDetector()
+        self.window_detector = WindowDetector(self.config_manager)
         self.injector = ClipboardInjector()
 
         # Heavy AI models — loaded lazily on a background thread
@@ -204,8 +204,8 @@ class WhisperAIApp:
         print(f"[App] AUDIO CHUNK EMITTED: {len(audio_data)} frames")
         if len(audio_data) == 0 or not self._models_loaded or self.pipeline is None:
             return
-        context = self.window_detector.get_context()
-        self.transcription_queue.put((audio_data, context))
+        context_tuple = self.window_detector.get_context()
+        self.transcription_queue.put((audio_data, context_tuple))
 
     def _on_recording_stopped(self, audio_data):
         self.signals.recording_stopped.emit()
@@ -214,18 +214,18 @@ class WhisperAIApp:
         if len(audio_data) == 0 or not self._models_loaded or self.pipeline is None:
             print("[App] Empty audio or models not loaded. Aborting pipeline.")
             return
-        context = self.window_detector.get_context()
-        print(f"[App] Active window context: {context}")
-        self.transcription_queue.put((audio_data, context))
+        context_tuple = self.window_detector.get_context()
+        print(f"[App] Active window context: {context_tuple[0]}")
+        self.transcription_queue.put((audio_data, context_tuple))
 
     def _transcription_worker(self):
         while True:
             task = self.transcription_queue.get()
             if task is None:
                 break
-            audio_data, context = task
+            audio_data, context_tuple = task
             try:
-                final_text = self.pipeline.process_audio(audio_data, context)
+                final_text = self.pipeline.process_audio(audio_data, context_tuple[0], context_tuple[1])
                 if final_text:
                     self.injector.inject_text(final_text)
             except Exception as e:

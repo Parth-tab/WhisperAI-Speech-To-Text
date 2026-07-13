@@ -20,8 +20,8 @@ APP_CONTEXT_MAP: Dict[str, str] = {
 DEFAULT_CONTEXT = "General text input — use clean, well-formatted prose"
 
 class WindowDetector:
-    def __init__(self):
-        pass
+    def __init__(self, config_manager=None):
+        self.config_manager = config_manager
 
     def get_active_window_info(self) -> tuple[str, str]:
         try:
@@ -38,7 +38,13 @@ class WindowDetector:
         except Exception:
             return "", ""
 
-    def get_context(self) -> str:
+    def get_context(self) -> tuple[str, str]:
         window_title, process_name = self.get_active_window_info()
         base_context = APP_CONTEXT_MAP.get(process_name.lower(), DEFAULT_CONTEXT)
-        return f"{base_context}. Active Window Title: '{window_title}'."
+        
+        profile_id = "general"
+        if self.config_manager:
+            app_styles = self.config_manager.get("app_styles", {})
+            profile_id = app_styles.get(process_name.lower(), "general")
+            
+        return f"{base_context}. Active Window Title: '{window_title}'.", profile_id

@@ -68,12 +68,13 @@ class LLMEngine:
         # Implement context caching for the LLM
         self.llm.set_cache(LlamaRAMCache(capacity_bytes=2 << 30))
 
-    def clean_text(self, text: str, context: str = "") -> str:
+    def clean_text(self, text: str, context: str = "", profile_id: str = "general") -> str:
         """
         Clean the provided transcript using the LLM.
         Removes filler words, fixes grammar, and formats for the target context.
         """
         from src.llm.prompts import FORMATTING_SYSTEM_PROMPT
+        from src.llm.style_profiles import get_style_prompt
         from src.llm.formatter import Formatter
         
         try:
@@ -82,7 +83,10 @@ class LLMEngine:
             print(e)
             return text
             
+        style_addon = get_style_prompt(profile_id)
         system_prompt = FORMATTING_SYSTEM_PROMPT
+        if style_addon:
+            system_prompt += f"\n\nSTYLE INSTRUCTIONS:\n{style_addon}"
 
         user_prompt = (
             f"Context: {context}\n"

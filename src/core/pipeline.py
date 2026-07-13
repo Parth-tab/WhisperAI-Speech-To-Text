@@ -14,7 +14,7 @@ class AIPipeline:
         self.llm_engine = llm_engine
         self.config_manager = config_manager or ConfigManager()
 
-    def process_audio(self, audio_data: np.ndarray, context: str = "") -> str:
+    def process_audio(self, audio_data: np.ndarray, context: str = "", profile_id: str = "general") -> str:
         if len(audio_data) == 0:
             print("[Pipeline] No audio data provided.")
             return ""
@@ -90,7 +90,7 @@ class AIPipeline:
             return final_text
             
         print("[Pipeline] Running LLM cleanup...")
-        final_text = self.llm_engine.clean_text(regex_cleaned, context)
+        final_text = self.llm_engine.clean_text(regex_cleaned, context, profile_id)
         print(f"[Pipeline] Final text: '{final_text}'")
         
         return final_text
