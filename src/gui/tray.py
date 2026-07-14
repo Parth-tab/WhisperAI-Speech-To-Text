@@ -1,7 +1,8 @@
 from PySide6.QtWidgets import QSystemTrayIcon, QMenu
-from PySide6.QtGui import QIcon, QPixmap, QPainter, QColor
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
 from src.gui.settings import SettingsWindow
+from src.utils.paths import get_asset_path
+
 
 class SystemTrayApp(QSystemTrayIcon):
     def __init__(self, app, config_manager, quit_callback, settings_callback=None):
@@ -10,32 +11,27 @@ class SystemTrayApp(QSystemTrayIcon):
         self.config_manager = config_manager
         self.quit_callback = quit_callback
         self.settings_callback = settings_callback
-        
+
         self.set_icon()
-        
+
         self.menu = QMenu()
-        
+
         self.settings_action = self.menu.addAction("Settings")
         self.settings_action.triggered.connect(self.show_settings)
-        
+
         self.stats_action = self.menu.addAction("Usage Stats")
         self.stats_action.triggered.connect(self.show_stats)
-        
+
         self.quit_action = self.menu.addAction("Quit")
         self.quit_action.triggered.connect(self.quit_app)
-        
+
         self.setContextMenu(self.menu)
-        
+
         self.settings_window = None
 
     def set_icon(self):
-        pixmap = QPixmap(32, 32)
-        pixmap.fill(Qt.GlobalColor.transparent)
-        painter = QPainter(pixmap)
-        painter.setBrush(QColor("red"))
-        painter.drawEllipse(2, 2, 28, 28)
-        painter.end()
-        self.setIcon(QIcon(pixmap))
+        icon_path = get_asset_path("src/assets/branding/logo.ico")
+        self.setIcon(QIcon(icon_path))
 
     def show_settings(self):
         if not self.settings_window:
@@ -47,6 +43,7 @@ class SystemTrayApp(QSystemTrayIcon):
 
     def show_stats(self):
         from src.gui.widgets.stats_dialog import StatsDialog
+
         self.stats_dialog = StatsDialog()
         self.stats_dialog.exec()
 

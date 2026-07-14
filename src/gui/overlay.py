@@ -1,16 +1,16 @@
-import math
 from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QGuiApplication, QPainter, QColor, QPen, QBrush
+from PySide6.QtGui import QGuiApplication, QPainter, QColor
+
 
 class RecordingOverlay(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint | 
-            Qt.WindowType.WindowStaysOnTopHint | 
-            Qt.WindowType.Tool |
-            Qt.WindowType.WindowTransparentForInput
+            Qt.WindowType.FramelessWindowHint
+            | Qt.WindowType.WindowStaysOnTopHint
+            | Qt.WindowType.Tool
+            | Qt.WindowType.WindowTransparentForInput
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
@@ -22,7 +22,7 @@ class RecordingOverlay(QWidget):
         # Timer for smooth animation
         self.anim_timer = QTimer(self)
         self.anim_timer.timeout.connect(self.animate)
-        self.anim_timer.start(16) # ~60fps
+        self.anim_timer.start(16)  # ~60fps
 
     def position_overlay(self):
         screen = QGuiApplication.primaryScreen().geometry()
@@ -51,20 +51,28 @@ class RecordingOverlay(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        
+
         center_x = self.width() / 2
         center_y = self.height() / 2
-        
+
         base_radius = 20
         dynamic_radius = base_radius + (self.level * 40)
 
         # Draw glow
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(QColor(0, 150, 255, 80))
-        painter.drawEllipse(int(center_x - dynamic_radius - 10), int(center_y - dynamic_radius - 10), 
-                            int((dynamic_radius + 10) * 2), int((dynamic_radius + 10) * 2))
+        painter.drawEllipse(
+            int(center_x - dynamic_radius - 10),
+            int(center_y - dynamic_radius - 10),
+            int((dynamic_radius + 10) * 2),
+            int((dynamic_radius + 10) * 2),
+        )
 
         # Draw inner bubble
         painter.setBrush(QColor(0, 150, 255, 200))
-        painter.drawEllipse(int(center_x - dynamic_radius), int(center_y - dynamic_radius), 
-                            int(dynamic_radius * 2), int(dynamic_radius * 2))
+        painter.drawEllipse(
+            int(center_x - dynamic_radius),
+            int(center_y - dynamic_radius),
+            int(dynamic_radius * 2),
+            int(dynamic_radius * 2),
+        )
