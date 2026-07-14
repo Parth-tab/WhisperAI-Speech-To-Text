@@ -1,0 +1,48 @@
+[project]
+name = "whisperai"
+version = "1.0.0"
+description = "Fast, context-aware, 100% local voice dictation application for Windows"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "PySide6>=6.7.0",
+    "sounddevice>=0.5.0",
+    "numpy>=1.26.0",
+    "faster-whisper>=1.1.0",
+    "onnxruntime>=1.19.0",
+    "llama-cpp-python>=0.3.0",
+    "pynput>=1.7.0",
+    "pywin32>=306",
+    "psutil>=6.0.0",
+    "pyperclip>=1.9.0",
+    "pyautogui>=0.9.54",
+    "huggingface-hub>=0.25.0",
+    "pyinstaller>=6.10.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "pre-commit>=3.7.0"
+]
+
+[tool.uv]
+# Execution Provider Routing for hardware-accelerated builds
+# Explicitly pull pre-compiled wheels for llama-cpp-python with CUDA/Vulkan
+# and faster-whisper optimizations where applicable on Windows
+# Note: Users might need specific indices for hardware accelerated wheels
+index = [
+    { name = "default", url = "https://pypi.org/simple" }
+]
+# Ensure we use binary wheels for ML dependencies if available
+resolution = "highest"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true

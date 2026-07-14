@@ -1,0 +1,57 @@
+name: Release Automation
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: uv pip install -e .
+
+      - name: Build Executable
+        run: pyinstaller WhisperAI.spec --clean
+
+      - name: Build Installer
+        run: |
+          # Assuming Inno Setup CLI is available as iscc
+          iscc installer/WhisperAI.iss
+
+      - name: Code Signing
+        run: |
+          # Placeholder for Azure SignTool or other code signing utility
+          # sign_tool.exe sign /f cert.pfx /p password dist/WhisperAI.exe
+          # sign_tool.exe sign /f cert.pfx /p password installer/Output/WhisperAISetup.exe
+          echo "Code signing step"
+
+      - name: Generate Model & Executable Checksums
+        run: |
+          # SHA-256 hashes for the .exe and specific GGUF / Whisper models
+          certutil -hashfile dist/WhisperAI.exe SHA256 > dist/checksums.txt
+          # certutil -hashfile models/qwen.gguf SHA256 >> dist/checksums.txt
+        
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/WhisperAI.exe
+            installer/Output/WhisperAISetup.exe
+            dist/checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
