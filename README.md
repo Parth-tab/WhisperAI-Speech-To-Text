@@ -1,77 +1,77 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Parth-tab/WhisperAI-Speech-To-Text/main/resources/logo.png" alt="WhisperAI Logo" width="200"/>
-  <h1>WhisperAI Speech-To-Text</h1>
-  <p><strong>Type up to 4x faster with Context-Aware, Local AI Voice Dictation.</strong></p>
+  <img src="resources/banner.png" alt="WhisperAI Cinematic Banner" width="800"/>
+</div>
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-  [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+<div align="center">
+  <!-- Group 1: CI/CD -->
+  <img src="https://img.shields.io/badge/Build-Passing-brightgreen" alt="Build"/>
+  <img src="https://img.shields.io/badge/Tests-Passing-brightgreen" alt="Tests"/>
+  <img src="https://img.shields.io/badge/Memory_Circuit_Breaker-Active-blue" alt="Circuit Breaker"/>
+  <br/>
+  <!-- Group 2: Code Quality -->
+  <img src="https://img.shields.io/badge/Ruff-Enabled-orange" alt="Ruff"/>
+  <img src="https://img.shields.io/badge/MyPy-Strict-blue" alt="MyPy"/>
+  <br/>
+  <!-- Group 3: Metadata -->
+  <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python Version"/>
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"/>
 </div>
 
 ---
 
-## ⚡ What is WhisperAI?
-WhisperAI is an advanced, local-first voice dictation keyboard that converts natural speech into polished, context-aware text directly within any desktop application. Unlike standard dictation, WhisperAI understands when you stumble, stutter, or change your mind mid-sentence, outputting only your final intent.
+## Executive Summary
 
-## ✨ Core Features
-*   **🧠 Auto-Edits & Cleanup:** Automatically removes filler words ("um", "uh", "like") and inserts proper punctuation based on your natural pauses.
-*   **⏪ Backtrack Corrections:** Say *"Let's meet at 2... actually make it 3"* and WhisperAI instantly outputs *"Let's meet at 3."*
-*   **🎯 Context & Syntax Awareness (Code Mode):** Detects if you're in an IDE like VS Code or Cursor and automatically converts spoken symbols into syntactically perfect code.
-*   **🤫 Whisper Mode:** Highly sensitive microphone thresholding allows you to dictate softly in quiet environments without dropping words.
-*   **📚 Personal Snippets & Dictionaries:** Map custom phrases to exact outputs via the built-in PyQt GUI.
-*   **🔒 100% Local Privacy:** Both the ASR (Faster-Whisper) and LLM (Qwen 3B) run entirely on your local hardware. No audio is ever sent to the cloud.
+The premise of local AI has long been constrained by memory limitations. Desktop users demand near-instantaneous voice dictation, but deploying large language models on consumer hardware traditionally starves the system of resources. WhisperAI resolves this bottleneck. By implementing a **Split-Pass routing** architecture and **P-Core affinity**, we decouple the transcription layer (Faster-Whisper) from the intent-extraction engine (Qwen 2.5 1.5B Q4_K_M). 
 
-## 🛠️ Requirements
-*   **OS:** Windows 10/11
-*   **CPU/GPU:** Intel Core i5 (12th Gen+) or equivalent. Nvidia GPU recommended for CUDA acceleration, or Intel Iris Xe (via Vulkan).
-*   **RAM:** 16GB minimum (due to local LLM requirements).
-*   **Python:** 3.10+
+The result? Intelligent, context-aware dictation that actively corrects stammers and syntactic errors, operating entirely within a strict memory footprint. Most importantly, this architecture ensures absolute **Zero-Trust Data Sovereignty**—no audio or text ever leaves your machine. 
 
-## 🚀 Installation
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Parth-tab/WhisperAI-Speech-To-Text.git
-   cd WhisperAI-Speech-To-Text
-   ```
+For deep technical insights on our memory and routing strategies, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
-2. **Create a virtual environment:**
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate
-   ```
+---
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Getting Started
 
-4. **Launch the application:**
-   ```bash
-   python main.py
-   ```
-   *(Note: The application will download the required AI models on its first run, which may take a few minutes depending on your connection speed).*
+### Path A: For Users (1-Click Install)
+Experience local, private dictation without touching a terminal.
+1. Navigate to our [GitHub Releases](#).
+2. Download the latest `WhisperAI_Setup.exe`.
+3. Run the installer and launch the application.
 
-## 📖 Usage
-1.  Run the application. A small recording bubble will appear in the corner of your screen.
-2.  Click inside any text field in any application (e.g., Slack, VS Code, Word).
-3.  Hold down the hotkey (default: **Global Hotkey** configured in Settings) and start speaking.
-4.  Release the hotkey. The transcribed, perfectly formatted text will be injected directly into your application.
+### Path B: For Engineers (Lightning-Fast Onboarding)
+We utilize `uv` for blistering fast dependency management.
+```bash
+git clone https://github.com/Parth-tab/WhisperAI-Speech-To-Text.git
+cd WhisperAI-Speech-To-Text
+uv venv
+uv sync
+python main.py
+```
 
-## 🧩 Project Structure
+---
+
+## Project Structure
+
 ```text
-WhisperAI-Speech-To-Text/
+WhisperAI/
 ├── src/                # Core application source code
 │   ├── asr/            # Automatic Speech Recognition (Faster-Whisper)
 │   ├── llm/            # Intent-extraction LLM Engine (Llama.cpp)
 │   ├── core/           # App mediator, Pipeline, and Telemetry
 │   ├── injection/      # Keyboard injection and Window detection
-│   └── gui/            # PySide6 Desktop Interface
+│   ├── gui/            # PySide6 Desktop Interface
+│   ├── utils/          # Path helpers, validators, logic extractors
+│   └── assets/         # Branding, images, UI resources
 ├── tests/              # Pytest suite
+├── installer/          # Inno Setup configurations
 ├── main.py             # Application entrypoint
+├── WhisperAI.spec      # PyInstaller build configuration
 └── requirements.txt    # Python dependencies
 ```
 
-## 🤝 Contributing
-We welcome community contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+---
 
-## 📄 License
+## Contributing
+We welcome community contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, CI/CD requirements, and the process for submitting pull requests.
+
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

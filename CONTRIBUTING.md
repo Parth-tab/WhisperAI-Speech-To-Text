@@ -1,25 +1,26 @@
 # Contributing to WhisperAI
 
-First off, thank you for considering contributing to WhisperAI! It's people like you that make WhisperAI such a powerful and flexible open-source dictation tool.
+Thank you for your interest in WhisperAI. To maintain the structural integrity and performance of this application, all contributions are held to rigorous standards.
 
-## Where do I go from here?
+## Mandatory Reading
+Before proposing any changes, you **must** read and understand our core architectural documents:
+- [AGENTS.md](AGENTS.md): The engineering philosophy, architecture constraints, and operational rules for this project.
+- [ARCHITECTURE.md](ARCHITECTURE.md): The technical breakdown of our Split-Pass routing, P-Core affinity, and memory management constraints.
 
-If you've noticed a bug or have a feature request, make one! It's generally best if you get confirmation of your bug or approval for your feature request this way before starting to code.
+## Universal Standards
+We hold human contributors to the exact same standards as our AI agents. Whether you are human or silicon, you must:
+1. **Adhere to the Architecture**: Follow the precise folder conventions and dependency rules outlined in `AGENTS.md`.
+2. **Never Break the Bundler**: All file loading must utilize `src.utils.paths.get_asset_path()`. Bare relative paths are strictly prohibited and will fail PyInstaller builds.
 
-## Fork & create a branch
+## CI Profiling & Testing Rules
+Before marking any pull request as ready for review, you must enforce the CI profiling rules locally:
+1. Run the test suite: `pytest`
+2. Compile the executable to verify production viability: `pyinstaller WhisperAI.spec --clean`
 
-If this is something you think you can fix, then fork WhisperAI and create a branch with a descriptive name.
+A task is not considered complete until both the test suite passes flawlessly and the binary compiles without warnings or errors.
 
-## Code Style
+## Code Quality
+- Ensure `ruff` and `mypy` compliance.
+- Keep commits atomic and descriptive, following conventional commit formats (e.g., `feat:`, `fix:`).
 
-- WhisperAI follows PEP 8 standards. 
-- Please ensure that your code is formatted properly and well-commented.
-- Add type hints to functions where possible.
-
-## Pull Requests
-
-- Before submitting a pull request, ensure that all tests pass (`pytest tests/`).
-- Document any new features in the `README.md`.
-- Ensure your commits are descriptive. We use the conventional commits format (e.g., `feat: added something`, `fix: fixed something`).
-
-Thank you for your contributions!
+By submitting a pull request, you confirm that you have read `AGENTS.md` and that your code passes all mandatory CI checks.
