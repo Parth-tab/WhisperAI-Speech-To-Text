@@ -1,5 +1,3 @@
-import sys
-import os
 import re
 from pathlib import Path
 from llama_cpp import Llama, LlamaRAMCache
@@ -20,10 +18,11 @@ def _ensure_model(model_dir: Path, filename: str) -> Path:
 
     model_dir.mkdir(parents=True, exist_ok=True)
     print(f"[LLMEngine] Model not found. Downloading {filename} from HuggingFace...")
-    print(f"[LLMEngine] This is a one-time download (~1.9 GB). Please wait...")
+    print("[LLMEngine] This is a one-time download (~1.9 GB). Please wait...")
 
     try:
         from huggingface_hub import hf_hub_download
+
         downloaded = hf_hub_download(
             repo_id=_HF_REPO,
             filename=_HF_FILE,
@@ -37,6 +36,31 @@ def _ensure_model(model_dir: Path, filename: str) -> Path:
             f"Download from: https://huggingface.co/{_HF_REPO}\n"
             f"Error: {e}"
         )
+
+
+def _ensure_list_newlines(text: str, list_mode: str) -> str:
+    """
+    Post-LLM safety net: ensure numbered list items appear on their own lines.
+    Gated behind list_mode to prevent corruption of decimals or prose.
+
+    list_mode values:
+    - 'none':  Return text unchanged.
+    - 'pure':  Enforce newlines AND prepend \\n\\n to break from any prior paragraph.
+    - 'mixed': Enforce newlines between items, but do NOT prepend \\n\\n because
+               the prose paragraph comes first in the same paste.
+    """
+    if list_mode == "none":
+        return text
+
+    # Force a newline before any "N. " pattern not already at the start of a line.
+    formatted_text = re.sub(r"(?<=[^\n])\s*(\d+\.\s)", r"\n\1", text)
+
+    if list_mode == "pure":
+        # Strictly prepend \n\n so the list always starts fresh after previous text.
+        return "\n\n" + formatted_text.strip()
+    else:  # mixed
+        # Prose comes first — just clean up and return without a leading gap.
+        return formatted_text.strip()
 
 
 class LLMEngine:
@@ -65,10 +89,12 @@ class LLMEngine:
             n_gpu_layers=-1,
             verbose=False,
         )
-        # Implement context caching for the LLM
-        self.llm.set_cache(LlamaRAMCache(capacity_bytes=2 << 30))
+        # Implement context caching for the LLM, strictly bound to 256MB
+        self.llm.set_cache(LlamaRAMCache(capacity_bytes=256 << 20))
 
-    def clean_text(self, text: str, context: str = "", profile_id: str = "general") -> str:
+    def clean_text(
+        self, text: str, context: str = "", profile_id: str = "general"
+    ) -> str:
         """
         Clean the provided transcript using the LLM.
         Removes filler words, fixes grammar, and formats for the target context.
@@ -76,27 +102,36 @@ class LLMEngine:
         from src.llm.prompts import PromptBuilder
         from src.llm.style_profiles import get_style_prompt
         from src.llm.formatter import Formatter
-        
+        from src.utils.list_detector import detect_list_mode
+
         try:
             Formatter().check_repetition(text)
         except ValueError as e:
             print(e)
             return text
-            
+
+        list_mode = detect_list_mode(text)
+
+        # MIXED MODE: The 1.5B model cannot reliably keep prose+list in one pass.
+        # Split the raw text at the list boundary, process each part separately,
+        # then join. This guarantees the paragraph is preserved as prose.
+        if list_mode == "mixed":
+            return self._clean_text_mixed(text, context, profile_id)
+
         style_addon = get_style_prompt(profile_id)
-        
+
         builder = PromptBuilder()
         if style_addon:
             builder.with_style(style_addon)
         if profile_id == "technical":
             builder.with_code_mode()
-            
+        if list_mode == "pure":
+            builder.with_list_hint()
+
         system_prompt = builder.build()
 
         user_prompt = (
-            f"Context: {context}\n"
-            f"Raw transcription: {text}\n\n"
-            f"Output:"
+            f"Context: {context}\n" f"Raw transcription: {text}\n\n" f"Output:"
         )
 
         prompt = (
@@ -113,31 +148,67 @@ class LLMEngine:
             response = self.llm(
                 prompt,
                 max_tokens=512,
-                stop=["<|im_end|>", "Cleaned text:", "cleaned text:", "Output:", "output:", "CLEANED TEXT:"],
+                stop=[
+                    "<|im_end|>",
+                    "Cleaned text:",
+                    "cleaned text:",
+                    "Output:",
+                    "output:",
+                    "CLEANED TEXT:",
+                ],
                 echo=False,
                 temperature=0.1,
             )
             end_t = time.time()
-            
+
             tokens = response.get("usage", {}).get("completion_tokens", 1)
             speed = tokens / max(end_t - start_t, 0.001)
             telemetry.log_token_generation_speed(speed)
-            
+
             result = response["choices"][0]["text"].strip()
-            
+
             # Strip ALL occurrences of prompt-echo patterns
-            result = re.sub(r'(?i)(cleaned\s*text\s*:|output\s*:)', '', result).strip()
+            result = re.sub(r"(?i)(cleaned\s*text\s*:|output\s*:)", "", result).strip()
             # Strip any leading/trailing quotes the LLM might add
-            result = result.strip('\'"')
-            
+            result = result.strip("'\"")
+            # Post-LLM safety net: enforce newlines and context break based on detected mode
+            result = _ensure_list_newlines(result, list_mode)
+
             # If the LLM returned nothing meaningful, return the original text
             if not result or len(result.strip()) < 2:
                 return text
-                
+
             return result
         except Exception as e:
             print(f"[LLMEngine] Error during clean_text: {e}")
             return text
+
+    def _clean_text_mixed(self, text: str, context: str, profile_id: str) -> str:
+        """
+        Split-pass handler for 'mixed' mode (prose paragraph followed by a list).
+
+        A 1.5B model given both prose and list in a single pass will reliably
+        collapse the prose into a list item. To guarantee correct output, we:
+          1. Split the raw transcription at the first list trigger boundary.
+          2. Process the prose part with no list hint (standard clean).
+          3. Process the list part with full LIST MODE (aggressive list hint).
+          4. Join: clean_prose + newline + clean_list (with \n\n prefix from enforcer).
+        """
+        from src.utils.list_detector import get_list_boundary
+
+        prose_raw, list_raw = get_list_boundary(text)
+
+        # Pass 1: clean the prose part (no list mode)
+        prose_result = self.clean_text(
+            prose_raw, context=context, profile_id=profile_id
+        )
+
+        # Pass 2: clean the list part (will trigger 'pure' list mode)
+        list_result = self.clean_text(list_raw, context=context, profile_id=profile_id)
+
+        # Join: prose stays as-is, list gets its \n\n prefix from _ensure_list_newlines
+        # Result: "Clean prose sentence.\n\n1. Item one\n2. Item two"
+        return prose_result + list_result
 
     def execute_command(self, command: str, text: str, context: str = "") -> str:
         system_prompt = (
