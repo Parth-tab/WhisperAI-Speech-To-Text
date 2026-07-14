@@ -1,9 +1,10 @@
 import time
 import threading
 import logging
-from typing import Callable, Dict, Any
+from typing import Callable, Dict
 
 logger = logging.getLogger("Watchdog")
+
 
 class ThreadWatchdog:
     def __init__(self, timeout_sec: float = 60.0):
@@ -43,17 +44,19 @@ class ThreadWatchdog:
             with self.lock:
                 for tid, start_time in list(self.active_tasks.items()):
                     if now - start_time > self.timeout_sec:
-                        logger.error(f"Watchdog: Thread {tid} deadlocked (>{self.timeout_sec}s).")
+                        logger.error(
+                            f"Watchdog: Thread {tid} deadlocked (>{self.timeout_sec}s)."
+                        )
                         deadlocked = True
                         del self.active_tasks[tid]
-            
+
             if deadlocked and self.on_deadlock:
                 logger.warning("Watchdog: Triggering recovery...")
                 try:
                     self.on_deadlock()
                 except Exception as e:
                     logger.error(f"Watchdog recovery failed: {e}")
-                    
+
             time.sleep(5.0)
 
     def wrap_thread(self, target, args=(), kwargs={}):
@@ -64,10 +67,11 @@ class ThreadWatchdog:
                 target(*args, **kwargs)
             finally:
                 self.unregister_task(tid)
-                
+
         t = threading.Thread(target=wrapped_target, daemon=True)
         t.start()
         return t
+
 
 # Global singleton
 watchdog = ThreadWatchdog(timeout_sec=30.0)

@@ -1,6 +1,7 @@
 import time
 from src.teams.api_client import team_api
 
+
 class AuthManager:
     def __init__(self):
         self.is_authenticated = False
@@ -12,7 +13,7 @@ class AuthManager:
         """
         print(f"[Auth] Attempting login for {email}...")
         time.sleep(0.5)
-        
+
         # Mock successful auth
         if email and password:
             self.is_authenticated = True
@@ -20,7 +21,7 @@ class AuthManager:
             team_api.set_token(f"mock_token_for_{email}")
             print("[Auth] Login successful.")
             return True
-            
+
         print("[Auth] Login failed.")
         return False
 
@@ -29,5 +30,6 @@ class AuthManager:
         self.user_email = None
         team_api.set_token(None)
         print("[Auth] Logged out.")
+
 
 auth_manager = AuthManager()

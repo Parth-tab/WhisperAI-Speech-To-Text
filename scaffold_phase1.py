@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 BASE_DIR = Path("E:/WhisperAI")
@@ -19,7 +18,7 @@ directories = [
     "resources/sounds",
     "tests",
     "scripts",
-    "installer/assets"
+    "installer/assets",
 ]
 
 files = {
@@ -313,31 +312,43 @@ def test_audio_capture():
     
     assert started and stopped
     assert isinstance(captured_audio, np.ndarray) and len(captured_audio) > 0
-"""
+""",
 }
 
 # Add blank __init__.py files
 init_dirs = [
-    "src", "src/core", "src/audio", "src/asr", "src/llm", "src/injection", 
-    "src/hotkey", "src/gui", "src/gui/widgets", "src/config", "src/utils", "tests"
+    "src",
+    "src/core",
+    "src/audio",
+    "src/asr",
+    "src/llm",
+    "src/injection",
+    "src/hotkey",
+    "src/gui",
+    "src/gui/widgets",
+    "src/config",
+    "src/utils",
+    "tests",
 ]
 for d in init_dirs:
     files[f"{d}/__init__.py"] = ""
 
+
 def run():
     print(f"Scaffolding WhisperAI at {BASE_DIR}...")
     BASE_DIR.mkdir(parents=True, exist_ok=True)
-    
+
     for d in directories:
         (BASE_DIR / d).mkdir(parents=True, exist_ok=True)
-        
+
     for file_path, content in files.items():
         full_path = BASE_DIR / file_path
         full_path.parent.mkdir(parents=True, exist_ok=True)
         with open(full_path, "w", encoding="utf-8") as f:
             f.write(content)
-            
+
     print("Phase 1 Scaffolding Complete!")
+
 
 if __name__ == "__main__":
     run()

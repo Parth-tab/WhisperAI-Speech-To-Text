@@ -1,7 +1,7 @@
 import os
-import sys
 
 _orig_add_dll = os.add_dll_directory
+
 
 def _safe_add_dll(path):
     """
@@ -14,5 +14,6 @@ def _safe_add_dll(path):
     if not os.path.exists(path):
         return None
     return _orig_add_dll(path)
+
 
 os.add_dll_directory = _safe_add_dll

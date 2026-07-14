@@ -1,5 +1,6 @@
 import re
 
+
 class BacktrackDetector:
     def __init__(self):
         # Common correction markers
@@ -11,28 +12,31 @@ class BacktrackDetector:
             r"no no",
             r"sorry",
             r"scratch that",
-            r"let me rephrase"
+            r"let me rephrase",
         ]
-        self.pattern = re.compile(r"\b(" + "|".join(self.markers) + r")\b", re.IGNORECASE)
+        self.pattern = re.compile(
+            r"\b(" + "|".join(self.markers) + r")\b", re.IGNORECASE
+        )
 
     def process(self, text: str) -> str:
         """
         Detects self-corrections in dictation and wraps them in <correction> tags
         to help the LLM understand intent.
         """
-        match = self.pattern.search(text)
-        if not match:
+        matches = list(self.pattern.finditer(text))
+        if not matches:
             return text
-            
-        marker = match.group(1)
-        # Split into original intent and correction
-        parts = self.pattern.split(text, maxsplit=1)
-        if len(parts) >= 3:
-            before = parts[0].strip()
-            marker = parts[1].strip()
-            after = parts[2].strip()
+
+        last_match = matches[-1]
+        marker = last_match.group(1)
+
+        before = text[: last_match.start()].strip()
+        after = text[last_match.end() :].strip()
+
+        if before and after:
             return f"<original>{before}</original> <correction>{marker} {after}</correction>"
-            
+
         return text
+
 
 backtrack_detector = BacktrackDetector()

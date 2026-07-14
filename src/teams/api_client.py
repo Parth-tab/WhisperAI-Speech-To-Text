@@ -1,6 +1,5 @@
 import time
-import json
-from src.config.manager import ConfigManager
+
 
 class TeamAPIClient:
     def __init__(self, base_url: str = "https://api.whisperai.example.com"):
@@ -13,7 +12,7 @@ class TeamAPIClient:
     def push_dictionary(self, dictionary: list) -> bool:
         # Scaffold logic for pushing dictionary to cloud
         print(f"[TeamAPI] Pushing dictionary ({len(dictionary)} items) to cloud...")
-        time.sleep(0.5) # Simulate network call
+        time.sleep(0.5)  # Simulate network call
         return True
 
     def pull_dictionary(self) -> list:
@@ -31,5 +30,6 @@ class TeamAPIClient:
         print("[TeamAPI] Pulling team snippets from cloud...")
         time.sleep(0.5)
         return {}
+
 
 team_api = TeamAPIClient()

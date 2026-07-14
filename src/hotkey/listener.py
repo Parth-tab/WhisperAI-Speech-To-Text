@@ -1,5 +1,6 @@
 from pynput import keyboard
 from typing import Callable, Optional
+import time
 
 
 class HotkeyListener:
@@ -24,8 +25,12 @@ class HotkeyListener:
         self._listener: Optional[keyboard.Listener] = None
         self._currently_held: set = set()
         self._is_recording = False
+        self._last_release_time = 0.0
+        self._debounce_ms = 300
 
-    def set_callbacks(self, on_press: Callable[[], None], on_release: Callable[[], None]):
+    def set_callbacks(
+        self, on_press: Callable[[], None], on_release: Callable[[], None]
+    ):
         self.on_press_callback = on_press
         self.on_release_callback = on_release
 
@@ -65,6 +70,8 @@ class HotkeyListener:
             return
 
         if not self._is_recording:
+            if time.monotonic() - self._last_release_time < self._debounce_ms / 1000.0:
+                return
             self._is_recording = True
             if self.on_press_callback:
                 try:
@@ -79,6 +86,7 @@ class HotkeyListener:
         norm_trigger = self._normalise(self.trigger_key)
         if norm == norm_trigger and self._is_recording:
             self._is_recording = False
+            self._last_release_time = time.monotonic()
             if self.on_release_callback:
                 try:
                     self.on_release_callback()

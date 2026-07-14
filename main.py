@@ -4,11 +4,12 @@ import os
 # ---------------------------------------------------------------------------
 # PyInstaller frozen-bundle guard — must run before ANY other imports.
 # ---------------------------------------------------------------------------
-if getattr(sys, 'frozen', False):
+if getattr(sys, "frozen", False):
     # 1. Redirect stdout/stderr to a log file so libraries that write to them
     #    (e.g. tqdm, huggingface_hub) don't crash with "NoneType has no write"
     #    when packaged with --noconsole (which sets stdout/stderr to None).
     import pathlib
+
     _log_dir = pathlib.Path.home() / ".whisperai" / "logs"
     _log_dir.mkdir(parents=True, exist_ok=True)
     _log_file = open(_log_dir / "whisperai.log", "a", encoding="utf-8", buffering=1)
@@ -35,5 +36,17 @@ from src.core.app import WhisperAIApp
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
+
+    # Register the AppUserModelID for Windows so the taskbar and thumbnails
+    # correctly display the custom window icon instead of the generic executable icon.
+    if os.name == "nt":
+        try:
+            import ctypes
+
+            myappid = "whisperai.desktop.app.1.1.0"
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except Exception:
+            pass
+
     app = WhisperAIApp()
     app.start()

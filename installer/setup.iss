@@ -7,6 +7,8 @@ OutputDir=E:\WhisperAI\installer\Output
 OutputBaseFilename=WhisperAISetup
 Compression=lzma
 SolidCompression=yes
+WizardImageFile=assets\wizard_image.bmp
+WizardSmallImageFile=assets\wizard_small.bmp
 
 [Files]
 Source: "E:\WhisperAI\dist\main\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
