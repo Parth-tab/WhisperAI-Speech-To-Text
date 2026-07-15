@@ -30,3 +30,15 @@ def test_execute_command(mock_llama):
 
     assert result == "Modified text."
     assert mock_llama_instance.called
+
+def test_ensure_list_newlines_decimals():
+    from src.llm.engine import _ensure_list_newlines
+    # Should not split decimals
+    text = "Section 1.5. hello"
+    result = _ensure_list_newlines(text, list_mode="mixed")
+    assert result == "Section 1.5. hello"
+    
+    # Should split numbered lists
+    text2 = "Here is a list. 1. Item one 2. Item two"
+    result2 = _ensure_list_newlines(text2, list_mode="mixed")
+    assert result2 == "Here is a list.\n1. Item one\n2. Item two"

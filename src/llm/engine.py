@@ -53,7 +53,7 @@ def _ensure_list_newlines(text: str, list_mode: str) -> str:
         return text
 
     # Force a newline before any "N. " pattern not already at the start of a line.
-    formatted_text = re.sub(r"(?<=[^\n])\s*(\d+\.\s)", r"\n\1", text)
+    formatted_text = re.sub(r"(?<=[^\n\s])\s+(\d+\.\s)", r"\n\1", text)
 
     if list_mode == "pure":
         # Strictly prepend \n\n so the list always starts fresh after previous text.
