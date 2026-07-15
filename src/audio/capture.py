@@ -161,6 +161,10 @@ class AudioCaptureEngine:
             else:
                 full_audio = np.array([], dtype=np.float32)
 
+        if len(full_audio) > 0 and self.device_samplerate != self.SAMPLE_RATE:
+            num_samples = int(len(full_audio) * self.SAMPLE_RATE / self.device_samplerate)
+            full_audio = scipy.signal.resample(full_audio, num_samples).astype(np.float32)
+
         # Minimum audio length guard: reject recordings shorter than 0.5 seconds
         if len(full_audio) < self.SAMPLE_RATE * 0.5:
             print(
@@ -190,23 +194,24 @@ class AudioCaptureEngine:
 
             chunk = audio_mono
 
-            if self.device_samplerate != self.SAMPLE_RATE:
-                num_samples = int(
-                    len(chunk) * self.SAMPLE_RATE / self.device_samplerate
-                )
-                chunk = scipy.signal.resample(chunk, num_samples).astype(np.float32)
-
             with self.lock:
                 self.audio_buffer.append(chunk)
 
                 if self.use_vad and self.vad_engine:
+                    # For VAD, downsample quickly. Since default is 48000->16000, ratio is 3.
+                    if self.device_samplerate == 48000 and self.SAMPLE_RATE == 16000:
+                        vad_chunk = chunk[::3]
+                    else:
+                        num_samples = int(len(chunk) * self.SAMPLE_RATE / self.device_samplerate)
+                        vad_chunk = scipy.signal.resample(chunk, num_samples).astype(np.float32)
+
                     self._resample_buffer = np.concatenate(
-                        [self._resample_buffer, chunk]
+                        [self._resample_buffer, vad_chunk]
                     )
                     while len(self._resample_buffer) >= self.BLOCKSIZE:
-                        vad_chunk = self._resample_buffer[: self.BLOCKSIZE]
+                        vad_chunk_out = self._resample_buffer[: self.BLOCKSIZE]
                         self._resample_buffer = self._resample_buffer[self.BLOCKSIZE :]
-                        self.vad_queue.put(vad_chunk)
+                        self.vad_queue.put(vad_chunk_out)
 
             if self.on_audio_level_changed:
                 rms = np.sqrt(np.mean(chunk**2))
