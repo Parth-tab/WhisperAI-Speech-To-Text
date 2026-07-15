@@ -117,17 +117,17 @@ class ASREngine:
         if rms < rms_min:
             return ""
 
-        max_val = np.abs(audio_data).max()
-        if max_val > 0:
-            audio_data = audio_data / max_val
-
-        # Trim leading/trailing silence to reduce hallucinations
+        # Trim leading/trailing silence to reduce hallucinations BEFORE normalization
         sr = 16000
         audio_data = self._trim_silence(audio_data, sr=sr, threshold_db=trim_db)
 
         # Skip if trimmed audio is too short (< 0.3 seconds)
         if len(audio_data) < sr * 0.3:
             return ""
+
+        max_val = np.abs(audio_data).max()
+        if max_val > 0:
+            audio_data = audio_data / max_val
 
         start_t = time.time()
 
