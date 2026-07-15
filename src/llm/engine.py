@@ -107,8 +107,8 @@ class LLMEngine:
         try:
             Formatter().check_repetition(text)
         except ValueError as e:
-            print(e)
-            return text
+            print(f"[LLMEngine] {e}")
+            return ""
 
         list_mode = detect_list_mode(text)
 

@@ -42,3 +42,19 @@ def test_ensure_list_newlines_decimals():
     text2 = "Here is a list. 1. Item one 2. Item two"
     result2 = _ensure_list_newlines(text2, list_mode="mixed")
     assert result2 == "Here is a list.\n1. Item one\n2. Item two"
+
+@patch("src.llm.engine.Llama")
+def test_llm_repetition_aborts_pipeline(mock_llama):
+    mock_llama_instance = MagicMock()
+    mock_llama.return_value = mock_llama_instance
+    
+    from src.llm.engine import LLMEngine
+    engine = LLMEngine(model_path="dummy/path")
+    
+    # Text with 6 repeating words (2 trigrams)
+    text = "hello world test hello world test"
+    result = engine.clean_text(text, context="dummy")
+    
+    # Should return empty string, NOT the raw text
+    assert result == ""
+
