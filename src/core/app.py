@@ -184,9 +184,16 @@ class WhisperAIApp:
         """Load ASR + LLM models on a background thread in parallel."""
         try:
             print("[App] Initializing models in parallel...")
+            
+            model_selection = self.config_manager.get("model_selection", "base")
+            if model_selection in ["tiny", "base", "small", "medium"]:
+                model_size = f"{model_selection}.en"
+            else:
+                model_size = model_selection
+                
             with ThreadPoolExecutor(max_workers=3) as executor:
                 future_audio = executor.submit(AudioCaptureEngine)
-                future_asr = executor.submit(ASREngine)
+                future_asr = executor.submit(ASREngine, model_size)
                 future_llm = executor.submit(LLMEngine)
 
             with self.state_lock:
