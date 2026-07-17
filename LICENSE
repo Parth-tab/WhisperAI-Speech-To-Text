@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Parth
+Copyright (c) 2026 WhisperAI Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+### Downstream Dependency Licenses
+
+WhisperAI is built on the shoulders of giants. While the core application code is licensed under MIT as above, it integrates with external machine learning models and libraries that have their own licensing requirements:
+
+1. **faster-whisper**  
+   Licensed under the MIT License.  
+   Copyright (c) 2023 SYSTRAN
+
+2. **Qwen 1.5B (Alibaba Cloud)**  
+   Licensed under the Tongyi Qianwen LICENSE AGREEMENT and Apache 2.0.  
+   Users deploying WhisperAI for commercial purposes must comply with Qwen's specific commercial use constraints depending on user scale.
+
+3. **llama.cpp / llama-cpp-python**  
+   Licensed under the MIT License.
+
+By using WhisperAI, you agree to abide by the downstream licenses of these embedded components.

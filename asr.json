@@ -1,0 +1,953 @@
+{
+  "status": "success",
+  "results_count": 1,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 2,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 3,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 4,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    },
+    {
+      "id": "2605.11422v1",
+      "title": "Chunkwise Aligners for Streaming Speech Recognition",
+      "pdf_url": "https://arxiv.org/pdf/2605.11422v1",
+      "summary": "We propose the Chunkwise Aligner, a novel architecture for streaming automatic speech recognition (ASR). While the Transducer is the standard model for streaming ASR, its training is costly due to the need to compute all possible audio-label alignments. The recently introduced Aligner reduces this cost by discarding explicit alignments, but this modification makes it unsuitable for streaming. Our approach overcomes this limitation by dividing the audio into chunks and aligning each label to the leftmost frames of its chunk, whereas transitions between chunks are managed by a learned end-of-chunk probability. Experiments show that the Chunkwise Aligner not only matches the Transducer's accuracy in both offline and streaming scenarios, but also offers superior training and decoding efficiencies.",
+      "published": "2026-05-12T02:16:26Z",
+      "primary_category": "eess.AS",
+      "journal_ref": "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2026, pp. 18282-18286",
+      "doi": "10.1109/ICASSP55912.2026.11463400",
+      "authors": [
+        "Wen Shen Teo",
+        "Takafumi Moriya",
+        "Masato Mimura"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 5,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    },
+    {
+      "id": "2605.11422v1",
+      "title": "Chunkwise Aligners for Streaming Speech Recognition",
+      "pdf_url": "https://arxiv.org/pdf/2605.11422v1",
+      "summary": "We propose the Chunkwise Aligner, a novel architecture for streaming automatic speech recognition (ASR). While the Transducer is the standard model for streaming ASR, its training is costly due to the need to compute all possible audio-label alignments. The recently introduced Aligner reduces this cost by discarding explicit alignments, but this modification makes it unsuitable for streaming. Our approach overcomes this limitation by dividing the audio into chunks and aligning each label to the leftmost frames of its chunk, whereas transitions between chunks are managed by a learned end-of-chunk probability. Experiments show that the Chunkwise Aligner not only matches the Transducer's accuracy in both offline and streaming scenarios, but also offers superior training and decoding efficiencies.",
+      "published": "2026-05-12T02:16:26Z",
+      "primary_category": "eess.AS",
+      "journal_ref": "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2026, pp. 18282-18286",
+      "doi": "10.1109/ICASSP55912.2026.11463400",
+      "authors": [
+        "Wen Shen Teo",
+        "Takafumi Moriya",
+        "Masato Mimura"
+      ]
+    },
+    {
+      "id": "2606.05179v1",
+      "title": "Efficient Punctuation Restoration via Weighted Lookahead Scoring Method for Streaming ASR Systems",
+      "pdf_url": "https://arxiv.org/pdf/2606.05179v1",
+      "summary": "Punctuation restoration improves ASR (Automatic Speech Recognition) readability. However streaming ASR requires online decisions with limited future context. In streaming ASR, the system predicts punctuation incrementally, which makes generation-based approaches prone to latency and alignment failures under boundary-wise evaluation. This paper proposes a non-autoregressive scoring method (no free-form generation) that preserves the input transcript and makes a decision at each word boundary. Our method compares punctuation insertion hypotheses against a no-insertion baseline under a bounded K-subword-token lookahead, and calibrates decisions using a weight \u03b1 and a validation-calibrated threshold \u03c4 (no parameter updates during inference). On IWSLT 2017, our scoring method achieves a 4-class macro F1 of 0.893 in the no fine-tuning setting (validation-calibrated, K=2) and 0.937 after fine-tuning (K=2), outperforming the prompt-based baseline (0.566) and a fine-tuned ELECTRA baseline (0.913) under the same lookahead budget. We analyze the impact of the lookahead budget through ablation studies on K.",
+      "published": "2026-04-18T01:03:33Z",
+      "comment": "Accepted for presentation at The International Joint Conference on Neural Networks (IJCNN) 2026",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Sungmook Woo",
+        "Hyungu Kang",
+        "Chanwoo Kim"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 6,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    },
+    {
+      "id": "2605.11422v1",
+      "title": "Chunkwise Aligners for Streaming Speech Recognition",
+      "pdf_url": "https://arxiv.org/pdf/2605.11422v1",
+      "summary": "We propose the Chunkwise Aligner, a novel architecture for streaming automatic speech recognition (ASR). While the Transducer is the standard model for streaming ASR, its training is costly due to the need to compute all possible audio-label alignments. The recently introduced Aligner reduces this cost by discarding explicit alignments, but this modification makes it unsuitable for streaming. Our approach overcomes this limitation by dividing the audio into chunks and aligning each label to the leftmost frames of its chunk, whereas transitions between chunks are managed by a learned end-of-chunk probability. Experiments show that the Chunkwise Aligner not only matches the Transducer's accuracy in both offline and streaming scenarios, but also offers superior training and decoding efficiencies.",
+      "published": "2026-05-12T02:16:26Z",
+      "primary_category": "eess.AS",
+      "journal_ref": "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2026, pp. 18282-18286",
+      "doi": "10.1109/ICASSP55912.2026.11463400",
+      "authors": [
+        "Wen Shen Teo",
+        "Takafumi Moriya",
+        "Masato Mimura"
+      ]
+    },
+    {
+      "id": "2606.05179v1",
+      "title": "Efficient Punctuation Restoration via Weighted Lookahead Scoring Method for Streaming ASR Systems",
+      "pdf_url": "https://arxiv.org/pdf/2606.05179v1",
+      "summary": "Punctuation restoration improves ASR (Automatic Speech Recognition) readability. However streaming ASR requires online decisions with limited future context. In streaming ASR, the system predicts punctuation incrementally, which makes generation-based approaches prone to latency and alignment failures under boundary-wise evaluation. This paper proposes a non-autoregressive scoring method (no free-form generation) that preserves the input transcript and makes a decision at each word boundary. Our method compares punctuation insertion hypotheses against a no-insertion baseline under a bounded K-subword-token lookahead, and calibrates decisions using a weight \u03b1 and a validation-calibrated threshold \u03c4 (no parameter updates during inference). On IWSLT 2017, our scoring method achieves a 4-class macro F1 of 0.893 in the no fine-tuning setting (validation-calibrated, K=2) and 0.937 after fine-tuning (K=2), outperforming the prompt-based baseline (0.566) and a fine-tuned ELECTRA baseline (0.913) under the same lookahead budget. We analyze the impact of the lookahead budget through ablation studies on K.",
+      "published": "2026-04-18T01:03:33Z",
+      "comment": "Accepted for presentation at The International Joint Conference on Neural Networks (IJCNN) 2026",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Sungmook Woo",
+        "Hyungu Kang",
+        "Chanwoo Kim"
+      ]
+    },
+    {
+      "id": "2604.14493v2",
+      "title": "Pushing the Limits of On-Device Streaming ASR: A Compact, High-Accuracy English Model for Low-Latency Inference",
+      "pdf_url": "https://arxiv.org/pdf/2604.14493v2",
+      "summary": "Deploying high-quality automatic speech recognition (ASR) on edge devices requires models that jointly optimize accuracy, latency, and memory footprint while operating entirely on CPU without GPU acceleration. We conduct a systematic empirical study of state-of-the-art ASR architectures, encompassing encoder-decoder, transducer, and LLM-based paradigms, evaluated across batch, chunked, and streaming inference modes. Through a comprehensive benchmark of over 50 configurations spanning OpenAI Whisper, NVIDIA Nemotron, Parakeet TDT, Canary, Conformer Transducer, and Qwen3-ASR, we identify NVIDIA's Nemotron Speech Streaming as the strongest candidate for real-time English streaming on resource-constrained hardware. We then re-implement the complete streaming inference pipeline in ONNX Runtime and conduct a controlled evaluation of multiple post-training quantization strategies, including importance-weighted k-quant, mixed-precision schemes, and round-to-nearest quantization, combined with graph-level operator fusion. These optimizations reduce the model from 2.47 GB to as little as 0.67 GB while maintaining word error rate (WER) within 1% absolute of the full-precision PyTorch baseline. Our recommended configuration, the int4 k-quant variant, achieves 8.20% average streaming WER across eight standard benchmarks, running comfortably faster than real-time on CPU with 0.56 s algorithmic latency, establishing a new quality-efficiency Pareto point for on-device streaming ASR.",
+      "published": "2026-04-16T00:04:32Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic",
+        "David Fan",
+        "Kunal Vaishnavi",
+        "Sam Kemp",
+        "Sunghoon Choi",
+        "Rui Ren",
+        "Sayan Shaw",
+        "Meng Tang"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 7,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    },
+    {
+      "id": "2605.11422v1",
+      "title": "Chunkwise Aligners for Streaming Speech Recognition",
+      "pdf_url": "https://arxiv.org/pdf/2605.11422v1",
+      "summary": "We propose the Chunkwise Aligner, a novel architecture for streaming automatic speech recognition (ASR). While the Transducer is the standard model for streaming ASR, its training is costly due to the need to compute all possible audio-label alignments. The recently introduced Aligner reduces this cost by discarding explicit alignments, but this modification makes it unsuitable for streaming. Our approach overcomes this limitation by dividing the audio into chunks and aligning each label to the leftmost frames of its chunk, whereas transitions between chunks are managed by a learned end-of-chunk probability. Experiments show that the Chunkwise Aligner not only matches the Transducer's accuracy in both offline and streaming scenarios, but also offers superior training and decoding efficiencies.",
+      "published": "2026-05-12T02:16:26Z",
+      "primary_category": "eess.AS",
+      "journal_ref": "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2026, pp. 18282-18286",
+      "doi": "10.1109/ICASSP55912.2026.11463400",
+      "authors": [
+        "Wen Shen Teo",
+        "Takafumi Moriya",
+        "Masato Mimura"
+      ]
+    },
+    {
+      "id": "2606.05179v1",
+      "title": "Efficient Punctuation Restoration via Weighted Lookahead Scoring Method for Streaming ASR Systems",
+      "pdf_url": "https://arxiv.org/pdf/2606.05179v1",
+      "summary": "Punctuation restoration improves ASR (Automatic Speech Recognition) readability. However streaming ASR requires online decisions with limited future context. In streaming ASR, the system predicts punctuation incrementally, which makes generation-based approaches prone to latency and alignment failures under boundary-wise evaluation. This paper proposes a non-autoregressive scoring method (no free-form generation) that preserves the input transcript and makes a decision at each word boundary. Our method compares punctuation insertion hypotheses against a no-insertion baseline under a bounded K-subword-token lookahead, and calibrates decisions using a weight \u03b1 and a validation-calibrated threshold \u03c4 (no parameter updates during inference). On IWSLT 2017, our scoring method achieves a 4-class macro F1 of 0.893 in the no fine-tuning setting (validation-calibrated, K=2) and 0.937 after fine-tuning (K=2), outperforming the prompt-based baseline (0.566) and a fine-tuned ELECTRA baseline (0.913) under the same lookahead budget. We analyze the impact of the lookahead budget through ablation studies on K.",
+      "published": "2026-04-18T01:03:33Z",
+      "comment": "Accepted for presentation at The International Joint Conference on Neural Networks (IJCNN) 2026",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Sungmook Woo",
+        "Hyungu Kang",
+        "Chanwoo Kim"
+      ]
+    },
+    {
+      "id": "2604.14493v2",
+      "title": "Pushing the Limits of On-Device Streaming ASR: A Compact, High-Accuracy English Model for Low-Latency Inference",
+      "pdf_url": "https://arxiv.org/pdf/2604.14493v2",
+      "summary": "Deploying high-quality automatic speech recognition (ASR) on edge devices requires models that jointly optimize accuracy, latency, and memory footprint while operating entirely on CPU without GPU acceleration. We conduct a systematic empirical study of state-of-the-art ASR architectures, encompassing encoder-decoder, transducer, and LLM-based paradigms, evaluated across batch, chunked, and streaming inference modes. Through a comprehensive benchmark of over 50 configurations spanning OpenAI Whisper, NVIDIA Nemotron, Parakeet TDT, Canary, Conformer Transducer, and Qwen3-ASR, we identify NVIDIA's Nemotron Speech Streaming as the strongest candidate for real-time English streaming on resource-constrained hardware. We then re-implement the complete streaming inference pipeline in ONNX Runtime and conduct a controlled evaluation of multiple post-training quantization strategies, including importance-weighted k-quant, mixed-precision schemes, and round-to-nearest quantization, combined with graph-level operator fusion. These optimizations reduce the model from 2.47 GB to as little as 0.67 GB while maintaining word error rate (WER) within 1% absolute of the full-precision PyTorch baseline. Our recommended configuration, the int4 k-quant variant, achieves 8.20% average streaming WER across eight standard benchmarks, running comfortably faster than real-time on CPU with 0.56 s algorithmic latency, establishing a new quality-efficiency Pareto point for on-device streaming ASR.",
+      "published": "2026-04-16T00:04:32Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic",
+        "David Fan",
+        "Kunal Vaishnavi",
+        "Sam Kemp",
+        "Sunghoon Choi",
+        "Rui Ren",
+        "Sayan Shaw",
+        "Meng Tang"
+      ]
+    },
+    {
+      "id": "2603.21682v2",
+      "title": "RESPOND: Responsive Engagement Strategy for Predictive Orchestration and Dialogue",
+      "pdf_url": "https://arxiv.org/pdf/2603.21682v2",
+      "summary": "The majority of voice-based conversational agents still rely on pause-and-respond turn-taking, leaving interactions sounding stiff and robotic. We present RESPOND (Responsive Engagement Strategy for Predictive Orchestration and Dialogue), a framework that brings two staples of human conversation to agents: timely backchannels (\"mm-hmm,\" \"right\") and proactive turn claims that can contribute relevant content before the speaker yields the conversational floor. Built on streaming ASR (Automatic Speech Recognition) and incremental semantics, RESPOND continuously predicts both when and how to interject, enabling fluid, listener-aware dialogue. A defining feature is its designer-facing controllability: two orthogonal dials, Backchannel Intensity (frequency of acknowledgments) and Turn Claim Aggressiveness (depth and assertiveness of early contributions), can be tuned to match the etiquette of contexts ranging from rapid ideation to reflective counseling. By coupling predictive orchestration with explicit control, RESPOND offers a practical path toward conversational agents that adapt their conversational footprint to social expectations, advancing the design of more natural and engaging voice interfaces.",
+      "published": "2026-03-23T08:13:07Z",
+      "comment": "12 pages, 8 figures",
+      "primary_category": "cs.HC",
+      "authors": [
+        "Meng-Chen Lee",
+        "Costas Panay",
+        "Javier Hernandez",
+        "Sean Andrist",
+        "Dan Bohus",
+        "Anatoly Churikov",
+        "Andrew D. Wilson"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 8,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    },
+    {
+      "id": "2605.11422v1",
+      "title": "Chunkwise Aligners for Streaming Speech Recognition",
+      "pdf_url": "https://arxiv.org/pdf/2605.11422v1",
+      "summary": "We propose the Chunkwise Aligner, a novel architecture for streaming automatic speech recognition (ASR). While the Transducer is the standard model for streaming ASR, its training is costly due to the need to compute all possible audio-label alignments. The recently introduced Aligner reduces this cost by discarding explicit alignments, but this modification makes it unsuitable for streaming. Our approach overcomes this limitation by dividing the audio into chunks and aligning each label to the leftmost frames of its chunk, whereas transitions between chunks are managed by a learned end-of-chunk probability. Experiments show that the Chunkwise Aligner not only matches the Transducer's accuracy in both offline and streaming scenarios, but also offers superior training and decoding efficiencies.",
+      "published": "2026-05-12T02:16:26Z",
+      "primary_category": "eess.AS",
+      "journal_ref": "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2026, pp. 18282-18286",
+      "doi": "10.1109/ICASSP55912.2026.11463400",
+      "authors": [
+        "Wen Shen Teo",
+        "Takafumi Moriya",
+        "Masato Mimura"
+      ]
+    },
+    {
+      "id": "2606.05179v1",
+      "title": "Efficient Punctuation Restoration via Weighted Lookahead Scoring Method for Streaming ASR Systems",
+      "pdf_url": "https://arxiv.org/pdf/2606.05179v1",
+      "summary": "Punctuation restoration improves ASR (Automatic Speech Recognition) readability. However streaming ASR requires online decisions with limited future context. In streaming ASR, the system predicts punctuation incrementally, which makes generation-based approaches prone to latency and alignment failures under boundary-wise evaluation. This paper proposes a non-autoregressive scoring method (no free-form generation) that preserves the input transcript and makes a decision at each word boundary. Our method compares punctuation insertion hypotheses against a no-insertion baseline under a bounded K-subword-token lookahead, and calibrates decisions using a weight \u03b1 and a validation-calibrated threshold \u03c4 (no parameter updates during inference). On IWSLT 2017, our scoring method achieves a 4-class macro F1 of 0.893 in the no fine-tuning setting (validation-calibrated, K=2) and 0.937 after fine-tuning (K=2), outperforming the prompt-based baseline (0.566) and a fine-tuned ELECTRA baseline (0.913) under the same lookahead budget. We analyze the impact of the lookahead budget through ablation studies on K.",
+      "published": "2026-04-18T01:03:33Z",
+      "comment": "Accepted for presentation at The International Joint Conference on Neural Networks (IJCNN) 2026",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Sungmook Woo",
+        "Hyungu Kang",
+        "Chanwoo Kim"
+      ]
+    },
+    {
+      "id": "2604.14493v2",
+      "title": "Pushing the Limits of On-Device Streaming ASR: A Compact, High-Accuracy English Model for Low-Latency Inference",
+      "pdf_url": "https://arxiv.org/pdf/2604.14493v2",
+      "summary": "Deploying high-quality automatic speech recognition (ASR) on edge devices requires models that jointly optimize accuracy, latency, and memory footprint while operating entirely on CPU without GPU acceleration. We conduct a systematic empirical study of state-of-the-art ASR architectures, encompassing encoder-decoder, transducer, and LLM-based paradigms, evaluated across batch, chunked, and streaming inference modes. Through a comprehensive benchmark of over 50 configurations spanning OpenAI Whisper, NVIDIA Nemotron, Parakeet TDT, Canary, Conformer Transducer, and Qwen3-ASR, we identify NVIDIA's Nemotron Speech Streaming as the strongest candidate for real-time English streaming on resource-constrained hardware. We then re-implement the complete streaming inference pipeline in ONNX Runtime and conduct a controlled evaluation of multiple post-training quantization strategies, including importance-weighted k-quant, mixed-precision schemes, and round-to-nearest quantization, combined with graph-level operator fusion. These optimizations reduce the model from 2.47 GB to as little as 0.67 GB while maintaining word error rate (WER) within 1% absolute of the full-precision PyTorch baseline. Our recommended configuration, the int4 k-quant variant, achieves 8.20% average streaming WER across eight standard benchmarks, running comfortably faster than real-time on CPU with 0.56 s algorithmic latency, establishing a new quality-efficiency Pareto point for on-device streaming ASR.",
+      "published": "2026-04-16T00:04:32Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic",
+        "David Fan",
+        "Kunal Vaishnavi",
+        "Sam Kemp",
+        "Sunghoon Choi",
+        "Rui Ren",
+        "Sayan Shaw",
+        "Meng Tang"
+      ]
+    },
+    {
+      "id": "2603.21682v2",
+      "title": "RESPOND: Responsive Engagement Strategy for Predictive Orchestration and Dialogue",
+      "pdf_url": "https://arxiv.org/pdf/2603.21682v2",
+      "summary": "The majority of voice-based conversational agents still rely on pause-and-respond turn-taking, leaving interactions sounding stiff and robotic. We present RESPOND (Responsive Engagement Strategy for Predictive Orchestration and Dialogue), a framework that brings two staples of human conversation to agents: timely backchannels (\"mm-hmm,\" \"right\") and proactive turn claims that can contribute relevant content before the speaker yields the conversational floor. Built on streaming ASR (Automatic Speech Recognition) and incremental semantics, RESPOND continuously predicts both when and how to interject, enabling fluid, listener-aware dialogue. A defining feature is its designer-facing controllability: two orthogonal dials, Backchannel Intensity (frequency of acknowledgments) and Turn Claim Aggressiveness (depth and assertiveness of early contributions), can be tuned to match the etiquette of contexts ranging from rapid ideation to reflective counseling. By coupling predictive orchestration with explicit control, RESPOND offers a practical path toward conversational agents that adapt their conversational footprint to social expectations, advancing the design of more natural and engaging voice interfaces.",
+      "published": "2026-03-23T08:13:07Z",
+      "comment": "12 pages, 8 figures",
+      "primary_category": "cs.HC",
+      "authors": [
+        "Meng-Chen Lee",
+        "Costas Panay",
+        "Javier Hernandez",
+        "Sean Andrist",
+        "Dan Bohus",
+        "Anatoly Churikov",
+        "Andrew D. Wilson"
+      ]
+    },
+    {
+      "id": "2604.13059v1",
+      "title": "A Proactive EMR Assistant for Doctor-Patient Dialogue: Streaming ASR, Belief Stabilization, and Preliminary Controlled Evaluation",
+      "pdf_url": "https://arxiv.org/pdf/2604.13059v1",
+      "summary": "Most dialogue-based electronic medical record (EMR) systems still behave as passive pipelines: transcribe speech, extract information, and generate the final note after the consultation. That design improves documentation efficiency, but it is insufficient for proactive consultation support because it does not explicitly address streaming speech noise, missing punctuation, unstable diagnostic belief, objectification quality, or measurable next-action gains. We present an end-to-end proactive EMR assistant built around streaming speech recognition, punctuation restoration, stateful extraction, belief stabilization, objectified retrieval, action planning, and replayable report generation. The system is evaluated in a preliminary controlled setting using ten streamed doctor-patient dialogues and a 300-query retrieval benchmark aggregated across dialogues. The full system reaches state-event F1 of 0.84, retrieval Recall@5 of 0.87, and end-to-end pilot scores of 83.3% coverage, 81.4% structural completeness, and 80.0% risk recall. Ablations further suggest that punctuation restoration and belief stabilization may improve downstream extraction, retrieval, and action selection within this pilot. These results were obtained under a controlled simulated pilot setting rather than broad deployment claims, and they should not be read as evidence of clinical deployment readiness, clinical safety, or real-world clinical utility. Instead, they suggest that the proposed online architecture may be technically coherent and directionally supportive under tightly controlled pilot conditions. The present study should be read as a pilot concept demonstration under tightly controlled pilot conditions rather than as evidence of clinical deployment readiness or clinical generalizability.",
+      "published": "2026-03-18T05:54:01Z",
+      "comment": "10 pages, 1 figure, 6 tables. Companion systems manuscript. Preliminary controlled evaluation in a simulated pilot setting",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Zhenhai Pan",
+        "Yan Liu",
+        "Jia You"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 9,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    },
+    {
+      "id": "2605.11422v1",
+      "title": "Chunkwise Aligners for Streaming Speech Recognition",
+      "pdf_url": "https://arxiv.org/pdf/2605.11422v1",
+      "summary": "We propose the Chunkwise Aligner, a novel architecture for streaming automatic speech recognition (ASR). While the Transducer is the standard model for streaming ASR, its training is costly due to the need to compute all possible audio-label alignments. The recently introduced Aligner reduces this cost by discarding explicit alignments, but this modification makes it unsuitable for streaming. Our approach overcomes this limitation by dividing the audio into chunks and aligning each label to the leftmost frames of its chunk, whereas transitions between chunks are managed by a learned end-of-chunk probability. Experiments show that the Chunkwise Aligner not only matches the Transducer's accuracy in both offline and streaming scenarios, but also offers superior training and decoding efficiencies.",
+      "published": "2026-05-12T02:16:26Z",
+      "primary_category": "eess.AS",
+      "journal_ref": "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2026, pp. 18282-18286",
+      "doi": "10.1109/ICASSP55912.2026.11463400",
+      "authors": [
+        "Wen Shen Teo",
+        "Takafumi Moriya",
+        "Masato Mimura"
+      ]
+    },
+    {
+      "id": "2606.05179v1",
+      "title": "Efficient Punctuation Restoration via Weighted Lookahead Scoring Method for Streaming ASR Systems",
+      "pdf_url": "https://arxiv.org/pdf/2606.05179v1",
+      "summary": "Punctuation restoration improves ASR (Automatic Speech Recognition) readability. However streaming ASR requires online decisions with limited future context. In streaming ASR, the system predicts punctuation incrementally, which makes generation-based approaches prone to latency and alignment failures under boundary-wise evaluation. This paper proposes a non-autoregressive scoring method (no free-form generation) that preserves the input transcript and makes a decision at each word boundary. Our method compares punctuation insertion hypotheses against a no-insertion baseline under a bounded K-subword-token lookahead, and calibrates decisions using a weight \u03b1 and a validation-calibrated threshold \u03c4 (no parameter updates during inference). On IWSLT 2017, our scoring method achieves a 4-class macro F1 of 0.893 in the no fine-tuning setting (validation-calibrated, K=2) and 0.937 after fine-tuning (K=2), outperforming the prompt-based baseline (0.566) and a fine-tuned ELECTRA baseline (0.913) under the same lookahead budget. We analyze the impact of the lookahead budget through ablation studies on K.",
+      "published": "2026-04-18T01:03:33Z",
+      "comment": "Accepted for presentation at The International Joint Conference on Neural Networks (IJCNN) 2026",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Sungmook Woo",
+        "Hyungu Kang",
+        "Chanwoo Kim"
+      ]
+    },
+    {
+      "id": "2604.14493v2",
+      "title": "Pushing the Limits of On-Device Streaming ASR: A Compact, High-Accuracy English Model for Low-Latency Inference",
+      "pdf_url": "https://arxiv.org/pdf/2604.14493v2",
+      "summary": "Deploying high-quality automatic speech recognition (ASR) on edge devices requires models that jointly optimize accuracy, latency, and memory footprint while operating entirely on CPU without GPU acceleration. We conduct a systematic empirical study of state-of-the-art ASR architectures, encompassing encoder-decoder, transducer, and LLM-based paradigms, evaluated across batch, chunked, and streaming inference modes. Through a comprehensive benchmark of over 50 configurations spanning OpenAI Whisper, NVIDIA Nemotron, Parakeet TDT, Canary, Conformer Transducer, and Qwen3-ASR, we identify NVIDIA's Nemotron Speech Streaming as the strongest candidate for real-time English streaming on resource-constrained hardware. We then re-implement the complete streaming inference pipeline in ONNX Runtime and conduct a controlled evaluation of multiple post-training quantization strategies, including importance-weighted k-quant, mixed-precision schemes, and round-to-nearest quantization, combined with graph-level operator fusion. These optimizations reduce the model from 2.47 GB to as little as 0.67 GB while maintaining word error rate (WER) within 1% absolute of the full-precision PyTorch baseline. Our recommended configuration, the int4 k-quant variant, achieves 8.20% average streaming WER across eight standard benchmarks, running comfortably faster than real-time on CPU with 0.56 s algorithmic latency, establishing a new quality-efficiency Pareto point for on-device streaming ASR.",
+      "published": "2026-04-16T00:04:32Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic",
+        "David Fan",
+        "Kunal Vaishnavi",
+        "Sam Kemp",
+        "Sunghoon Choi",
+        "Rui Ren",
+        "Sayan Shaw",
+        "Meng Tang"
+      ]
+    },
+    {
+      "id": "2603.21682v2",
+      "title": "RESPOND: Responsive Engagement Strategy for Predictive Orchestration and Dialogue",
+      "pdf_url": "https://arxiv.org/pdf/2603.21682v2",
+      "summary": "The majority of voice-based conversational agents still rely on pause-and-respond turn-taking, leaving interactions sounding stiff and robotic. We present RESPOND (Responsive Engagement Strategy for Predictive Orchestration and Dialogue), a framework that brings two staples of human conversation to agents: timely backchannels (\"mm-hmm,\" \"right\") and proactive turn claims that can contribute relevant content before the speaker yields the conversational floor. Built on streaming ASR (Automatic Speech Recognition) and incremental semantics, RESPOND continuously predicts both when and how to interject, enabling fluid, listener-aware dialogue. A defining feature is its designer-facing controllability: two orthogonal dials, Backchannel Intensity (frequency of acknowledgments) and Turn Claim Aggressiveness (depth and assertiveness of early contributions), can be tuned to match the etiquette of contexts ranging from rapid ideation to reflective counseling. By coupling predictive orchestration with explicit control, RESPOND offers a practical path toward conversational agents that adapt their conversational footprint to social expectations, advancing the design of more natural and engaging voice interfaces.",
+      "published": "2026-03-23T08:13:07Z",
+      "comment": "12 pages, 8 figures",
+      "primary_category": "cs.HC",
+      "authors": [
+        "Meng-Chen Lee",
+        "Costas Panay",
+        "Javier Hernandez",
+        "Sean Andrist",
+        "Dan Bohus",
+        "Anatoly Churikov",
+        "Andrew D. Wilson"
+      ]
+    },
+    {
+      "id": "2604.13059v1",
+      "title": "A Proactive EMR Assistant for Doctor-Patient Dialogue: Streaming ASR, Belief Stabilization, and Preliminary Controlled Evaluation",
+      "pdf_url": "https://arxiv.org/pdf/2604.13059v1",
+      "summary": "Most dialogue-based electronic medical record (EMR) systems still behave as passive pipelines: transcribe speech, extract information, and generate the final note after the consultation. That design improves documentation efficiency, but it is insufficient for proactive consultation support because it does not explicitly address streaming speech noise, missing punctuation, unstable diagnostic belief, objectification quality, or measurable next-action gains. We present an end-to-end proactive EMR assistant built around streaming speech recognition, punctuation restoration, stateful extraction, belief stabilization, objectified retrieval, action planning, and replayable report generation. The system is evaluated in a preliminary controlled setting using ten streamed doctor-patient dialogues and a 300-query retrieval benchmark aggregated across dialogues. The full system reaches state-event F1 of 0.84, retrieval Recall@5 of 0.87, and end-to-end pilot scores of 83.3% coverage, 81.4% structural completeness, and 80.0% risk recall. Ablations further suggest that punctuation restoration and belief stabilization may improve downstream extraction, retrieval, and action selection within this pilot. These results were obtained under a controlled simulated pilot setting rather than broad deployment claims, and they should not be read as evidence of clinical deployment readiness, clinical safety, or real-world clinical utility. Instead, they suggest that the proposed online architecture may be technically coherent and directionally supportive under tightly controlled pilot conditions. The present study should be read as a pilot concept demonstration under tightly controlled pilot conditions rather than as evidence of clinical deployment readiness or clinical generalizability.",
+      "published": "2026-03-18T05:54:01Z",
+      "comment": "10 pages, 1 figure, 6 tables. Companion systems manuscript. Preliminary controlled evaluation in a simulated pilot setting",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Zhenhai Pan",
+        "Yan Liu",
+        "Jia You"
+      ]
+    },
+    {
+      "id": "2603.14877v1",
+      "title": "SoulX-Duplug: Plug-and-Play Streaming State Prediction Module for Realtime Full-Duplex Speech Conversation",
+      "pdf_url": "https://arxiv.org/pdf/2603.14877v1",
+      "summary": "Recent advances in spoken dialogue systems have brought increased attention to human-like full-duplex voice interactions. However, our comprehensive review of this field reveals several challenges, including the difficulty in obtaining training data, catastrophic forgetting, and limited scalability. In this work, we propose SoulX-Duplug, a plug-and-play streaming state prediction module for full-duplex spoken dialogue systems. By jointly performing streaming ASR, SoulX-Duplug explicitly leverages textual information to identify user intent, effectively serving as a semantic VAD. To promote fair evaluation, we introduce SoulX-Duplug-Eval, extending widely used benchmarks with improved bilingual coverage. Experimental results show that SoulX-Duplug enables low-latency streaming dialogue state control, and the system built upon it outperforms existing full-duplex models in overall turn management and latency performance. We have open-sourced SoulX-Duplug and SoulX-Duplug-Eval.",
+      "published": "2026-03-16T06:23:10Z",
+      "comment": "submitted to Interspeech 2026, under review",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Ruiqi Yan",
+        "Wenxi Chen",
+        "Zhanxun Liu",
+        "Ziyang Ma",
+        "Haopeng Lin",
+        "Hanlin Wen",
+        "Hanke Xie",
+        "Jun Wu",
+        "Yuzhe Liang",
+        "Yuxiang Zhao",
+        "Pengchao Feng",
+        "Jiale Qian",
+        "Hao Meng",
+        "Yuhang Dai",
+        "Shunshun Yin",
+        "Ming Tao",
+        "Lei Xie",
+        "Kai Yu",
+        "Xinsheng Wang",
+        "Xie Chen"
+      ]
+    }
+  ]
+}
+{
+  "status": "success",
+  "results_count": 10,
+  "papers": [
+    {
+      "id": "2606.24169v1",
+      "title": "Data Scale, Not Latency, Shapes Cross-Lingual Encoder Transfer in Streaming ASR",
+      "pdf_url": "https://arxiv.org/pdf/2606.24169v1",
+      "summary": "Adapting a streaming speech recognition model to a new language requires choosing between two plausible warm starts: a multilingual (ML) encoder or an English-only (EN) encoder. The common intuition is that the multilingual encoder should help most at low data, but it is unclear how long that advantage persists, whether tight streaming latency amplifies it, and whether it survives deployment quantization. We answer these questions with a controlled sweep of a 0.6 B-parameter cache-aware FastConformer transducer across eight European languages, up to five target-language data scales (100 h to 2500 h), three streaming tiers plus offline decoding, and up to four public test sets. The main result is that multilingual initialization is a data-limited advantage, not a latency-limited one. On FLEURS at 160 ms, the mean EN-ML word error rate (WER) gap falls from +4.21 percentage points (pp) at 100 h to +0.20 pp at 2500 h; a power-law fit summarizes this decay, with each doubling of target-language data roughly halving the remaining advantage. Across the three streaming tiers, the across-language mean EN-ML gap is approximately stable at each scale from 100 to 1000 h, and is near zero by 2500 h. Finally, 4-bit weight-only encoder quantization at the matched 560 ms streaming tier reduces the encoder footprint by about 3x, with an average FLEURS WER increase of about 0.5 pp. The resulting guideline is simple: use multilingual initialization in low-data regimes, treat the choice as effectively irrelevant at large data, and make latency and quantization decisions independently.",
+      "published": "2026-06-23T05:51:35Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic"
+      ]
+    },
+    {
+      "id": "2606.05121v1",
+      "title": "Audio Interaction Model",
+      "pdf_url": "https://arxiv.org/pdf/2606.05121v1",
+      "summary": "Audio is an inherently interactive modality, yet today's Large Audio Language Models (LALMs) are offline, and streaming audio models each handle only a single task such as streaming ASR or voice chatting. It is time to unify them into one online LALM: a model that, through an always-on perceive-decide-respond loop, listens to sound, environment, and instructions in real time and reacts on the fly. We formalize this regime as the Audio Interaction Model, and realize it with Audio-Interaction, a unified streaming model that retains offline task execution while adding online general audio instruction following, from dialogue to full voice chatting, deciding when to respond from the semantics of the stream. To enable this, we propose SoundFlow, a framework that instantiates the perceive-decide-respond loop end to end, from data to training to deployment, through streaming-native data construction, comprehension-aware training, and asynchronous low-latency inference for stable real-time interaction. We further construct StreamAudio-2M, a 2.6M-item streaming corpus spanning 7 fundamental abilities and 28 sub-tasks, and Proactive-Sound-Bench for evaluating proactive audio intervention. Across 8 benchmarks, Audio-Interaction preserves competitive performance on mainstream audio tasks while unlocking capabilities inaccessible to offline LALMs, including real-time ASR, streaming audio instruction following, and proactive help.",
+      "published": "2026-06-03T17:26:11Z",
+      "comment": "Next generation of LALMs, work in progress",
+      "primary_category": "cs.SD",
+      "authors": [
+        "Zhifei Xie",
+        "Zihang Liu",
+        "Ze An",
+        "Xiaobin Hu",
+        "Yue Liao",
+        "Ziyang Ma",
+        "Dongchao Yang",
+        "Mingbao Lin",
+        "Deheng Ye",
+        "Shuicheng Yan",
+        "Chunyan Miao"
+      ]
+    },
+    {
+      "id": "2605.18222v2",
+      "title": "Contextual Biasing for Streaming ASR via CTC-based Word Spotting",
+      "pdf_url": "https://arxiv.org/pdf/2605.18222v2",
+      "summary": "Contextual biasing is essential to improving the recognition of rare and domain-specific words in an automatic speech recognition (ASR) system. While numerous methods have been proposed in recent years, most of them focus on offline settings and do not explicitly address the challenges of streaming ASR. For example, CTC-based word spotting (CTC-WS) have demonstrated strong performance by directly detecting keywords from CTC log-probabilities, but they are limited to offline processing and require access to the full utterance. In This work, we present a streaming extension of CTC-WS for real-time contextual biasing. Our method maintains active keyword paths across audio chunks using a stateful token passing algorithm, enabling the detection of keywords that span multiple chunks. To ensure low latency and stable output, we introduce an incremental commitment mechanism that only emits segments guaranteed not to be affected by future audio, while deferring uncertain regions. This method naturally integrates with streaming ASR pipelines and does not require modifications to the underlying acoustic model or additional training, making it practical for real-world deployment. Experimental results show that our method reduces overall WER and effectively improves keyword F-score, demonstrating its effectiveness for real-time ASR applications.",
+      "published": "2026-05-18T11:06:44Z",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Kai-Chen Tsai",
+        "Tien-Hong Lo",
+        "Yun-Ting Sun",
+        "Berlin Chen"
+      ]
+    },
+    {
+      "id": "2605.11422v1",
+      "title": "Chunkwise Aligners for Streaming Speech Recognition",
+      "pdf_url": "https://arxiv.org/pdf/2605.11422v1",
+      "summary": "We propose the Chunkwise Aligner, a novel architecture for streaming automatic speech recognition (ASR). While the Transducer is the standard model for streaming ASR, its training is costly due to the need to compute all possible audio-label alignments. The recently introduced Aligner reduces this cost by discarding explicit alignments, but this modification makes it unsuitable for streaming. Our approach overcomes this limitation by dividing the audio into chunks and aligning each label to the leftmost frames of its chunk, whereas transitions between chunks are managed by a learned end-of-chunk probability. Experiments show that the Chunkwise Aligner not only matches the Transducer's accuracy in both offline and streaming scenarios, but also offers superior training and decoding efficiencies.",
+      "published": "2026-05-12T02:16:26Z",
+      "primary_category": "eess.AS",
+      "journal_ref": "Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2026, pp. 18282-18286",
+      "doi": "10.1109/ICASSP55912.2026.11463400",
+      "authors": [
+        "Wen Shen Teo",
+        "Takafumi Moriya",
+        "Masato Mimura"
+      ]
+    },
+    {
+      "id": "2606.05179v1",
+      "title": "Efficient Punctuation Restoration via Weighted Lookahead Scoring Method for Streaming ASR Systems",
+      "pdf_url": "https://arxiv.org/pdf/2606.05179v1",
+      "summary": "Punctuation restoration improves ASR (Automatic Speech Recognition) readability. However streaming ASR requires online decisions with limited future context. In streaming ASR, the system predicts punctuation incrementally, which makes generation-based approaches prone to latency and alignment failures under boundary-wise evaluation. This paper proposes a non-autoregressive scoring method (no free-form generation) that preserves the input transcript and makes a decision at each word boundary. Our method compares punctuation insertion hypotheses against a no-insertion baseline under a bounded K-subword-token lookahead, and calibrates decisions using a weight \u03b1 and a validation-calibrated threshold \u03c4 (no parameter updates during inference). On IWSLT 2017, our scoring method achieves a 4-class macro F1 of 0.893 in the no fine-tuning setting (validation-calibrated, K=2) and 0.937 after fine-tuning (K=2), outperforming the prompt-based baseline (0.566) and a fine-tuned ELECTRA baseline (0.913) under the same lookahead budget. We analyze the impact of the lookahead budget through ablation studies on K.",
+      "published": "2026-04-18T01:03:33Z",
+      "comment": "Accepted for presentation at The International Joint Conference on Neural Networks (IJCNN) 2026",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Sungmook Woo",
+        "Hyungu Kang",
+        "Chanwoo Kim"
+      ]
+    },
+    {
+      "id": "2604.14493v2",
+      "title": "Pushing the Limits of On-Device Streaming ASR: A Compact, High-Accuracy English Model for Low-Latency Inference",
+      "pdf_url": "https://arxiv.org/pdf/2604.14493v2",
+      "summary": "Deploying high-quality automatic speech recognition (ASR) on edge devices requires models that jointly optimize accuracy, latency, and memory footprint while operating entirely on CPU without GPU acceleration. We conduct a systematic empirical study of state-of-the-art ASR architectures, encompassing encoder-decoder, transducer, and LLM-based paradigms, evaluated across batch, chunked, and streaming inference modes. Through a comprehensive benchmark of over 50 configurations spanning OpenAI Whisper, NVIDIA Nemotron, Parakeet TDT, Canary, Conformer Transducer, and Qwen3-ASR, we identify NVIDIA's Nemotron Speech Streaming as the strongest candidate for real-time English streaming on resource-constrained hardware. We then re-implement the complete streaming inference pipeline in ONNX Runtime and conduct a controlled evaluation of multiple post-training quantization strategies, including importance-weighted k-quant, mixed-precision schemes, and round-to-nearest quantization, combined with graph-level operator fusion. These optimizations reduce the model from 2.47 GB to as little as 0.67 GB while maintaining word error rate (WER) within 1% absolute of the full-precision PyTorch baseline. Our recommended configuration, the int4 k-quant variant, achieves 8.20% average streaming WER across eight standard benchmarks, running comfortably faster than real-time on CPU with 0.56 s algorithmic latency, establishing a new quality-efficiency Pareto point for on-device streaming ASR.",
+      "published": "2026-04-16T00:04:32Z",
+      "primary_category": "cs.AI",
+      "authors": [
+        "Nenad Banfic",
+        "David Fan",
+        "Kunal Vaishnavi",
+        "Sam Kemp",
+        "Sunghoon Choi",
+        "Rui Ren",
+        "Sayan Shaw",
+        "Meng Tang"
+      ]
+    },
+    {
+      "id": "2603.21682v2",
+      "title": "RESPOND: Responsive Engagement Strategy for Predictive Orchestration and Dialogue",
+      "pdf_url": "https://arxiv.org/pdf/2603.21682v2",
+      "summary": "The majority of voice-based conversational agents still rely on pause-and-respond turn-taking, leaving interactions sounding stiff and robotic. We present RESPOND (Responsive Engagement Strategy for Predictive Orchestration and Dialogue), a framework that brings two staples of human conversation to agents: timely backchannels (\"mm-hmm,\" \"right\") and proactive turn claims that can contribute relevant content before the speaker yields the conversational floor. Built on streaming ASR (Automatic Speech Recognition) and incremental semantics, RESPOND continuously predicts both when and how to interject, enabling fluid, listener-aware dialogue. A defining feature is its designer-facing controllability: two orthogonal dials, Backchannel Intensity (frequency of acknowledgments) and Turn Claim Aggressiveness (depth and assertiveness of early contributions), can be tuned to match the etiquette of contexts ranging from rapid ideation to reflective counseling. By coupling predictive orchestration with explicit control, RESPOND offers a practical path toward conversational agents that adapt their conversational footprint to social expectations, advancing the design of more natural and engaging voice interfaces.",
+      "published": "2026-03-23T08:13:07Z",
+      "comment": "12 pages, 8 figures",
+      "primary_category": "cs.HC",
+      "authors": [
+        "Meng-Chen Lee",
+        "Costas Panay",
+        "Javier Hernandez",
+        "Sean Andrist",
+        "Dan Bohus",
+        "Anatoly Churikov",
+        "Andrew D. Wilson"
+      ]
+    },
+    {
+      "id": "2604.13059v1",
+      "title": "A Proactive EMR Assistant for Doctor-Patient Dialogue: Streaming ASR, Belief Stabilization, and Preliminary Controlled Evaluation",
+      "pdf_url": "https://arxiv.org/pdf/2604.13059v1",
+      "summary": "Most dialogue-based electronic medical record (EMR) systems still behave as passive pipelines: transcribe speech, extract information, and generate the final note after the consultation. That design improves documentation efficiency, but it is insufficient for proactive consultation support because it does not explicitly address streaming speech noise, missing punctuation, unstable diagnostic belief, objectification quality, or measurable next-action gains. We present an end-to-end proactive EMR assistant built around streaming speech recognition, punctuation restoration, stateful extraction, belief stabilization, objectified retrieval, action planning, and replayable report generation. The system is evaluated in a preliminary controlled setting using ten streamed doctor-patient dialogues and a 300-query retrieval benchmark aggregated across dialogues. The full system reaches state-event F1 of 0.84, retrieval Recall@5 of 0.87, and end-to-end pilot scores of 83.3% coverage, 81.4% structural completeness, and 80.0% risk recall. Ablations further suggest that punctuation restoration and belief stabilization may improve downstream extraction, retrieval, and action selection within this pilot. These results were obtained under a controlled simulated pilot setting rather than broad deployment claims, and they should not be read as evidence of clinical deployment readiness, clinical safety, or real-world clinical utility. Instead, they suggest that the proposed online architecture may be technically coherent and directionally supportive under tightly controlled pilot conditions. The present study should be read as a pilot concept demonstration under tightly controlled pilot conditions rather than as evidence of clinical deployment readiness or clinical generalizability.",
+      "published": "2026-03-18T05:54:01Z",
+      "comment": "10 pages, 1 figure, 6 tables. Companion systems manuscript. Preliminary controlled evaluation in a simulated pilot setting",
+      "primary_category": "cs.CL",
+      "authors": [
+        "Zhenhai Pan",
+        "Yan Liu",
+        "Jia You"
+      ]
+    },
+    {
+      "id": "2603.14877v1",
+      "title": "SoulX-Duplug: Plug-and-Play Streaming State Prediction Module for Realtime Full-Duplex Speech Conversation",
+      "pdf_url": "https://arxiv.org/pdf/2603.14877v1",
+      "summary": "Recent advances in spoken dialogue systems have brought increased attention to human-like full-duplex voice interactions. However, our comprehensive review of this field reveals several challenges, including the difficulty in obtaining training data, catastrophic forgetting, and limited scalability. In this work, we propose SoulX-Duplug, a plug-and-play streaming state prediction module for full-duplex spoken dialogue systems. By jointly performing streaming ASR, SoulX-Duplug explicitly leverages textual information to identify user intent, effectively serving as a semantic VAD. To promote fair evaluation, we introduce SoulX-Duplug-Eval, extending widely used benchmarks with improved bilingual coverage. Experimental results show that SoulX-Duplug enables low-latency streaming dialogue state control, and the system built upon it outperforms existing full-duplex models in overall turn management and latency performance. We have open-sourced SoulX-Duplug and SoulX-Duplug-Eval.",
+      "published": "2026-03-16T06:23:10Z",
+      "comment": "submitted to Interspeech 2026, under review",
+      "primary_category": "eess.AS",
+      "authors": [
+        "Ruiqi Yan",
+        "Wenxi Chen",
+        "Zhanxun Liu",
+        "Ziyang Ma",
+        "Haopeng Lin",
+        "Hanlin Wen",
+        "Hanke Xie",
+        "Jun Wu",
+        "Yuzhe Liang",
+        "Yuxiang Zhao",
+        "Pengchao Feng",
+        "Jiale Qian",
+        "Hao Meng",
+        "Yuhang Dai",
+        "Shunshun Yin",
+        "Ming Tao",
+        "Lei Xie",
+        "Kai Yu",
+        "Xinsheng Wang",
+        "Xie Chen"
+      ]
+    },
+    {
+      "id": "2603.01382v1",
+      "title": "End-to-End Simultaneous Dysarthric Speech Reconstruction with Frame-Level Adaptor and Multiple Wait-k Knowledge Distillation",
+      "pdf_url": "https://arxiv.org/pdf/2603.01382v1",
+      "summary": "Dysarthric speech reconstruction (DSR) typically employs a cascaded system that combines automatic speech recognition (ASR) and sentence-level text-to-speech (TTS) to convert dysarthric speech into normally-prosodied speech. However, dysarthric individuals often speak more slowly, leading to excessively long response times in such systems, rendering them impractical in long-speech scenarios. Cascaded DSR systems based on streaming ASR and incremental TTS can help reduce latency. However, patients with differing dysarthria severity exhibit substantial pronunciation variability for the same text, resulting in poor robustness of ASR and limiting the intelligibility of reconstructed speech. In addition, incremental TTS suffers from poor prosodic feature prediction due to a limited receptive field. In this study, we propose an end-to-end simultaneous DSR system with two key innovations: 1) A frame-level adaptor module is introduced to bridge ASR and TTS. By employing explicit-implicit semantic information fusion and joint module training, it enhances the error tolerance of TTS to ASR outputs. 2) A multiple wait-k autoregressive TTS module is designed to mitigate prosodic degradation via multi-view knowledge distillation. Our system has an average response time of 1.03 seconds on Tesla A100, with an average real-time factor (RTF) of 0.71. On the UASpeech dataset, it attains a mean opinion score (MOS) of 4.67 and demonstrates a 54.25% relative reduction in word error rate (WER) compared to the state-of-the-art. Our demo is available at: https://wflrz123.github.io/",
+      "published": "2026-03-02T02:26:01Z",
+      "comment": "Submitted to 2025 Asia Pacific Signal and Information Processing Association Annual Summit and Conference (APSIPA ASC)",
+      "primary_category": "cs.SD",
+      "journal_ref": "2025 Asia Pacific Signal and Information Processing Association Annual Summit and Conference (APSIPA ASC), Singapore, 2025, pp. 1092-1097",
+      "doi": "10.1109/APSIPAASC65261.2025.11248992",
+      "authors": [
+        "Minghui Wu",
+        "Haitao Tang",
+        "Jiahuan Fan",
+        "Ruizhi Liao",
+        "Yanyong Zhang"
+      ]
+    }
+  ]
+}
