@@ -32,10 +32,9 @@ class ASREngine:
     def __init__(self, model_size: str = "tiny.en", compute_type: str = "default"):
         self.model_size = model_size
         self.compute_type = compute_type
-        print(
-            f"[ASREngine] Loading Whisper '{model_size}' model (compute_type={compute_type})..."
-        )
-        print(f"[ASREngine] Model cache: {_WHISPER_CACHE}")
+        pass
+
+        pass
         # faster-whisper auto-downloads the model to download_root if not present
         self.model = WhisperModel(
             model_size,
@@ -44,7 +43,7 @@ class ASREngine:
             download_root=_WHISPER_CACHE,
             cpu_threads=2,
         )
-        print("[ASREngine] Model loaded successfully.")
+        pass
 
     @staticmethod
     def _trim_silence(
@@ -112,22 +111,19 @@ class ASREngine:
 
         audio_data = audio_data.astype(np.float32).flatten()
 
-        # Check RMS BEFORE normalization to avoid amplifying noise
+        max_val = np.abs(audio_data).max()
+        if max_val > 0:
+            audio_data = audio_data / max_val
+
         rms = np.sqrt(np.mean(audio_data**2))
         if rms < rms_min:
             return ""
 
-        # Trim leading/trailing silence to reduce hallucinations BEFORE normalization
         sr = 16000
         audio_data = self._trim_silence(audio_data, sr=sr, threshold_db=trim_db)
 
-        # Skip if trimmed audio is too short (< 0.3 seconds)
         if len(audio_data) < sr * 0.3:
             return ""
-
-        max_val = np.abs(audio_data).max()
-        if max_val > 0:
-            audio_data = audio_data / max_val
 
         start_t = time.time()
 

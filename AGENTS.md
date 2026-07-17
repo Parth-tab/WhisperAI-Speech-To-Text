@@ -85,6 +85,11 @@ A task is NOT done until all commands pass with zero errors and the `.exe` succe
 ### 3. UI Layer (PySide6)
 - The UI runs in the main thread.
 - **NEVER run blocking operations** (Whisper transcription, LLM generation, model downloading) in the main thread. Always dispatch heavy work to background threads (`QThread` or `ThreadPoolExecutor`) and communicate back via Qt Signals.
+- **No Blocking Modals in Floating UIs:** Because this application relies on floating UI overlays, you are permanently banned from using blocking modal dialogs (e.g., `QMessageBox.critical`). Modal dialogs lose window focus and spawn invisibly, deadlocking the main thread. All UI error handling must use non-blocking background notifications (e.g., `self.tray.showMessage()`) or inline text updates.
+
+### 4. Hardware & Audio Integrity (HARD RULES)
+- **C-Level Hardware Polling is Strictly Boot-Only:** You are strictly forbidden from placing heavy C-library re-initializations (e.g., `sounddevice._terminate()`, `Pa_Initialize()`) inside frequent UI event loops, button clicks, or toggle callbacks. Hardware state must be cached on application boot or handled in a detached background thread to prevent Python GIL deadlocks.
+- **Bulletproof String Matching for Hardware:** When interrogating OS-level hardware names, assume extreme variance in driver naming conventions. All string matching for hardware profiles (like Bluetooth HFP) must be strictly `.lower()` and case-insensitive. You must use broad substring arrays (e.g., `["bluetooth", "hands-free", "headset", "earbuds", "airpods", "bth"]`).
 
 ---
 

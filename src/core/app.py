@@ -4,8 +4,8 @@ import queue
 import platform
 import psutil
 from concurrent.futures import ThreadPoolExecutor
-from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtWidgets import QApplication, QMessageBox
+from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtGui import QIcon
 from src.utils.paths import get_asset_path
 
@@ -13,7 +13,7 @@ from src.asr.engine import ASREngine
 from src.llm.engine import LLMEngine
 from src.core.pipeline import AIPipeline
 
-from src.audio.capture import AudioCaptureEngine
+from src.audio.capture import AudioWorker
 from src.hotkey.listener import make_listener_from_config
 from src.injection.window_detect import WindowDetector
 from src.injection.injector import ClipboardInjector
@@ -44,13 +44,13 @@ class WhisperAIApp:
 
         # Lightweight components — initialise immediately
         hotkey_str = self.config_manager.get("hotkey", "<ctrl>+<alt>+w")
-        print(f"[App] Hotkey configured as: {hotkey_str}")
+        pass
         self.hotkey_listener = make_listener_from_config(hotkey_str)
         self.window_detector = WindowDetector(self.config_manager)
         self.injector = ClipboardInjector()
 
         # Heavy AI models — loaded lazily on a background thread
-        self.audio_engine = None
+        self.audio_worker = None
         self.asr_engine = None
         self.llm_engine = None
         self.pipeline = None
@@ -75,7 +75,6 @@ class WhisperAIApp:
         self.signals.bubble_state.connect(self.bubble.set_state)
         self.signals.hotkey_pressed.connect(self.handle_hotkey_press)
         self.signals.hotkey_released.connect(self.handle_hotkey_release)
-        self.signals.audio_capture_finished.connect(self.handle_recording_stopped)
         self.bubble.show()
 
         # Tray — visible immediately so user knows app is running
@@ -110,7 +109,7 @@ class WhisperAIApp:
                 on_release=self.on_hotkey_release,
             )
             self.hotkey_listener.start()
-            print(f"[App] Hotkey updated to: {new_hotkey}")
+            pass
 
         is_whisper = new_settings.get(
             "whisper_mode", self.config_manager.get("whisper_mode", False)
@@ -124,20 +123,54 @@ class WhisperAIApp:
             new_vad = base_vad
 
         with self.state_lock:
-            if self.audio_engine and self.audio_engine.vad_engine:
-                self.audio_engine.vad_engine.threshold = new_vad
-                print(
-                    f"[App] VAD threshold updated to: {new_vad} (Whisper Mode: {is_whisper})"
-                )
+            if self.audio_worker and getattr(self.audio_worker, 'vad_engine', None):
+                self.audio_worker.vad_engine.threshold = new_vad
 
-        print("[App] Settings saved!")
-
+    def _check_and_download_models(self):
+        from pathlib import Path
+        from src.llm.engine import _MODELS_DIR, _MODEL_FILENAME
+        from src.asr.engine import _WHISPER_CACHE
+        
+        llm_path = Path(_MODELS_DIR) / _MODEL_FILENAME
+        model_selection = self.config_manager.get("model_selection", "base")
+        model_size = f"{model_selection}.en" if model_selection in ["tiny", "base", "small", "medium"] else model_selection
+        
+        needs_download = False
+        if not llm_path.exists():
+            needs_download = True
+        else:
+            whisper_dir = Path(_WHISPER_CACHE)
+            if not whisper_dir.exists():
+                needs_download = True
+            else:
+                found = False
+                for item in whisper_dir.iterdir():
+                    if item.is_dir() and model_size in item.name:
+                        found = True
+                        break
+                if not found:
+                    needs_download = True
+                    
+        if needs_download:
+            from src.gui.downloader_dialog import DownloaderDialog
+            dialog = DownloaderDialog(self.config_manager)
+            dialog.start_download()
+            dialog.exec()
+            
     def start(self):
         self._pin_process_to_p_cores()
         self.hotkey_listener.start()
         self.telemetry.start_background_logging(interval=5.0)
         self.watchdog.start()
         threading.Thread(target=self._transcription_worker, daemon=True).start()
+
+        # Check and download models with UI if missing
+        self._check_and_download_models()
+
+        # Start silent auto-update check in background
+        from src.core.updater import AutoUpdater
+        self.updater = AutoUpdater(tray_icon=self.tray)
+        self.updater.start_check()
 
         # Load heavy models in a background thread so the tray appears instantly
         self.watchdog.wrap_thread(target=self._load_models)
@@ -174,16 +207,15 @@ class WhisperAIApp:
                 p_core_indices = list(range(p_threads))
                 p = psutil.Process()
                 p.cpu_affinity(p_core_indices)
-                print(
-                    f"[App] P-Core Affinity enabled. Pinned to cores: {p_core_indices} (Total logical: {logical_cores})"
-                )
-        except Exception as e:
-            print(f"[App] Failed to set CPU affinity: {e}")
+                pass
+
+        except Exception:
+            pass
 
     def _load_models(self):
         """Load ASR + LLM models on a background thread in parallel."""
         try:
-            print("[App] Initializing models in parallel...")
+            pass
             
             model_selection = self.config_manager.get("model_selection", "base")
             if model_selection in ["tiny", "base", "small", "medium"]:
@@ -191,32 +223,13 @@ class WhisperAIApp:
             else:
                 model_size = model_selection
                 
-            with ThreadPoolExecutor(max_workers=3) as executor:
-                future_audio = executor.submit(AudioCaptureEngine)
+            with ThreadPoolExecutor(max_workers=2) as executor:
                 future_asr = executor.submit(ASREngine, model_size)
                 future_llm = executor.submit(LLMEngine)
 
             with self.state_lock:
-                self.audio_engine = future_audio.result()
-
-                is_whisper = self.config_manager.get("whisper_mode", False)
-                base_vad = self.config_manager.get("vad_threshold", 0.5)
-                new_vad = (
-                    self.config_manager.get("whisper_vad_threshold", 0.2)
-                    if is_whisper
-                    else base_vad
-                )
-                if self.audio_engine.vad_engine:
-                    self.audio_engine.vad_engine.threshold = new_vad
-                    print(
-                        f"[App] VAD threshold initialized to: {new_vad} (Whisper Mode: {is_whisper})"
-                    )
-
                 self.asr_engine = future_asr.result()
                 self.llm_engine = future_llm.result()
-
-                self.audio_engine.on_recording_stopped = self._on_recording_stopped
-                self.audio_engine.on_audio_level_changed = self._on_audio_level_changed
 
                 self.pipeline = AIPipeline(
                     self.asr_engine, self.llm_engine, self.config_manager
@@ -224,10 +237,10 @@ class WhisperAIApp:
 
                 self._models_loaded = True
 
-            print("[App] All models loaded. Ready to dictate!")
+            pass
             self.signals.models_ready.emit()
-        except Exception as e:
-            print(f"[App] ERROR loading models: {e}")
+        except Exception:
+            pass
 
     def stop(self):
         self.hotkey_listener.stop()
@@ -235,79 +248,112 @@ class WhisperAIApp:
         self.watchdog.stop()
         self.transcription_queue.put(None)
         with self.state_lock:
-            if self.audio_engine:
-                self.audio_engine.stop_recording()
+            if self.audio_worker and self.audio_worker.isRunning():
+                self.audio_worker.stop()
 
     def _on_audio_level_changed(self, level: float):
         self.signals.audio_level.emit(level)
 
     def _on_deadlock(self):
-        print("[App] Deadlock detected! Restarting models...")
+        pass
         self.signals.status_update.emit("Restarting (Deadlock)...")
         with self.state_lock:
             self._models_loaded = False
-            if self.audio_engine:
-                self.audio_engine.stop_recording()
+            if self.audio_worker and self.audio_worker.isRunning():
+                self.audio_worker.stop()
         self.watchdog.wrap_thread(target=self._load_models)
 
     def toggle_recording(self):
         with self.state_lock:
-            if not self._models_loaded or not self.audio_engine:
-                print("[App] Models still loading...")
+            if not self._models_loaded:
                 return
 
-            if self.audio_engine.is_recording:
-                print("[App] BUBBLE CLICKED! Stopping recording...")
-                self.audio_engine.stop_recording()
+            if self.audio_worker and self.audio_worker.isRunning():
+                self.audio_worker.stop()
             else:
-                print("[App] BUBBLE CLICKED! Starting recording...")
-                self.audio_engine.start_recording()
-                self.signals.recording_started.emit()
-                self.signals.bubble_state.emit(BubbleState.RECORDING)
+                is_whisper = self.config_manager.get("whisper_mode", False)
+                base_vad = self.config_manager.get("vad_threshold", 0.5)
+                new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
+                
+                self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad)
+                self.audio_worker.connection_successful.connect(self._on_recording_started)
+                self.audio_worker.recording_failed.connect(self._on_recording_failed)
+                self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
+                self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
+                self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
+                
+                self.signals.bubble_state.emit(BubbleState.PROCESSING)
+                self.audio_worker.start()
 
     def on_hotkey_press(self):
         self.signals.hotkey_pressed.emit()
 
     def handle_hotkey_press(self):
         with self.state_lock:
-            if not self._models_loaded or not self.audio_engine:
-                print("[App] Models still loading, please wait...")
+            if not self._models_loaded:
                 return
-            print("[App] HOTKEY PRESSED! Starting recording...")
-            self.audio_engine.start_recording()
-            self.signals.recording_started.emit()
-            self.signals.bubble_state.emit(BubbleState.RECORDING)
+            if not (self.audio_worker and self.audio_worker.isRunning()):
+                is_whisper = self.config_manager.get("whisper_mode", False)
+                base_vad = self.config_manager.get("vad_threshold", 0.5)
+                new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
+                
+                self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad)
+                self.audio_worker.connection_successful.connect(self._on_recording_started)
+                self.audio_worker.recording_failed.connect(self._on_recording_failed)
+                self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
+                self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
+                self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
+                
+                self.signals.bubble_state.emit(BubbleState.PROCESSING)
+                self.audio_worker.start()
 
     def on_hotkey_release(self):
         self.signals.hotkey_released.emit()
 
     def handle_hotkey_release(self):
         with self.state_lock:
-            if not self._models_loaded or not self.audio_engine:
-                return
-            print("[App] HOTKEY RELEASED! Stopping recording...")
-            self.audio_engine.stop_recording()
+            if self.audio_worker and self.audio_worker.isRunning():
+                self.audio_worker.stop()
 
-    def _on_audio_chunk(self, audio_data):
+
+
+    @Slot()
+    def _on_recording_started(self):
+        self.signals.recording_started.emit()
+        self.signals.bubble_state.emit(BubbleState.RECORDING)
+
+    @Slot(str)
+    def _on_recording_failed(self, err_msg):
+        print(f"Recording failed: {err_msg}")
+        self.signals.bubble_state.emit(BubbleState.IDLE)
+        self.signals.recording_stopped.emit()
+        with self.state_lock:
+            if self.audio_worker:
+                self.audio_worker.wait(1000) # Gracefully join thread
+        if hasattr(self, 'tray'):
+            self.tray.showMessage("Hardware Failure", f"Failed to open audio stream:\n\n{err_msg}")
+
+    @Slot(object)
+    def _on_audio_chunk(self, chunk):
         pass  # Intentionally disabled
 
-    def _on_recording_stopped(self, audio_data):
-        # Emit signal to handle context detection on main thread
-        self.signals.audio_capture_finished.emit(audio_data)
+    @Slot(float)
+    def _on_audio_level_changed(self, level):
+        self.signals.audio_level.emit(level)
 
-    def handle_recording_stopped(self, audio_data):
+    @Slot(object)
+    def _on_recording_stopped(self, audio_data):
         self.signals.recording_stopped.emit()
         self.signals.bubble_state.emit(BubbleState.PROCESSING)
-        print(f"[App] AUDIO CAPTURED (final remaining): {len(audio_data)} frames")
 
         with self.state_lock:
             if len(audio_data) == 0 or not self._models_loaded or self.pipeline is None:
-                print("[App] Empty audio or models not loaded. Aborting pipeline.")
+                self.signals.bubble_state.emit(BubbleState.IDLE)
                 return
             pipeline_ref = self.pipeline
 
         context_tuple = self.window_detector.get_context()
-        print(f"[App] Active window context: {context_tuple[0]}")
+        pass
         self.transcription_queue.put((audio_data, context_tuple, pipeline_ref))
 
     def _transcription_worker(self):
@@ -329,7 +375,7 @@ class WhisperAIApp:
                     self.injector.inject_text(final_text)
                     duration_sec = len(audio_data) / 16000.0
                     stats_store.log_session(duration_sec, final_text)
-            except Exception as e:
-                print(f"[App] Error in pipeline: {e}")
+            except Exception:
+                pass
             finally:
                 self.signals.bubble_state.emit(BubbleState.IDLE)

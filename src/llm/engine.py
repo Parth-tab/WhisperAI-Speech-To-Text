@@ -17,8 +17,8 @@ def _ensure_model(model_dir: Path, filename: str) -> Path:
         return model_path
 
     model_dir.mkdir(parents=True, exist_ok=True)
-    print(f"[LLMEngine] Model not found. Downloading {filename} from HuggingFace...")
-    print("[LLMEngine] This is a one-time download (~1.9 GB). Please wait...")
+    pass
+    pass
 
     try:
         from huggingface_hub import hf_hub_download
@@ -81,7 +81,7 @@ class LLMEngine:
             resolved = _ensure_model(_MODELS_DIR, _MODEL_FILENAME)
 
         self.model_path = str(resolved)
-        print(f"[LLMEngine] Loading model from: {self.model_path}")
+        pass
         self.llm = Llama(
             model_path=self.model_path,
             n_ctx=n_ctx,
@@ -106,8 +106,8 @@ class LLMEngine:
 
         try:
             Formatter().check_repetition(text)
-        except ValueError as e:
-            print(f"[LLMEngine] {e}")
+        except ValueError:
+            pass
             return ""
 
         list_mode = detect_list_mode(text)
@@ -179,8 +179,8 @@ class LLMEngine:
                 return text
 
             return result
-        except Exception as e:
-            print(f"[LLMEngine] Error during clean_text: {e}")
+        except Exception:
+            pass
             return text
 
     def _clean_text_mixed(self, text: str, context: str, profile_id: str) -> str:
@@ -236,6 +236,6 @@ class LLMEngine:
                 temperature=0.1,
             )
             return response["choices"][0]["text"].strip()
-        except Exception as e:
-            print(f"[LLMEngine] Error during execute_command: {e}")
+        except Exception:
+            pass
             return text

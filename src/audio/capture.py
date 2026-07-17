@@ -1,238 +1,236 @@
 import sounddevice as sd
 import numpy as np
-import threading
 import collections
 import queue
 import scipy.signal
-import scipy.io.wavfile
-from typing import Callable, Optional
+import ctypes
+from PySide6.QtCore import QThread, Signal
 from src.audio.vad import VADEngine
 
+class AudioWorker(QThread):
+    connection_successful = Signal()
+    recording_failed = Signal(str)
+    audio_chunk_ready = Signal(object) # np.ndarray
+    audio_level_changed = Signal(float)
+    recording_stopped = Signal(object) # np.ndarray
 
-class AudioCaptureEngine:
-    SAMPLE_RATE = 16000
-    CHANNELS = 1
-    DTYPE = "int16"
-    BLOCKSIZE = 512
-    SILENCE_TIMEOUT_MS = 4000
-
-    def __init__(self, use_vad: bool = True):
+    def __init__(self, use_vad=True, vad_threshold=0.5):
+        super().__init__()
         self.use_vad = use_vad
-        self.vad_engine = (
-            VADEngine(
-                sample_rate=self.SAMPLE_RATE,
-                min_silence_duration_ms=self.SILENCE_TIMEOUT_MS,
-            )
-            if use_vad
-            else None
-        )
-        self.audio_buffer = collections.deque(maxlen=30000)
-        self._stream: Optional[sd.InputStream] = None
+        self.vad_threshold = vad_threshold
         self.is_recording = False
-        self.lock = threading.Lock()
-        self.vad_queue = queue.Queue()
-        self.vad_thread = None
-        self._stop_event = threading.Event()
-
-        self.on_recording_started: Optional[Callable[[], None]] = None
-        self.on_audio_level_changed: Optional[Callable[[float], None]] = None
-        self.on_recording_stopped: Optional[Callable[[np.ndarray], None]] = None
-        self.on_audio_chunk: Optional[Callable[[np.ndarray], None]] = None
+        self.audio_queue = queue.Queue()
+        self.full_audio = collections.deque(maxlen=30000)
         self._resample_buffer = np.array([], dtype=np.float32)
-        self._debug_dumped = False
-        self._debug_buffer = []
+        
+    def stop(self):
+        self.is_recording = False
+        
+    def run(self):
+        # 1. Initialize COM Apartment for this background thread
+        try:
+            ctypes.windll.ole32.CoInitializeEx(None, 0)
+        except Exception as e:
+            print(f"Warning: CoInitializeEx failed: {e}")
 
         try:
-            print("Querying audio devices:")
-            print(sd.query_devices())
+            # 2. Refresh PortAudio cache natively off the UI thread
+            # Avoid re-initializing to prevent GIL deadlocks/UI freezes with Bluetooth devices.
+            # sd._terminate()
+            # sd._initialize()
 
-            # Force primary WASAPI or DirectSound
-            hostapi_idx = None
-            for i, api in enumerate(sd.query_hostapis()):
-                if "WASAPI" in api["name"]:
-                    hostapi_idx = i
-                    break
-            if hostapi_idx is None:
+            # 3. Find precise COM Communications Device
+            comm_device_name = None
+            try:
+                import helper
+                comm_device_name = helper._get_windows_default_communications_device_name()
+            except Exception as e:
+                print(f"Failed to get COM comm device: {e}")
+
+            is_bluetooth_hfp = False
+            if comm_device_name:
+                is_bluetooth_hfp = True
+            else:
+                device_idx = sd.default.device[0]
+                if device_idx is not None and device_idx >= 0:
+                    device_info = sd.query_devices(device_idx, "input")
+                    device_name = device_info.get("name", "").lower()
+                    if any(k in device_name for k in ["hands-free", "ag audio", "bluetooth", "bth", "headset", "earbuds", "airpods"]):
+                        is_bluetooth_hfp = True
+
+            # 4. Host API Cascade with Safe 16kHz
+            target_apis = ['WASAPI', 'DirectSound', 'MME']
+            working_stream = None
+            working_sr = None
+            in_channels = 1
+            
+            for api_name in target_apis:
+                hostapi_idx = None
                 for i, api in enumerate(sd.query_hostapis()):
-                    if "DirectSound" in api["name"]:
+                    if api_name in api["name"]:
                         hostapi_idx = i
                         break
-            if hostapi_idx is not None:
-                sd.default.hostapi = hostapi_idx
-
-            device_info = sd.query_devices(sd.default.device[0], "input")
-            self.device_samplerate = 48000
-            self.device_channels = min(2, int(device_info["max_input_channels"]))
-        except Exception as e:
-            print(f"Error querying devices: {e}")
-            self.device_samplerate = 48000
-            self.device_channels = self.CHANNELS
-
-    def start_recording(self):
-        # Join old VAD thread FIRST to prevent race with _stop_event
-        if self.vad_thread and self.vad_thread.is_alive():
-            self.vad_thread.join(timeout=1.0)
-
-        # Clear stop event AFTER old thread is joined
-        self._stop_event.clear()
-
-        with self.lock:
-            if self.is_recording:
-                return
-
-            self.audio_buffer.clear()
-            self._resample_buffer = np.array([], dtype=np.float32)
-            self._debug_dumped = False
-            self._debug_buffer = []
-            if self.vad_engine:
-                self.vad_engine.reset_state()
-                while not self.vad_queue.empty():
+                
+                if hostapi_idx is None:
+                    continue
+                    
+                api_info = sd.query_hostapis(hostapi_idx)
+                device_idx = None
+                
+                if comm_device_name:
+                    for dev_id in api_info['devices']:
+                        dev = sd.query_devices(dev_id)
+                        if comm_device_name in dev['name'] or dev['name'] in comm_device_name:
+                            device_idx = dev_id
+                            break
+                
+                if device_idx is None:
+                    device_idx = api_info.get("default_input_device")
+                    
+                if device_idx is None or device_idx < 0:
+                    continue
+                    
+                device_info = sd.query_devices(device_idx)
+                in_channels = 1
+                out_channels = int(device_info.get("max_output_channels", 0))
+                out_device_idx = None
+                
+                if is_bluetooth_hfp:
+                    for dev_id in api_info['devices']:
+                        dev = sd.query_devices(dev_id)
+                        if dev.get('max_output_channels', 0) > 0:
+                            if comm_device_name and (comm_device_name in dev['name'] or dev['name'] in comm_device_name):
+                                out_device_idx = dev_id
+                                break
+                            elif any(k in dev['name'].lower() for k in ["hands-free", "ag audio", "bluetooth", "bth", "headset", "earbuds", "airpods"]):
+                                out_device_idx = dev_id
+                                break
+                    if out_device_idx is None:
+                        out_device_idx = api_info.get("default_output_device")
+                        
+                    if out_device_idx is not None and out_device_idx >= 0:
+                        out_dev_info = sd.query_devices(out_device_idx)
+                        out_channels = int(out_dev_info.get("max_output_channels", 0))
+                
+                sample_rates = [16000, 48000, 8000]
+                
+                hostapi_name = api_info.get('name', '')
+                stream_settings = None
+                if 'Windows WASAPI' in hostapi_name:
+                    stream_settings = sd.WasapiSettings(exclusive=False)
+                    
+                for test_sr in sample_rates:
                     try:
-                        self.vad_queue.get_nowait()
-                    except queue.Empty:
+                        def _audio_callback(indata, outdata, frames, time_info, status):
+                            if outdata is not None:
+                                outdata.fill(0) # Absolute silence lock
+                            if self.is_recording:
+                                self.audio_queue.put(indata.copy())
+
+                        if is_bluetooth_hfp and out_channels > 0 and out_device_idx is not None and out_device_idx >= 0:
+                            stream = sd.Stream(
+                                device=(device_idx, out_device_idx),
+                                samplerate=test_sr,
+                                channels=(1, 1),
+                                dtype="int16",
+                                blocksize=0,
+                                callback=_audio_callback,
+                                extra_settings=stream_settings,
+                            )
+                        else:
+                            def _input_callback(indata, frames, time_info, status):
+                                if self.is_recording:
+                                    self.audio_queue.put(indata.copy())
+                                    
+                            stream = sd.InputStream(
+                                device=device_idx,
+                                samplerate=test_sr,
+                                channels=1,
+                                dtype="int16",
+                                blocksize=0,
+                                callback=_input_callback,
+                                extra_settings=stream_settings,
+                            )
+                            
+                        working_stream = stream
+                        working_sr = test_sr
                         break
-
-            self.is_recording = True
-
-            if self.vad_engine:
-                self.vad_thread = threading.Thread(target=self._vad_worker, daemon=True)
-                self.vad_thread.start()
-
-            if self._stream:
-                self._stream.stop()
-                self._stream.close()
-                self._stream = None
-
-            try:
-                self._stream = sd.InputStream(
-                    samplerate=48000,
-                    channels=self.device_channels,
-                    dtype=self.DTYPE,
-                    blocksize=1536,
-                    callback=self._audio_callback,
-                )
-                self.device_samplerate = 48000
-                self._stream.start()
-            except Exception as e:
-                print(f"Error starting audio stream: {e}")
-                self.is_recording = False
-                if self.on_recording_stopped:
-                    self.on_recording_stopped(np.array([], dtype=self.DTYPE))
-                return
-
-            if self.on_recording_started:
-                self.on_recording_started()
-
-    def stop_recording(self):
-        # Phase 1: Under lock, set flags and grab stream reference
-        # Do NOT stop the stream here — that causes a deadlock because
-        # stream.stop() waits for the audio callback to finish, but the
-        # callback tries to acquire this same lock.
-        with self.lock:
-            if not self.is_recording:
-                return
-
-            self.is_recording = False
-            self._stop_event.set()
-
-            # Drain the VAD queue to unblock any waiting thread
-            while not self.vad_queue.empty():
-                try:
-                    self.vad_queue.get_nowait()
-                except Exception:
+                    except Exception as e:
+                        print(f"[AudioWorker] Fallback warning: Failed {hostapi_name} at {test_sr}Hz - {e}")
+                        continue
+                        
+                if working_stream is not None:
                     break
-
-            # Grab stream reference but don't stop it while holding the lock
-            stream_to_close = self._stream
-            self._stream = None
-
-        # Phase 2: Stop stream OUTSIDE lock — no deadlock possible
-        if stream_to_close:
-            try:
-                stream_to_close.stop()
-                stream_to_close.close()
-            except Exception as e:
-                print(f"[AudioCapture] Error closing stream: {e}")
-
-        # Phase 3: Read buffer after stream is fully stopped (no more callbacks)
-        with self.lock:
-            if self.audio_buffer:
-                full_audio = np.concatenate(list(self.audio_buffer))
+                    
+            if working_stream is None:
+                raise RuntimeError("No compatible audio API/device/samplerate combination found.")
+                
+            self.connection_successful.emit()
+            self.is_recording = True
+            
+            vad_engine = None
+            if self.use_vad:
+                vad_engine = VADEngine(sample_rate=16000, min_silence_duration_ms=4000)
+                vad_engine.threshold = self.vad_threshold
+                
+            with working_stream:
+                while self.is_recording:
+                    try:
+                        chunk = self.audio_queue.get(timeout=0.1)
+                        
+                        audio_float32 = chunk.astype(np.float32) / 32768.0
+                        if audio_float32.ndim > 1 and audio_float32.shape[1] > 1:
+                            audio_mono = audio_float32.mean(axis=1)
+                        elif audio_float32.ndim > 1:
+                            audio_mono = audio_float32[:, 0]
+                        else:
+                            audio_mono = audio_float32
+                            
+                        self.full_audio.append(audio_mono)
+                        
+                        rms = np.sqrt(np.mean(audio_mono**2))
+                        self.audio_level_changed.emit(float(rms))
+                        self.audio_chunk_ready.emit(audio_mono)
+                        
+                        if vad_engine:
+                            if working_sr == 48000:
+                                vad_chunk = audio_mono[::3]
+                            elif working_sr == 8000:
+                                vad_chunk = scipy.signal.resample(audio_mono, len(audio_mono) * 2)
+                            else:
+                                vad_chunk = audio_mono
+                                
+                            self._resample_buffer = np.concatenate([self._resample_buffer, vad_chunk])
+                            
+                            while len(self._resample_buffer) >= 512:
+                                out_chunk = self._resample_buffer[:512]
+                                self._resample_buffer = self._resample_buffer[512:]
+                                if vad_engine.process_chunk(out_chunk):
+                                    print("[AudioWorker] VAD silence timeout reached.")
+                                    self.is_recording = False
+                                    break
+                    except queue.Empty:
+                        continue
+                        
+            # Stream exited cleanly
+            if len(self.full_audio) > 0:
+                final_audio = np.concatenate(list(self.full_audio))
+                if working_sr != 16000:
+                    num_samples = int(len(final_audio) * 16000 / working_sr)
+                    final_audio = scipy.signal.resample(final_audio, num_samples).astype(np.float32)
+                    
+                if len(final_audio) < 16000 * 0.5:
+                    final_audio = np.array([], dtype=np.float32)
             else:
-                full_audio = np.array([], dtype=np.float32)
-
-        if len(full_audio) > 0 and self.device_samplerate != self.SAMPLE_RATE:
-            num_samples = int(len(full_audio) * self.SAMPLE_RATE / self.device_samplerate)
-            full_audio = scipy.signal.resample(full_audio, num_samples).astype(np.float32)
-
-        # Minimum audio length guard: reject recordings shorter than 0.5 seconds
-        if len(full_audio) < self.SAMPLE_RATE * 0.5:
-            print(
-                f"[AudioCapture] Warning: Audio too short ({len(full_audio)} samples, need {int(self.SAMPLE_RATE * 0.5)}). Discarding."
-            )
-            full_audio = np.array([], dtype=np.float32)
-
-        if self.on_recording_stopped:
-            self.on_recording_stopped(full_audio)
-
-    def _audio_callback(self, indata, frames, time_info, status):
-        # Early exit if recording has been stopped — prevents the callback
-        # from blocking on the lock during shutdown
-        if not self.is_recording:
-            return
-
-        if status:
-            print(f"[AudioCapture] Stream status warning: {status}")
-
-        try:
-            audio_float32 = indata.astype(np.float32) / 32768.0
-
-            if audio_float32.shape[1] > 1:
-                audio_mono = audio_float32.mean(axis=1)
-            else:
-                audio_mono = audio_float32[:, 0].copy()
-
-            chunk = audio_mono
-
-            with self.lock:
-                self.audio_buffer.append(chunk)
-
-                if self.use_vad and self.vad_engine:
-                    # For VAD, downsample quickly. Since default is 48000->16000, ratio is 3.
-                    if self.device_samplerate == 48000 and self.SAMPLE_RATE == 16000:
-                        vad_chunk = chunk[::3]
-                    else:
-                        num_samples = int(len(chunk) * self.SAMPLE_RATE / self.device_samplerate)
-                        vad_chunk = scipy.signal.resample(chunk, num_samples).astype(np.float32)
-
-                    self._resample_buffer = np.concatenate(
-                        [self._resample_buffer, vad_chunk]
-                    )
-                    while len(self._resample_buffer) >= self.BLOCKSIZE:
-                        vad_chunk_out = self._resample_buffer[: self.BLOCKSIZE]
-                        self._resample_buffer = self._resample_buffer[self.BLOCKSIZE :]
-                        self.vad_queue.put(vad_chunk_out)
-
-            if self.on_audio_level_changed:
-                rms = np.sqrt(np.mean(chunk**2))
-                self.on_audio_level_changed(float(rms))
+                final_audio = np.array([], dtype=np.float32)
+                
+            self.recording_stopped.emit(final_audio)
+            
         except Exception as e:
-            print(f"[AudioCapture] Critical stream error: {e}")
-            threading.Thread(target=self.stop_recording, daemon=True).start()
-
-    def _vad_worker(self):
-        while self.is_recording and not self._stop_event.is_set():
+            print(f"[AudioWorker] Fatal error: {e}")
+            self.recording_failed.emit(str(e))
+        finally:
             try:
-                chunk = self.vad_queue.get(timeout=0.1)
-                if self.vad_engine and self.is_recording:
-                    timeout_reached = self.vad_engine.process_chunk(chunk)
-                    if timeout_reached:
-                        print(
-                            "[AudioCapture] VAD silence timeout reached. Stopping recording."
-                        )
-                        threading.Thread(
-                            target=self.stop_recording, daemon=True
-                        ).start()
-                        break
-            except queue.Empty:
-                continue
+                ctypes.windll.ole32.CoUninitialize()
+            except Exception:
+                pass

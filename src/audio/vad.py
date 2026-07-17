@@ -1,11 +1,7 @@
 import numpy as np
 import onnxruntime
 import urllib.request
-import scipy.io.wavfile
 from pathlib import Path
-
-DEBUG_BYPASS_VAD = False
-
 
 class VADEngine:
     def __init__(
@@ -49,36 +45,28 @@ class VADEngine:
         self._speech_detected = False
         self._consecutive_speech_chunks = 0
         self._state = np.zeros((2, 1, 128)).astype("float32")
-        if hasattr(self, "_debug_chunks"):
-            self._debug_chunks = []
-
     def process_chunk(self, audio_chunk: np.ndarray) -> bool:
-        if DEBUG_BYPASS_VAD:
-            if not hasattr(self, "_debug_chunks"):
-                self._debug_chunks = []
-            self._debug_chunks.append(audio_chunk.copy())
-            total_samples = sum(len(c) for c in self._debug_chunks)
-            if total_samples >= 5 * self.sample_rate:
-                full_audio = np.concatenate(self._debug_chunks)
-                # Keep exactly 5 seconds
-                full_audio = full_audio[: int(5 * self.sample_rate)]
-                debug_path = Path.home() / ".whisperai" / "debug_dump.wav"
-                scipy.io.wavfile.write(str(debug_path), self.sample_rate, full_audio)
-                return True
-            return False
+        # (Debug VAD bypass removed due to undefined NameError)
 
         if len(audio_chunk) > 512:
             audio_chunk = audio_chunk[:512]
         elif len(audio_chunk) < 512:
             audio_chunk = np.pad(audio_chunk, (0, 512 - len(audio_chunk)))
 
-        inputs = {
-            "input": audio_chunk.reshape(1, -1).astype(np.float32),
-            "state": self._state,
-            "sr": np.array(self.sample_rate, dtype=np.int64),
-        }
-
-        ort_outs = self._session.run(None, inputs)
+        try:
+            inputs = {
+                "input": audio_chunk.reshape(1, -1).astype(np.float32),
+                "state": self._state,
+                "sr": np.array(self.sample_rate, dtype=np.int64),
+            }
+            ort_outs = self._session.run(None, inputs)
+        except Exception:
+            inputs = {
+                "input": audio_chunk.astype(np.float32),
+                "state": self._state,
+                "sr": np.array(self.sample_rate, dtype=np.int64),
+            }
+            ort_outs = self._session.run(None, inputs)
         speech_prob, self._state = ort_outs[0], ort_outs[1]
 
         is_speech = speech_prob[0][0] > self.threshold

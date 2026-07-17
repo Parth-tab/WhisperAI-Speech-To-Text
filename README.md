@@ -75,3 +75,17 @@ We welcome community contributions! Please read our [CONTRIBUTING.md](CONTRIBUTI
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Troubleshooting
+**Windows Defender SmartScreen Bypasses**
+If Windows Defender SmartScreen prevents the application from launching, click **More info** and then **Run anyway**. This happens because our compiled binary is not signed by an expensive EV Code Signing Certificate. 
+All logs for the runtime environment, including caught exceptions and output, are stored securely at `%USERPROFILE%\.whisperai\logs\whisperai.log`.
+
+## Enterprise Deployment
+To deploy WhisperAI across an enterprise environment while bypassing Group Policy restrictions and SmartScreen blocks on untrusted executables, you can compile the application from source on a trusted internal machine.
+1. Install Python 3.10+ and clone the repository.
+2. Run `uv sync` to install dependencies.
+3. Compile with `pyinstaller WhisperAI.spec --clean`.
+4. Deploy the newly compiled binary generated in the `dist` folder.

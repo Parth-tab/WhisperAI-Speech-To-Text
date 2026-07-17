@@ -31,7 +31,7 @@ jobs:
       - name: Build Installer
         run: |
           # Assuming Inno Setup CLI is available as iscc
-          iscc installer/WhisperAI.iss
+          iscc installer/setup.iss
 
       - name: Code Signing
         run: |
