@@ -1,39 +1,67 @@
-# Byte-compiled / optimized / DLL files
+# ==========================================
+# WhisperAI - Ironclad .gitignore
+# ==========================================
+
+# 1. Credentials & Environments (Zero-Trust)
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+secrets/
+
+# 2. Compiled Binaries & Caches (Clutter)
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environments
-venv/
-env/
-ENV/
-.env
-
-# PyInstaller
-build/
-dist/
-*.spec
-
-# Models
-models/
-*.gguf
-*.bin
-
-# Caches
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
 .coverage
 htmlcov/
 
-# Scratch & Sandbox
+# 3. Build Artifacts (PyInstaller Protection)
+build/
+dist/
+*.spec
+!WhisperAI.spec
+
+# 4. Heavy Platform Artifacts & AI Models (Git LFS Trap)
+# Absolute protection for Hugging Face Lazy-Loader models
+.whisperai/
+models/
+*.gguf
+*.bin
+*.safetensors
+*.pt
+
+# 5. Media Binaries (Force LFS)
+*.wav
+*.mp3
+*.flac
+
+# 6. Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# 7. Logs & Ephemera
+*.log
+*.tsv
+temp/
 scratch/
 /*test_*.py
 *.json
+!asr.json
+!disfluency.json
+!speculative.json
 
-# IDEs
+# 8. IDE Settings
 .idea/
 .vscode/
 *.swp
 
-# OS generated files
+# 9. System Trash
 .DS_Store
 Thumbs.db
