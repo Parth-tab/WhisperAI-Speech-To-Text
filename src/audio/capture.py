@@ -42,7 +42,7 @@ class AudioWorker(QThread):
             # 3. Find precise COM Communications Device
             comm_device_name = None
             try:
-                import helper
+                from src import helper
                 comm_device_name = helper._get_windows_default_communications_device_name()
             except Exception as e:
                 print(f"Failed to get COM comm device: {e}")

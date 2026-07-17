@@ -20,7 +20,7 @@ for pkg in ['tqdm', 'regex', 'huggingface-hub']:
 datas_list += [('src/assets/branding/*', 'src/assets/branding')]
 
 a = Analysis(
-    ['main.py'],
+    ['src/main.py'],
     pathex=[],
     binaries=binaries_list,
     datas=datas_list,

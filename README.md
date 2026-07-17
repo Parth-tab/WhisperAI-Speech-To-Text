@@ -74,7 +74,7 @@ git clone https://github.com/Parth-tab/WhisperAI-Speech-To-Text.git
 cd WhisperAI-Speech-To-Text
 uv venv
 uv sync
-python main.py
+python src/main.py
 ```
 
 ---

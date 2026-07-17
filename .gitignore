@@ -53,9 +53,9 @@ temp/
 scratch/
 /*test_*.py
 *.json
-!asr.json
-!disfluency.json
-!speculative.json
+!resources/asr.json
+!resources/disfluency.json
+!resources/speculative.json
 
 # 8. IDE Settings
 .idea/

@@ -28,10 +28,12 @@ WhisperAI/
 │   ├── injection/      # Keyboard injection and Window detection
 │   ├── gui/            # PySide6 Desktop Interface
 │   ├── utils/          # Path helpers, validators, logic extractors
-│   └── assets/         # Branding, images, UI resources
+│   ├── assets/         # Branding, images, UI resources
+│   ├── main.py         # Application entrypoint
+│   └── helper.py       # Win32 helpers
 ├── tests/              # Pytest suite
+├── resources/          # Static configuration assets
 ├── installer/          # Inno Setup configurations
-├── main.py             # Application entrypoint
 ├── WhisperAI.spec      # PyInstaller build configuration
 └── requirements.txt    # Python dependencies
 ```
@@ -143,7 +145,7 @@ Any AI working on this repository MUST always check the GitHub Actions tab for C
 
 When something is broken, follow this sequence:
 
-1. **Reproduce** — confirm you can reproduce the bug consistently using `python main.py`.
+1. **Reproduce** — confirm you can reproduce the bug consistently using `python src/main.py`.
 2. **Compile Test** — confirm the bug happens (or doesn't happen) in the `pyinstaller` frozen bundle.
 3. **Inspect logs** — Check `%USERPROFILE%\.whisperai\logs\whisperai.log` for stdout outputs when running the frozen `.exe`.
 4. **Hypothesize** — form one specific theory before changing code.
