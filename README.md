@@ -35,12 +35,52 @@ We decouple the acoustic transcription layer from the intent-extraction engine t
 
 ---
 
-## ✨ Features
+## 🏗️ System Structure
 
-*   **Context-Aware Dictation:** Automatically analyzes the application you are currently typing in and adapts its vocabulary (e.g., coding syntax for IDEs, formal language for Outlook).
-*   **Lazy-Load Models:** A commercial-grade runtime model fetcher. The application installer is lightweight (<100MB). Upon first boot, it fetches the necessary AI weights securely from the Hugging Face CDN.
-*   **Silent Auto-Updater (Handoff Bootstrapper):** Never worry about being out of date. WhisperAI silently detects new releases and allows you to update via a single click in your system tray without interrupting your workflow.
-*   **Universal Bluetooth Support:** Custom hardware probing heuristics guarantee seamless connection with Bluetooth Hands-Free Profile (HFP) headsets without deadlocking the Windows audio stack.
+WhisperAI follows a strict, domain-driven `src/` layout to cleanly separate acoustic processing, language generation, and the graphical user interface.
+
+```text
+WhisperAI/
+├── src/                # Core application source code
+│   ├── asr/            # Automatic Speech Recognition (Faster-Whisper)
+│   ├── llm/            # Intent-extraction LLM Engine (Llama.cpp)
+│   ├── core/           # App mediator, Pipeline, and Telemetry
+│   ├── injection/      # Keyboard injection and Window detection
+│   ├── gui/            # PySide6 Desktop Interface
+│   ├── utils/          # Path helpers, validators, logic extractors
+│   ├── assets/         # Branding, images, UI resources
+│   ├── main.py         # Application entrypoint
+│   └── helper.py       # Win32 hardware heuristics
+├── tests/              # Pytest suite & CI profiling tests
+├── resources/          # Static configuration assets & JSON schemas
+├── installer/          # Inno Setup configurations
+├── WhisperAI.spec      # PyInstaller build configuration
+└── pyproject.toml      # Dependency & linting configuration
+```
+
+---
+
+## ✨ Detailed Features & Capabilities
+
+*   **Context-Aware Dictation (Active Window Detection):**
+    *   WhisperAI intelligently probes the Windows API to determine which application is currently in focus via `src/injection/window_detect.py`.
+    *   It dynamically swaps terminology (e.g., heavily biasing towards `snake_case` programming syntax if an IDE is active, or formal prose if Outlook is active) resulting in highly accurate, zero-correction dictation.
+
+*   **Lazy-Load Model Architecture (Hugging Face CDN):**
+    *   To prevent the distribution of multi-gigabyte monolithic executables, WhisperAI ships as a lightweight `<100MB` binary.
+    *   Upon first execution, the `DownloaderDialog` automatically provisions the necessary quantized models (`Qwen 2.5` and `Whisper`) from secure Hugging Face endpoints directly into `%USERPROFILE%\.whisperai\models`, preventing repository and installer bloat.
+
+*   **Silent Auto-Updater (The Handoff Bootstrapper):**
+    *   Powered by the `src/core/updater.py` module, WhisperAI checks for new releases on GitHub via a non-blocking background thread.
+    *   When an update is detected, it downloads the new payload silently and executes a seamless process handoff—bypassing Windows OS-level file lock restrictions on running executables without interrupting the user.
+
+*   **Universal Bluetooth Duplex Support (Anti-Deadlock Heuristics):**
+    *   Windows WASAPI heavily struggles with Bluetooth Hands-Free Profile (HFP) dynamic device enumeration, frequently causing Python Global Interpreter Lock (GIL) deadlocks.
+    *   WhisperAI utilizes a custom C-Types bridge (`src/helper.py`) to perform boot-time caching and case-insensitive heuristic matching to instantly align audio input/output streams without freezing the UI.
+
+*   **Flow Bubble (Non-Blocking GUI):**
+    *   A custom, frameless `PySide6` desktop overlay provides real-time visual feedback (Listening, Processing, Idle) via animated pulses.
+    *   Built purely with asynchronous Qt Signals, it never steals window focus and operates flawlessly without blocking modal dialogs.
 
 ---
 
