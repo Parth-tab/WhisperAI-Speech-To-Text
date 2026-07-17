@@ -29,6 +29,21 @@ Unbounded memory consumption is a catastrophic failure mode in continuous local 
 Small 1.5B parameter LLMs are lightning-fast but suffer from context collapse when tasked with complex structural logic—such as mixing conversational prose with numbered lists. Relying purely on prompting results in hallucinations (e.g., generating conversational preambles inside dictation text).
 
 *   **The Split-Pass Pipeline:** Instead of brute-forcing the prompt, WhisperAI employs a deterministic routing strategy. When the ingestion engine detects "mixed mode" dictation, it physically splits the user's prose from the requested list. Inference is run separately, preventing the model from collapsing the two concepts.
+
+```mermaid
+flowchart TD
+    A[Raw Audio Input] --> B[Faster-Whisper Acoustic Layer]
+    B --> C{Detect Mixed Mode?}
+    C -->|Yes| D[Split: Prose]
+    C -->|Yes| E[Split: List/Code]
+    C -->|No| F[Standard Parsing]
+    D --> G[Qwen 1.5B LLM]
+    E --> G
+    F --> G
+    G --> H[Regex Constraint Layer]
+    H --> I[Inject to Active Window]
+```
+
 *   **Regex Constraint Layer:** Probabilistic text generation is immediately piped through a deterministic post-processing layer. Hard regular expressions (`re.sub`) enforce line breaks, strip hallucinated conversational filler, and guarantee structural precision before the text is injected into the active window.
 
 ---
