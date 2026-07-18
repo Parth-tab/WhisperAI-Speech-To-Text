@@ -88,9 +88,8 @@ WhisperAI/
 
 ### 1. Standard Installation (For Users)
 Experience local, private dictation without touching a terminal.
-1. Navigate to our [GitHub Releases](../../releases/latest).
-2. Download the latest `WhisperAISetup.exe`.
-3. Run the installer. On first boot, a visual Progress Bar will appear as the app securely fetches the local AI models.
+1. Download the `WhisperAISetup.exe` file directly from the root directory of this repository.
+2. Run the installer. On first boot, a visual Progress Bar will appear as the app securely fetches the local AI models.
 
 <div align="center">
   <img src="resources/lazy_loader.png" alt="Lazy Loader UI" width="400"/>
