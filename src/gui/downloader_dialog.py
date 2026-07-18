@@ -45,6 +45,7 @@ class DownloadWorker(QThread):
 
     def _patch_tqdm(self):
         import tqdm
+        import tqdm.auto
         self._original_tqdm = tqdm.tqdm
         self._original_auto_tqdm = tqdm.auto.tqdm
         
@@ -90,7 +91,7 @@ class DownloaderDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("WhisperAI - Initializing")
         self.setFixedSize(400, 150)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
         
         layout = QVBoxLayout(self)
         
@@ -123,6 +124,3 @@ class DownloaderDialog(QDialog):
     def handle_error(self, err_msg):
         self.status_label.setText(f"Error: {err_msg}")
         self.status_label.setStyleSheet("color: red;")
-        # Allow user to close on error
-        self.setWindowFlags(self.windowFlags() | Qt.WindowCloseButtonHint)
-        self.show() # Refresh flags
