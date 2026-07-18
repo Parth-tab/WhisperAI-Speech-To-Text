@@ -84,6 +84,36 @@ WhisperAI/
 
 ---
 
+## 📋 System Requirements
+
+Here are the software and hardware requirements needed to run WhisperAI smoothly. Since WhisperAI runs 100% locally using advanced AI models, meeting these requirements ensures real-time, context-aware dictation without lag.
+
+### 💻 Software Requirements
+
+- **Operating System:** Windows 10 or Windows 11 (64-bit only). 
+  *(The application relies on PySide6 and Win32 APIs, packaged as a Windows-only `.exe` via PyInstaller).*
+- **Runtimes:** **Microsoft Visual C++ Redistributable (2015-2022)**. 
+  *(Required by the underlying `llama-cpp-python` and `faster-whisper` C-libraries for local inference).*
+
+### ⚙️ Hardware Requirements
+
+WhisperAI employs an aggressive "Split-Pass" architecture and hard memory circuit breakers (like a strict 256MB KV cache limit) to maintain a minimal footprint while running a quantized Qwen 2.5 1.5B model and Whisper `tiny.en`.
+
+| Component | Minimum | Recommended |
+| :--- | :--- | :--- |
+| **Processor (CPU)** | 64-bit Multi-core CPU with AVX2 support | Intel 12th Gen+ or AMD Ryzen 5000+ (App automatically pins to P-Cores for optimal latency) |
+| **Memory (RAM)** | 4 GB | 8 GB+ (To seamlessly multi-task with other heavy desktop apps) |
+| **Graphics (GPU)** | None (Runs reliably on CPU via `llama.cpp` and `faster-whisper`) | Dedicated GPU (Optional) |
+| **Storage (Disk)** | ~2.0 GB available space | 3.0 GB+ on an **SSD** (Crucial for fast application startup and model loading) |
+
+#### 💽 Storage Breakdown (Approximate)
+- **Installer Executable:** ~178 MB
+- **LLM Engine:** ~1.12 GB (Qwen 2.5 1.5B Q4_K_M GGUF dynamically downloaded to `%USERPROFILE%\.whisperai\models\llm`)
+- **ASR Engine:** ~40 MB (Whisper `tiny.en` dynamically downloaded to `%USERPROFILE%\.whisperai\models\whisper`)
+- **Runtime Extraction Cache:** ~500 MB (PyInstaller `sys._MEIPASS` temporary extraction directory)
+
+---
+
 ## 🚀 Installation & Usage
 
 ### 1. Standard Installation (For Users)
