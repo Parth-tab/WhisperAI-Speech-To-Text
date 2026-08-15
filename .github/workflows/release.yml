@@ -23,7 +23,7 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: uv pip install -e .
+        run: uv pip install --system -e .
 
       - name: Build Executable
         run: pyinstaller WhisperAI.spec --clean
