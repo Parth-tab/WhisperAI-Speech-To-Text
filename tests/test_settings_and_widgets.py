@@ -127,6 +127,7 @@ def test_settings_window_save(qapp):
     settings.vad_input.setValue(0.7)
     settings.model_input.setCurrentText("small")
     settings.whisper_mode_input.setChecked(True)
+    settings.hibernation_checkbox.setChecked(False)
 
     settings.save_settings()
 
@@ -134,6 +135,20 @@ def test_settings_window_save(qapp):
     assert cfg.get("vad_threshold") == 0.7
     assert cfg.get("model_selection") == "small"
     assert cfg.get("whisper_mode") is True
+    assert cfg.get("enable_hibernation") is False
     assert len(saved_payload) == 1
     assert saved_payload[0]["hotkey"] == "<ctrl>+<shift>+d"
+    assert saved_payload[0]["enable_hibernation"] is False
+    settings.close()
+
+
+def test_settings_window_hibernation_toggled(qapp):
+    cfg = ConfigManager()
+    settings = SettingsWindow(cfg)
+
+    settings.hibernation_checkbox.setChecked(False)
+    assert cfg.get("enable_hibernation") is False
+
+    settings.hibernation_checkbox.setChecked(True)
+    assert cfg.get("enable_hibernation") is True
     settings.close()

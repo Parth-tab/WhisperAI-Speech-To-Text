@@ -43,6 +43,9 @@ class ConfigManager:
         "whisper_trim_db": -55.0,
         "whisper_rms_min": 0.003,
         "voice_activation": False,
+        # False = Models stay in RAM permanently (Recommended for 16GB+ RAM)
+        # True = Models unload after 60s of inactivity (Recommended for 8GB RAM)
+        "enable_hibernation": True,
     }
 
     def __init__(self, config_path=None):

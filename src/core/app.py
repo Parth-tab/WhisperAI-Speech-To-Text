@@ -51,7 +51,9 @@ class WhisperAIApp:
         self.preview_pool = ThreadPoolExecutor(max_workers=2)
 
         # Lightweight components — initialise immediately
+        self.enable_hibernation = self.config_manager.get("enable_hibernation", True)
         self.is_hibernating = False
+        self.is_waking_up = False  # Strict lock to prevent race conditions
         hotkey_str = self.config_manager.get("hotkey", "<ctrl>+<alt>+w")
         self.hotkey_listener = make_listener_from_config(hotkey_str)
         self.window_detector = WindowDetector(self.config_manager)
@@ -62,7 +64,8 @@ class WhisperAIApp:
         self.hibernation_timer = QTimer()
         self.hibernation_timer.setSingleShot(True)
         self.hibernation_timer.timeout.connect(self.hibernate_models)
-        self.hibernation_timer.start(60000)
+        if self.enable_hibernation:
+            self.hibernation_timer.start(60000)
 
         # Heavy AI models — loaded lazily on a background thread
         self.audio_worker = None
@@ -146,6 +149,9 @@ class WhisperAIApp:
             if self.asr_engine and "language" in new_settings:
                 lang_val = new_settings["language"]
                 self.asr_engine.language = None if lang_val == "auto" else lang_val
+
+        if "enable_hibernation" in new_settings:
+            self.update_hibernation_setting(new_settings["enable_hibernation"])
 
     def _check_and_download_models(self):
         from pathlib import Path
@@ -237,10 +243,27 @@ class WhisperAIApp:
         except Exception:
             pass
 
-    def hibernate_models(self):
-        """Unload ASR and LLM models from RAM after 60s idle."""
+    def update_hibernation_setting(self, enabled: bool):
         with self.state_lock:
-            if not self.is_hibernating and (self.audio_worker is None or not getattr(self.audio_worker, "isRunning", lambda: False)()):
+            self.enable_hibernation = enabled
+            if enabled:
+                if hasattr(self, 'hibernation_timer'):
+                    self.hibernation_timer.start(60000)
+                logger.info("[App] Hibernation enabled.")
+            else:
+                if hasattr(self, 'hibernation_timer'):
+                    self.hibernation_timer.stop()
+                if self.is_hibernating and not self.is_waking_up:
+                    self._trigger_wake_up()
+                logger.info("[App] Hibernation disabled. Models will stay in RAM.")
+
+    def hibernate_models(self):
+        """Unload ASR and LLM models from RAM after 60s idle if hibernation is enabled."""
+        with self.state_lock:
+            if not self.enable_hibernation or self.is_waking_up:
+                return
+            is_recording = (self.audio_worker is not None and getattr(self.audio_worker, "isRunning", lambda: False)())
+            if not self.is_hibernating and not is_recording:
                 logger.info("[App] 60s idle reached. Hibernating models to save RAM.")
                 self.is_hibernating = True
                 if self.asr_engine:
@@ -250,9 +273,52 @@ class WhisperAIApp:
                 if self.config_manager.get("voice_activation", False) and hasattr(self, 'wake_word_worker') and not self.wake_word_worker.isRunning():
                     self.wake_word_worker.start()
 
-    def start_recording_with_preroll(self, preroll_audio: np.ndarray | None = None):
+    def _trigger_wake_up(self):
+        """Trigger background wake up of ASR and LLM models with strict state guard."""
         with self.state_lock:
-            if not self._models_loaded:
+            if self.is_waking_up:
+                return
+            self.is_waking_up = True
+            self.signals.bubble_state.emit(BubbleState.PROCESSING)
+            if hasattr(self, 'bubble') and self.bubble:
+                try:
+                    self.bubble.setToolTip("Warming up models...")
+                except Exception:
+                    pass
+            self.preview_pool.submit(self._bg_wakeup_task)
+
+    def _bg_wakeup_task(self):
+        """Background worker reloading models into RAM."""
+        try:
+            with self.state_lock:
+                if self.asr_engine:
+                    self.asr_engine.wake_up()
+                if self.llm_engine:
+                    self.llm_engine.wake_up()
+        except Exception as e:
+            logger.error(f"[App] Error waking up models: {e}")
+        finally:
+            self._on_models_woken_up()
+
+    def _on_models_woken_up(self):
+        """Callback when background wake-up finishes."""
+        with self.state_lock:
+            self.is_hibernating = False
+            self.is_waking_up = False
+        self.signals.bubble_state.emit(BubbleState.IDLE)
+        if hasattr(self, 'bubble') and self.bubble:
+            try:
+                self.bubble.setToolTip("")
+            except Exception:
+                pass
+        logger.info("[App] Models reloaded successfully. Ready to dictate.")
+
+    def start_recording_with_preroll(self, preroll_audio: np.ndarray | None = None):
+        if self.enable_hibernation and hasattr(self, 'hibernation_timer'):
+            self.hibernation_timer.start(60000)
+
+        with self.state_lock:
+            if not self._models_loaded or self.is_waking_up:
                 return
             if self.audio_worker and self.audio_worker.isRunning():
                 return
@@ -338,78 +404,73 @@ class WhisperAIApp:
         self.watchdog.wrap_thread(target=self._load_models)
 
     def toggle_recording(self):
-        if hasattr(self, 'hibernation_timer'):
+        """Handle clicks on FlowBubble or manual toggle."""
+        if self.enable_hibernation and hasattr(self, 'hibernation_timer'):
             self.hibernation_timer.start(60000)
 
         with self.state_lock:
             if not self._models_loaded:
                 return
 
-            if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
-                self.wake_word_worker.stop()
+            if self.is_waking_up:
+                logger.debug("[App] Wake-up in progress. Ignoring toggle.")
+                return
 
             if self.is_hibernating:
                 logger.info("[App] Wake up triggered. Loading models...")
-                self.signals.bubble_state.emit(BubbleState.PROCESSING)
-                def _bg_wakeup():
-                    with self.state_lock:
-                        if self.asr_engine:
-                            self.asr_engine.wake_up()
-                        if self.llm_engine:
-                            self.llm_engine.wake_up()
-                        self.is_hibernating = False
-                    self.signals.bubble_state.emit(BubbleState.IDLE)
-                self.preview_pool.submit(_bg_wakeup)
+                self._trigger_wake_up()
                 return
 
-            if self.audio_worker and self.audio_worker.isRunning():
-                self.audio_worker.stop()
-                if hasattr(self.audio_worker, "quit"):
-                    self.audio_worker.quit()
-            else:
-                is_whisper = self.config_manager.get("whisper_mode", False)
-                base_vad = self.config_manager.get("vad_threshold", 0.5)
-                new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
+            self._execute_toggle_recording()
 
-                self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad)
-                self.audio_worker.connection_successful.connect(self._on_recording_started)
-                self.audio_worker.recording_failed.connect(self._on_recording_failed)
-                self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
-                self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
-                self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
+    def _execute_toggle_recording(self):
+        """The actual logic to start/stop recording."""
+        if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
+            self.wake_word_worker.stop()
 
-                self.signals.bubble_state.emit(BubbleState.PROCESSING)
-                self.audio_worker.start()
+        if self.audio_worker and self.audio_worker.isRunning():
+            self.audio_worker.stop()
+            if hasattr(self.audio_worker, "quit"):
+                self.audio_worker.quit()
+        else:
+            is_whisper = self.config_manager.get("whisper_mode", False)
+            base_vad = self.config_manager.get("vad_threshold", 0.5)
+            new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
+
+            self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad)
+            self.audio_worker.connection_successful.connect(self._on_recording_started)
+            self.audio_worker.recording_failed.connect(self._on_recording_failed)
+            self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
+            self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
+            self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
+
+            self.signals.bubble_state.emit(BubbleState.PROCESSING)
+            self.audio_worker.start()
 
     def on_hotkey_press(self):
         self.signals.hotkey_pressed.emit()
 
     def handle_hotkey_press(self):
-        if hasattr(self, 'hibernation_timer'):
+        if self.enable_hibernation and hasattr(self, 'hibernation_timer'):
             self.hibernation_timer.start(60000)
 
         with self.state_lock:
             if not self._models_loaded:
                 return
 
-            if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
-                self.wake_word_worker.stop()
+            if self.is_waking_up:
+                logger.debug("[App] Wake-up in progress. Ignoring rapid hotkey press.")
+                return
 
             if self.is_hibernating:
                 logger.info("[App] Wake up triggered from hotkey. Reloading models...")
-                self.signals.bubble_state.emit(BubbleState.PROCESSING)
-                def _bg_wakeup_hk():
-                    with self.state_lock:
-                        if self.asr_engine:
-                            self.asr_engine.wake_up()
-                        if self.llm_engine:
-                            self.llm_engine.wake_up()
-                        self.is_hibernating = False
-                    self.signals.bubble_state.emit(BubbleState.IDLE)
-                self.preview_pool.submit(_bg_wakeup_hk)
+                self._trigger_wake_up()
                 return
 
             if not (self.audio_worker and self.audio_worker.isRunning()):
+                if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
+                    self.wake_word_worker.stop()
+
                 is_whisper = self.config_manager.get("whisper_mode", False)
                 base_vad = self.config_manager.get("vad_threshold", 0.5)
                 new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
@@ -462,6 +523,9 @@ class WhisperAIApp:
 
     @Slot(object)
     def _on_recording_stopped(self, audio_data):
+        if self.enable_hibernation and hasattr(self, 'hibernation_timer'):
+            self.hibernation_timer.start(60000)
+
         self.signals.recording_stopped.emit()
         self.signals.bubble_state.emit(BubbleState.PROCESSING)
 

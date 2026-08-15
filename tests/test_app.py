@@ -181,6 +181,64 @@ def test_app_hibernation(
 @patch("src.core.app.make_listener_from_config")
 @patch("src.core.app.WindowDetector")
 @patch("src.core.app.ClipboardInjector")
+def test_app_hibernation_disabled(
+    MockInjector,
+    MockWindowDetector,
+    MockMakeListener,
+    MockLLMEngine,
+    MockASREngine,
+    MockAudioWorker,
+):
+    app = WhisperAIApp()
+    app.enable_hibernation = False
+    app._models_loaded = True
+    app.asr_engine = MagicMock()
+    app.llm_engine = MagicMock()
+
+    app.hibernate_models()
+
+    assert app.is_hibernating is False
+    app.asr_engine.hibernate.assert_not_called()
+    app.llm_engine.hibernate.assert_not_called()
+
+
+@patch("src.core.app.AudioWorker")
+@patch("src.core.app.ASREngine")
+@patch("src.core.app.LLMEngine")
+@patch("src.core.app.make_listener_from_config")
+@patch("src.core.app.WindowDetector")
+@patch("src.core.app.ClipboardInjector")
+def test_update_hibernation_setting(
+    MockInjector,
+    MockWindowDetector,
+    MockMakeListener,
+    MockLLMEngine,
+    MockASREngine,
+    MockAudioWorker,
+):
+    import time
+    app = WhisperAIApp()
+    app._models_loaded = True
+    app.asr_engine = MagicMock()
+    app.llm_engine = MagicMock()
+    app.is_hibernating = True
+
+    # Disable hibernation live
+    app.update_hibernation_setting(False)
+    assert app.enable_hibernation is False
+
+    time.sleep(0.1)
+    app.asr_engine.wake_up.assert_called_once()
+    app.llm_engine.wake_up.assert_called_once()
+    assert app.is_hibernating is False
+
+
+@patch("src.core.app.AudioWorker")
+@patch("src.core.app.ASREngine")
+@patch("src.core.app.LLMEngine")
+@patch("src.core.app.make_listener_from_config")
+@patch("src.core.app.WindowDetector")
+@patch("src.core.app.ClipboardInjector")
 def test_app_wakeup_on_toggle(
     MockInjector,
     MockWindowDetector,
@@ -233,4 +291,31 @@ def test_app_wakeup_on_hotkey(
     app.asr_engine.wake_up.assert_called_once()
     app.llm_engine.wake_up.assert_called_once()
     assert app.is_hibernating is False
+
+
+@patch("src.core.app.AudioWorker")
+@patch("src.core.app.ASREngine")
+@patch("src.core.app.LLMEngine")
+@patch("src.core.app.make_listener_from_config")
+@patch("src.core.app.WindowDetector")
+@patch("src.core.app.ClipboardInjector")
+def test_app_wakeup_race_condition_ignored(
+    MockInjector,
+    MockWindowDetector,
+    MockMakeListener,
+    MockLLMEngine,
+    MockASREngine,
+    MockAudioWorker,
+):
+    app = WhisperAIApp()
+    app._models_loaded = True
+    app.is_waking_up = True
+    app.audio_worker = None
+
+    # Should ignore toggle and hotkey presses while waking up
+    app.toggle_recording()
+    MockAudioWorker.assert_not_called()
+
+    app.handle_hotkey_press()
+    MockAudioWorker.assert_not_called()
 

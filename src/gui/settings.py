@@ -112,6 +112,19 @@ class SettingsWindow(QWidget):
         )
         general_layout.addWidget(self.auto_update_input)
 
+        self.hibernation_checkbox = QCheckBox(
+            "Enable Model Hibernation (Saves RAM, adds 1.5s delay on wake)"
+        )
+        self.hibernation_checkbox.setChecked(
+            self.config_manager.get("enable_hibernation", True)
+        )
+        self.hibernation_checkbox.setAccessibleName("Enable Model Hibernation Checkbox")
+        self.hibernation_checkbox.setAccessibleDescription(
+            "Toggle automatic unloading of models after 60 seconds of inactivity"
+        )
+        self.hibernation_checkbox.toggled.connect(self._on_hibernation_toggled)
+        general_layout.addWidget(self.hibernation_checkbox)
+
         general_layout.addStretch()
         self.general_tab.setLayout(general_layout)
         self.tabs.addTab(self.general_tab, "General")
@@ -166,6 +179,9 @@ class SettingsWindow(QWidget):
 
         self.setLayout(main_layout)
 
+    def _on_hibernation_toggled(self, checked: bool):
+        self.config_manager.set("enable_hibernation", checked)
+
     def save_settings(self):
         new_hotkey = self.hotkey_input.text()
         new_vad = self.vad_input.value()
@@ -173,6 +189,7 @@ class SettingsWindow(QWidget):
         new_language = self.language_input.currentText()
         new_whisper_mode = self.whisper_mode_input.isChecked()
         new_auto_update = self.auto_update_input.isChecked()
+        new_enable_hibernation = self.hibernation_checkbox.isChecked()
 
         self.config_manager.set("hotkey", new_hotkey)
         self.config_manager.set("vad_threshold", new_vad)
@@ -180,6 +197,7 @@ class SettingsWindow(QWidget):
         self.config_manager.set("language", new_language)
         self.config_manager.set("whisper_mode", new_whisper_mode)
         self.config_manager.set("auto_update_enabled", new_auto_update)
+        self.config_manager.set("enable_hibernation", new_enable_hibernation)
 
         self.settings_saved.emit(
             {
@@ -189,6 +207,7 @@ class SettingsWindow(QWidget):
                 "language": new_language,
                 "whisper_mode": new_whisper_mode,
                 "auto_update_enabled": new_auto_update,
+                "enable_hibernation": new_enable_hibernation,
             }
         )
         self.close()

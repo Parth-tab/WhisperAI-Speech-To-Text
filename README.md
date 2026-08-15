@@ -5,7 +5,7 @@
 <div align="center">
   <!-- Group 1: CI/CD & Audit Score -->
   <img src="https://img.shields.io/badge/Build-Passing-brightgreen" alt="Build"/>
-  <img src="https://img.shields.io/badge/Tests-156%20Passing-brightgreen" alt="Tests"/>
+  <img src="https://img.shields.io/badge/Tests-160%20Passing-brightgreen" alt="Tests"/>
   <img src="https://img.shields.io/badge/Cross_Industry_Audit-95.6%2F100-brightgreen" alt="Cross-Industry Score"/>
   <img src="https://img.shields.io/badge/Memory_Circuit_Breaker-Active-blue" alt="Circuit Breaker"/>
   <br/>
@@ -60,10 +60,11 @@ Raw Audio ──► [1. ASRStage] (distil-large-v3)
 ```
 * **Smart Fast-Path Bypass:** Explicit casing commands (e.g., `"camel parse JSON"`) and pre-configured snippets automatically set `is_terminal=True`, bypassing downstream LLM inference entirely and reducing end-to-end latency to **sub-300ms**.
 
-### 2. 60-Second Auto-Hibernation Engine
-To preserve system resources during multi-tasking, WhisperAI monitors user activity:
-* After **60 seconds of idle time**, heavy ASR and LLM model weights are unloaded from RAM, dropping application memory consumption from **~4.5GB peak to <200MB baseline**.
-* Upon voice activation or hotkey press, an asynchronous background loader wakes the pipeline with a seamless **1.5-second warm-up**, completely eliminating UI stutters.
+### 2. Adaptive Model Hibernation (User-Toggleable)
+To support both low-RAM and high-performance workflows, WhisperAI features a configurable hibernation engine:
+*   **Eco Mode (Default):** Models unload from RAM after 60 seconds of inactivity, dropping memory usage from 4.5GB to <200MB. A thread-safe `is_waking_up` state lock ensures rapid hotkey presses during the 1.5s reload sequence are safely ignored without crashing.
+*   **Performance Mode:** Users with 16GB+ RAM can disable the toggle in Settings to keep models pinned in memory permanently, ensuring zero-latency dictation during long continuous sessions.
+*   Settings are applied live instantly—no application restart required.
 
 ### 3. Zero-Copy Lock-Free Audio Ring Buffer
 * High-velocity dictation (200+ WPM) and background CPU contention can cause standard Python list buffers (`audio_chunks.append()`) to suffer from heap reallocation delays and dropped audio samples.
@@ -102,6 +103,9 @@ sequenceDiagram
 ---
 
 ## ✨ Features & Domain Intelligence
+
+* ⚙️ **Live Settings Application:**
+  * Hibernation and other performance toggles can be switched on/off instantly via the Settings UI without requiring an app restart, utilizing thread-safe state updates.
 
 * 🎙️ **Hands-Free Voice Activation (`WakeWordWorker`):**
   * Operates a continuous 1-second circular pre-roll buffer at 16kHz (`deque(maxlen=16000)`).
@@ -197,7 +201,7 @@ uv venv
 .venv\Scripts\activate
 uv sync
 
-# 3. Run the automated test suite (156 passing tests)
+# 3. Run the automated test suite (160 passing tests)
 pytest
 
 # 4. Compile the standalone executable
