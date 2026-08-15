@@ -65,3 +65,7 @@ scratch/
 # 9. System Trash
 .DS_Store
 Thumbs.db
+
+# 10. Local Agent Skills & Workspaces
+.agents/
+.agent/
