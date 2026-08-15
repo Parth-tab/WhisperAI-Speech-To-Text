@@ -5,9 +5,16 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build-and-release:
     runs-on: windows-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,32 +33,33 @@ jobs:
         run: uv pip install --system -e .
 
       - name: Build Executable
-        run: pyinstaller WhisperAI.spec --clean
+        run: pyinstaller WhisperAI.spec --clean --noconfirm
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress
 
       - name: Build Installer
         run: |
-          # Assuming Inno Setup CLI is available as iscc
-          iscc installer/setup.iss
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer/setup.iss
+          if (Test-Path "installer/Output/WhisperAISetup.exe") {
+            Copy-Item "installer/Output/WhisperAISetup.exe" "WhisperAISetup.exe" -Force
+          }
 
-      - name: Code Signing
+      - name: Generate Checksums
         run: |
-          # Placeholder for Azure SignTool or other code signing utility
-          # sign_tool.exe sign /f cert.pfx /p password dist/WhisperAI.exe
-          # sign_tool.exe sign /f cert.pfx /p password installer/Output/WhisperAISetup.exe
-          echo "Code signing step"
-
-      - name: Generate Model & Executable Checksums
-        run: |
-          # SHA-256 hashes for the .exe and specific GGUF / Whisper models
           certutil -hashfile dist/WhisperAI.exe SHA256 > dist/checksums.txt
-          # certutil -hashfile models/qwen.gguf SHA256 >> dist/checksums.txt
-        
+          if (Test-Path "installer/Output/WhisperAISetup.exe") {
+            certutil -hashfile installer/Output/WhisperAISetup.exe SHA256 >> dist/checksums.txt
+          }
+
       - name: Publish Release
         uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             dist/WhisperAI.exe
             installer/Output/WhisperAISetup.exe
+            WhisperAISetup.exe
             dist/checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
