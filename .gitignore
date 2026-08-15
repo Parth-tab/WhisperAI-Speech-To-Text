@@ -23,6 +23,7 @@ htmlcov/
 # 3. Build Artifacts (PyInstaller Protection)
 build/
 dist/
+installer/Output/
 *.spec
 !WhisperAI.spec
 
