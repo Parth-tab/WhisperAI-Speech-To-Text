@@ -1,5 +1,8 @@
 import time
+import logging
 from src.teams.api_client import team_api
+
+logger = logging.getLogger("whisperai")
 
 
 class AuthManager:
@@ -11,7 +14,7 @@ class AuthManager:
         """
         Scaffold logic for authenticating a team user.
         """
-        print(f"[Auth] Attempting login for {email}...")
+        logger.info(f"[Auth] Attempting login for {email}...")
         time.sleep(0.5)
 
         # Mock successful auth
@@ -19,17 +22,17 @@ class AuthManager:
             self.is_authenticated = True
             self.user_email = email
             team_api.set_token(f"mock_token_for_{email}")
-            print("[Auth] Login successful.")
+            logger.info("[Auth] Login successful.")
             return True
 
-        print("[Auth] Login failed.")
+        logger.warning("[Auth] Login failed.")
         return False
 
     def logout(self):
         self.is_authenticated = False
         self.user_email = None
         team_api.set_token(None)
-        print("[Auth] Logged out.")
+        logger.info("[Auth] Logged out.")
 
 
 auth_manager = AuthManager()

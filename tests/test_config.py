@@ -7,7 +7,7 @@ def test_config_manager_defaults(tmp_path):
 
     assert manager.get("hotkey") == "<ctrl>+<alt>+w"
     assert manager.get("vad_threshold") == 0.5
-    assert manager.get("model_selection") == "base"
+    assert manager.get("model_selection") == "distil-large-v3"
 
 
 def test_config_manager_save_load(tmp_path):
@@ -21,7 +21,7 @@ def test_config_manager_save_load(tmp_path):
     manager2 = ConfigManager(config_path=str(config_file))
     assert manager2.get("hotkey") == "<shift>+<space>"
     assert manager2.get("vad_threshold") == 0.7
-    assert manager2.get("model_selection") == "base"
+    assert manager2.get("model_selection") == "distil-large-v3"
 
 
 def test_config_manager_invalid_load(tmp_path):

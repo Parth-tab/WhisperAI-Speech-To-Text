@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from PySide6.QtCore import QThread, Signal, Qt
 from PySide6.QtWidgets import QMessageBox, QProgressDialog, QApplication
+from packaging.version import parse
 from src.core.version import __version__
 
 class UpdateCheckWorker(QThread):
@@ -20,7 +21,7 @@ class UpdateCheckWorker(QThread):
                 data = json.loads(response.read().decode())
                 
                 latest_version = data.get("tag_name", "")
-                if latest_version and latest_version > __version__:
+                if latest_version and parse(latest_version) > parse(__version__):
                     # Find the setup.exe asset
                     download_url = None
                     for asset in data.get("assets", []):

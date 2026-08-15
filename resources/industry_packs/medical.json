@@ -1,0 +1,33 @@
+{
+    "pack_name": "Medical / Clinical (RxNorm & SOAP)",
+    "terms": [
+        "hydrochlorothiazide",
+        "lisinopril",
+        "atorvastatin",
+        "metformin",
+        "amlodipine",
+        "metoprolol",
+        "omeprazole",
+        "losartan",
+        "albuterol",
+        "gabapentin",
+        "hydrocodone",
+        "acetaminophen",
+        "furosemide",
+        "pantoprazole",
+        "prednisone",
+        "escitalopram",
+        "fluticasone",
+        "amoxicillin",
+        "dextroamphetamine",
+        "SOAP",
+        "RxNorm",
+        "ISMP",
+        "SpO2",
+        "BUN",
+        "eGFR",
+        "HbA1c",
+        "echocardiogram",
+        "electrocardiogram"
+    ]
+}

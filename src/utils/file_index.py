@@ -1,8 +1,11 @@
 import os
 import psutil
+import logging
 from typing import Dict, List
 import difflib
 import time
+
+logger = logging.getLogger("whisperai")
 
 
 class FileIndexer:
@@ -16,7 +19,7 @@ class FileIndexer:
             cwd = process.cwd()
             return cwd
         except Exception as e:
-            print(f"[FileIndexer] Error getting cwd for pid {pid}: {e}")
+            logger.warning(f"[FileIndexer] Error getting cwd for pid {pid}: {e}")
             return ""
 
     def scan_workspace(self, workspace_path: str) -> List[str]:
@@ -31,7 +34,7 @@ class FileIndexer:
         ):
             return self.workspace_cache[workspace_path]
 
-        print(f"[FileIndexer] Scanning workspace: {workspace_path}")
+        logger.info(f"[FileIndexer] Scanning workspace: {workspace_path}")
         files = []
 
         # Avoid traversing deep/irrelevant directories
@@ -62,16 +65,23 @@ class FileIndexer:
                         break
 
                 if len(files) >= 10000:
-                    print(
+                    logger.warning(
                         f"[FileIndexer] Warning: Max file limit (10000) reached for {workspace_path}. Aborting deep scan."
                     )
                     break
         except Exception as e:
-            print(f"[FileIndexer] Error scanning workspace: {e}")
+            logger.error(f"[FileIndexer] Error scanning workspace: {e}")
+
+        # Evict oldest cache entries if limit reached (>20 workspaces)
+        if len(self.workspace_cache) > 20:
+            oldest_ws = min(self.last_scanned, key=self.last_scanned.get, default=None)
+            if oldest_ws and oldest_ws in self.workspace_cache:
+                del self.workspace_cache[oldest_ws]
+                del self.last_scanned[oldest_ws]
 
         self.workspace_cache[workspace_path] = list(set(files))
         self.last_scanned[workspace_path] = now
-        print(f"[FileIndexer] Found {len(files)} files.")
+        logger.info(f"[FileIndexer] Found {len(files)} files.")
         return self.workspace_cache[workspace_path]
 
     def fuzzy_find_file(self, workspace_path: str, query: str) -> str:

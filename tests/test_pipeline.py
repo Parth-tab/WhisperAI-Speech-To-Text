@@ -22,7 +22,7 @@ def test_ai_pipeline():
     from unittest.mock import ANY
 
     mock_asr.transcribe.assert_called_once_with(
-        audio_data, dictionary=ANY, whisper_mode=True, trim_db=-55.0, rms_min=0.003
+        audio_data, dictionary=ANY, profile_id="general", language=ANY, rms_min=0.003, trim_db=-55.0
     )
 
     # pre_filter_text should have removed "uh" and "um"

@@ -90,11 +90,37 @@ class DownloaderDialog(QDialog):
     def __init__(self, config_manager, parent=None):
         super().__init__(parent)
         self.setWindowTitle("WhisperAI - Initializing")
-        self.setFixedSize(400, 150)
+        self.setMinimumSize(420, 170)
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
         
+        from src.utils.theme_compiler import compile_qss
+        qss_template = """
+            QDialog {
+                background-color: {{bg_primary}};
+                color: {{text_primary}};
+                font-family: 'Segoe UI', sans-serif;
+            }
+            QLabel {
+                color: {{text_primary}};
+            }
+            QProgressBar {
+                border: 1px solid {{border_subtle}};
+                border-radius: 4px;
+                text-align: center;
+                background-color: {{bg_secondary}};
+                color: {{text_primary}};
+            }
+            QProgressBar::chunk {
+                background-color: {{accent_idle}};
+                border-radius: 3px;
+            }
+        """
+        self.setStyleSheet(compile_qss(qss_template, "dark"))
+
         layout = QVBoxLayout(self)
-        
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(12)
+
         self.info_label = QLabel("Downloading required AI models for first run.\nThis may take a few minutes depending on your internet connection.")
         self.info_label.setWordWrap(True)
         self.info_label.setAlignment(Qt.AlignCenter)
@@ -123,4 +149,4 @@ class DownloaderDialog(QDialog):
         
     def handle_error(self, err_msg):
         self.status_label.setText(f"Error: {err_msg}")
-        self.status_label.setStyleSheet("color: red;")
+        self.status_label.setStyleSheet("color: #EF4444; font-weight: bold;")

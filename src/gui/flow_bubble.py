@@ -3,7 +3,14 @@ import ctypes
 from ctypes import wintypes
 from enum import Enum
 
-from PySide6.QtWidgets import QApplication, QWidget, QFrame, QHBoxLayout, QLabel
+from PySide6.QtWidgets import (
+    QApplication,
+    QWidget,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QGraphicsDropShadowEffect,
+)
 from PySide6.QtCore import (
     Qt,
     QPropertyAnimation,
@@ -12,14 +19,18 @@ from PySide6.QtCore import (
     QTimer,
     Signal,
     QSize,
+    QPoint,
 )
 from PySide6.QtGui import QPainter, QColor, QPen, QPixmap
 from src.utils.paths import get_asset_path
+from src.utils.theme_compiler import compile_qss
+from src.utils.caret_tracker import get_active_caret_coordinates
 
 
 def set_no_activate(hwnd):
     GWL_EXSTYLE = -20
     WS_EX_NOACTIVATE = 0x08000000
+    WS_EX_TOOLWINDOW = 0x00000080
 
     if sys.maxsize > 2**32:
         GetWindowLong = ctypes.windll.user32.GetWindowLongPtrW
@@ -36,7 +47,17 @@ def set_no_activate(hwnd):
 
     ex_style = GetWindowLong(hwnd, GWL_EXSTYLE)
     if ex_style != 0 or ctypes.GetLastError() == 0:
-        SetWindowLong(hwnd, GWL_EXSTYLE, ex_style | WS_EX_NOACTIVATE)
+        target_style = ex_style | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW
+        if ex_style != target_style:
+            SetWindowLong(hwnd, GWL_EXSTYLE, target_style)
+            SWP_NOMOVE = 0x0002
+            SWP_NOSIZE = 0x0001
+            SWP_NOZORDER = 0x0004
+            SWP_FRAMECHANGED = 0x0020
+            ctypes.windll.user32.SetWindowPos(
+                hwnd, 0, 0, 0, 0, 0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
+            )
 
 
 class WaveformWidget(QWidget):
@@ -49,7 +70,7 @@ class WaveformWidget(QWidget):
 
     def update_level(self, rms):
         self.levels.pop(0)
-        self.levels.append(min(1.0, rms * 15.0))  # Scale appropriately
+        self.levels.append(min(1.0, rms * 15.0))
         self.update()
 
     def paintEvent(self, event):
@@ -113,26 +134,34 @@ class FlowBubble(QWidget):
         super().__init__()
         self.config_manager = config_manager
 
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setAttribute(Qt.WA_ShowWithoutActivating)
 
         self.state = BubbleState.IDLE
         self.drag_pos = None
         self.click_pos = None
 
-        self.setFixedSize(50, 50)
-        self.setWindowOpacity(0.6)
-
+        # Parent margin container layout to host QGraphicsDropShadowEffect cleanly
         self.layout = QHBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(12, 12, 12, 12)
 
         self.bg_frame = QFrame(self)
-        self.bg_frame.setStyleSheet("""
+        qss_template = """
             QFrame {
-                background-color: #111111;
+                background-color: {{bg_bubble}};
                 border-radius: 25px;
             }
-        """)
+        """
+        self.bg_frame.setStyleSheet(compile_qss(qss_template, "dark"))
+
+        # Attach clean drop shadow to inner QFrame
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(16)
+        shadow.setColor(QColor(0, 0, 0, 150))
+        shadow.setOffset(0, 4)
+        self.bg_frame.setGraphicsEffect(shadow)
+
         self.bg_layout = QHBoxLayout(self.bg_frame)
         self.bg_layout.setContentsMargins(10, 10, 10, 10)
         self.bg_layout.setSpacing(10)
@@ -150,20 +179,34 @@ class FlowBubble(QWidget):
         )
 
         self.icon_label.setStyleSheet("background-color: white; border-radius: 15px;")
-
         self.bg_layout.addWidget(self.icon_label)
 
         self.waveform = WaveformWidget()
         self.waveform.hide()
         self.bg_layout.addWidget(self.waveform)
 
+        self.preview_label = QLabel()
+        self.preview_label.setStyleSheet("color: #E2E8F0; font-size: 11px; font-weight: 500;")
+        self.preview_label.hide()
+        self.bg_layout.addWidget(self.preview_label)
+
         self.spinner = SpinnerWidget()
         self.spinner.hide()
         self.bg_layout.addWidget(self.spinner)
 
-        self.anim = QPropertyAnimation(self, b"size")
-        self.anim.setEasingCurve(QEasingCurve.OutCubic)
-        self.anim.setDuration(250)
+        self.setMinimumSize(74, 74)
+        self.setMaximumSize(16777215, 16777215)
+        self.resize(74, 74)
+        self.setWindowOpacity(0.6)
+
+        # Animations
+        self.anim_size = QPropertyAnimation(self, b"size")
+        self.anim_size.setEasingCurve(QEasingCurve.OutCubic)
+        self.anim_size.setDuration(250)
+
+        self.anim_move = QPropertyAnimation(self, b"pos")
+        self.anim_move.setEasingCurve(QEasingCurve.OutCubic)
+        self.anim_move.setDuration(200)
 
         self._load_position()
 
@@ -175,11 +218,40 @@ class FlowBubble(QWidget):
     def _load_position(self):
         if self.config_manager:
             pos = self.config_manager.get("bubble_pos", None)
-            if pos and len(pos) == 2:
+            if pos and len(pos) == 2 and pos[0] > 0 and pos[1] > 0:
                 self.move(pos[0], pos[1])
-            else:
-                screen = QApplication.primaryScreen().geometry()
-                self.move(screen.width() - 300, screen.height() - 200)
+                return
+        
+        self.update_position_near_caret(force=True)
+
+    def update_position_near_caret(self, force: bool = False):
+        """Update bubble location near active text cursor ONLY if a valid text caret is detected."""
+        from src.utils.caret_tracker import get_win32_caret_coords
+        coords = get_win32_caret_coords()
+        if coords is None:
+            return  # Stay anchored in current position; do NOT jump to workarea fallbacks!
+            
+        x, y = coords
+        target_x = max(10, x + 10)
+        target_y = max(10, y + 20)
+
+        screen = QApplication.primaryScreen()
+        if screen:
+            geo = screen.availableGeometry()
+            target_x = max(geo.left() + 10, min(target_x, geo.right() - self.width() - 10))
+            target_y = max(geo.top() + 10, min(target_y, geo.bottom() - self.height() - 10))
+
+        curr_pos = self.pos()
+        dx = abs(curr_pos.x() - target_x)
+        dy = abs(curr_pos.y() - target_y)
+
+        if force or dx >= 25 or dy >= 25:
+            self.smooth_move(target_x, target_y)
+
+    def smooth_move(self, x: int, y: int):
+        self.anim_move.setStartValue(self.pos())
+        self.anim_move.setEndValue(QPoint(x, y))
+        self.anim_move.start()
 
     def _save_position(self):
         if self.config_manager:
@@ -220,14 +292,22 @@ class FlowBubble(QWidget):
 
     def set_state(self, state: BubbleState):
         self.state = state
+        self.show()
+        self.raise_()
+
+        if state == BubbleState.RECORDING:
+            self.update_position_near_caret(force=False)
+
         if state == BubbleState.IDLE:
             self.setWindowOpacity(0.6)
             self.waveform.hide()
             self.spinner.hide()
+            self.preview_label.hide()
+            self.preview_label.setText("")
             self.icon_label.setStyleSheet(
                 "background-color: white; border-radius: 15px;"
             )
-            self.animate_size(50, 50)
+            self.animate_size(74, 74)
         elif state == BubbleState.RECORDING:
             self.setWindowOpacity(1.0)
             self.waveform.show()
@@ -241,21 +321,39 @@ class FlowBubble(QWidget):
             self.icon_label.setStyleSheet(
                 f"background-color: {color}; border-radius: 15px;"
             )
-            self.animate_size(150, 50)
+            self.animate_size(174, 74)
         elif state == BubbleState.PROCESSING:
             self.setWindowOpacity(1.0)
             self.waveform.hide()
+            self.preview_label.hide()
             self.spinner.show()
             self.icon_label.setStyleSheet(
                 "background-color: #F59E0B; border-radius: 15px;"
             )
-            self.animate_size(110, 50)
+            self.animate_size(134, 74)
+
+        self.bg_frame.update()
+        self.update()
 
     def animate_size(self, w, h):
-        self.anim.setStartValue(self.size())
-        self.anim.setEndValue(QSize(w, h))
-        self.anim.start()
+        self.setMaximumSize(16777215, 16777215)
+        self.anim_size.setStartValue(self.size())
+        self.anim_size.setEndValue(QSize(w, h))
+        self.anim_size.start()
 
     def update_audio_level(self, rms: float):
         if self.state == BubbleState.RECORDING:
             self.waveform.update_level(rms)
+
+    def update_preview_text(self, text: str):
+        if self.state == BubbleState.RECORDING and text:
+            import re
+            from src.utils.text_cleaner import sanitize_symbol_loops
+            text = sanitize_symbol_loops(text)
+            if not text or not re.search(r"[a-zA-Z0-9]", text):
+                return
+            display_text = text[-30:] if len(text) > 30 else text
+            self.preview_label.setText(display_text)
+            self.preview_label.show()
+            new_w = min(374, max(174, 144 + len(display_text) * 7))
+            self.animate_size(new_w, 74)

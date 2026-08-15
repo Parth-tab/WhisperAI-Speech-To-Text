@@ -1,4 +1,5 @@
 def _get_windows_default_communications_device_name():
+    ole32 = None
     try:
         import ctypes
         from ctypes import wintypes
@@ -17,7 +18,8 @@ def _get_windows_default_communications_device_name():
         PKEY_Device_FriendlyName = type("PROPERTYKEY", (ctypes.Structure,), {"_fields_": [("fmtid", GUID), ("pid", DWORD)]})(GUID(0xa45c254e, 0xdf1c, 0x4efd, (BYTE*8)(0x80,0x20,0x67,0xd1,0x46,0xa8,0x50,0xe0)), 14)
         
         ole32 = ctypes.windll.ole32
-        ole32.CoInitialize(None)
+        co_init_res = ole32.CoInitialize(None)
+        com_initialized_by_us = (co_init_res == 0)  # S_OK = 0, S_FALSE = 1 (already initialized)
         
         class IPropertyStoreVtbl(ctypes.Structure):
             _fields_ = [("QueryInterface", ctypes.c_void_p), ("AddRef", ctypes.c_void_p), ("Release", ctypes.c_void_p), ("GetCount", ctypes.c_void_p), ("GetAt", ctypes.c_void_p), ("GetValue", ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.POINTER(type(PKEY_Device_FriendlyName)), ctypes.POINTER(PROPVARIANT)))]
@@ -64,5 +66,6 @@ def _get_windows_default_communications_device_name():
     except Exception:
         pass
     finally:
-        ole32.CoUninitialize()
+        if com_initialized_by_us and ole32 is not None:
+            ole32.CoUninitialize()
     return None

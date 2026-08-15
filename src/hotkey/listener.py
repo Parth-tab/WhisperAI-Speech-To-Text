@@ -1,6 +1,9 @@
 from pynput import keyboard
 from typing import Callable, Optional
 import time
+import logging
+
+logger = logging.getLogger("whisperai")
 
 
 class HotkeyListener:
@@ -77,7 +80,7 @@ class HotkeyListener:
                 try:
                     self.on_press_callback()
                 except Exception as e:
-                    print(f"Error in hotkey press callback: {e}")
+                    logger.error(f"Error in hotkey press callback: {e}")
 
     def _on_release(self, key):
         norm = self._normalise(key)
@@ -91,7 +94,7 @@ class HotkeyListener:
                 try:
                     self.on_release_callback()
                 except Exception as e:
-                    print(f"Error in hotkey release callback: {e}")
+                    logger.error(f"Error in hotkey release callback: {e}")
 
 
 def make_listener_from_config(hotkey_str: str) -> HotkeyListener:

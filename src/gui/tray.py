@@ -28,24 +28,43 @@ class SystemTrayApp(QSystemTrayIcon):
         self.setContextMenu(self.menu)
 
         self.settings_window = None
+        self.stats_dialog = None
 
     def set_icon(self):
         icon_path = get_asset_path("src/assets/branding/logo.ico")
         self.setIcon(QIcon(icon_path))
 
     def show_settings(self):
-        if not self.settings_window:
-            self.settings_window = SettingsWindow(self.config_manager)
-            if self.settings_callback:
-                self.settings_window.settings_saved.connect(self.settings_callback)
+        try:
+            if self.settings_window is not None:
+                self.settings_window.show()
+                self.settings_window.activateWindow()
+                return
+        except RuntimeError:
+            self.settings_window = None
+
+        self.settings_window = SettingsWindow(self.config_manager)
+        if self.settings_callback:
+            self.settings_window.settings_saved.connect(self.settings_callback)
         self.settings_window.show()
         self.settings_window.activateWindow()
 
     def show_stats(self):
         from src.gui.widgets.stats_dialog import StatsDialog
 
+        try:
+            if self.stats_dialog is not None:
+                self.stats_dialog.show()
+                self.stats_dialog.raise_()
+                self.stats_dialog.activateWindow()
+                return
+        except RuntimeError:
+            self.stats_dialog = None
+
         self.stats_dialog = StatsDialog()
-        self.stats_dialog.exec()
+        self.stats_dialog.show()
+        self.stats_dialog.raise_()
+        self.stats_dialog.activateWindow()
 
     def quit_app(self):
         self.quit_callback()

@@ -6,28 +6,50 @@ binaries_list = []
 binaries_list += collect_dynamic_libs('llama_cpp')
 binaries_list += collect_dynamic_libs('ctranslate2')
 binaries_list += collect_dynamic_libs('sounddevice')
+try:
+    binaries_list += collect_dynamic_libs('onnxruntime')
+except Exception:
+    pass
 
 datas_list = []
 datas_list += collect_data_files('llama_cpp')
 datas_list += collect_data_files('faster_whisper')
 datas_list += collect_data_files('sounddevice')
+try:
+    datas_list += collect_data_files('onnxruntime')
+except Exception:
+    pass
 for pkg in ['tqdm', 'regex', 'huggingface-hub']:
     try:
         datas_list += copy_metadata(pkg)
     except Exception:
         pass
 
-datas_list += [('src/assets/branding/*', 'src/assets/branding')]
+datas_list += [
+    ('src/assets/branding/*', 'src/assets/branding'),
+    ('src/assets/logo.png', 'src/assets'),
+    ('resources/*', 'resources'),
+    ('resources/industry_packs/*', 'resources/industry_packs'),
+]
 
 a = Analysis(
     ['src/main.py'],
     pathex=[],
     binaries=binaries_list,
     datas=datas_list,
-    hiddenimports=['llama_cpp', 'faster_whisper', 'ctranslate2', 'tiktoken_ext.openai_public', 'tiktoken_ext'],
-    hookspath=[],
+    hiddenimports=[
+        'llama_cpp',
+        'faster_whisper',
+        'ctranslate2',
+        'tiktoken_ext.openai_public',
+        'tiktoken_ext',
+        'scipy.signal',
+        'sqlite3',
+        'packaging.version'
+    ],
+    hookspath=['hooks'],
     hooksconfig={},
-    runtime_hooks=[],
+    runtime_hooks=['rthooks/rthook_llama_cpp.py'],
     excludes=[],
     noarchive=False,
     optimize=0,

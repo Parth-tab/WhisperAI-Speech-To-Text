@@ -7,7 +7,9 @@ class PromptBuilder:
             "2. If the user restarts mid-sentence, output ONLY their final intent. Discard false starts.\n"
             "3. If input contains <original> and <correction> tags, use ONLY the <correction> content.\n"
             "4. When the user says ordinal words (first/second/third) or 'number one/two/three', output a numbered list. Each list item MUST be on its own line separated by a newline character. NEVER merge list items into a single paragraph. Correct format: '1. Item one\\n2. Item two\\n3. Item three'.\n"
-            "5. Return ONLY the cleaned text. NEVER explain. NEVER add commentary.\n\n"
+            "5. Return ONLY the cleaned text. NEVER explain. NEVER add commentary.\n"
+            "6. CRITICAL: Do NOT copy, echo, or output any text from Context or Target App. Output ONLY the user's spoken words.\n"
+            "7. CRITICAL: NEVER repeat letters (e.g. llll, tttt, gggg) or symbols (e.g. ????, .....). Discard any repetitive noise entirely.\n\n"
         )
         self.style_addon = ""
         self.mode_addon = ""

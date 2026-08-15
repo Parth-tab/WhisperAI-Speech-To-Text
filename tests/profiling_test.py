@@ -46,8 +46,8 @@ def test_profiling_and_split_pass():
         from llama_cpp import LlamaRAMCache
 
         mock_cache_cls.return_value = LlamaRAMCache(capacity_bytes=16 << 20)
-        # 2. Instantiate real LLMEngine with smaller n_ctx to stay under 1.5GB
-        llm = LLMEngine(n_ctx=512)
+        # 2. Instantiate real LLMEngine with n_ctx=1024 to stay under 1.5GB
+        llm = LLMEngine(n_ctx=1024)
 
     # Measure memory after loading LLM
     gc.collect()

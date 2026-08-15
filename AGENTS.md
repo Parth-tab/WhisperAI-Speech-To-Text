@@ -155,3 +155,20 @@ When something is broken, follow this sequence:
 ---
 
 *Think like an owner of this codebase, not a temporary contributor.*
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live in GitHub Issues (`Parth-tab/WhisperAI-Speech-To-Text`). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical triage roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout (`CONTEXT.md` at repo root + `docs/adr/`). See `docs/agents/domain.md`.
+

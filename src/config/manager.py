@@ -3,20 +3,46 @@ import json
 import tempfile
 import threading
 import copy
+import logging
 from pathlib import Path
+
+logger = logging.getLogger("whisperai")
 
 
 class ConfigManager:
     DEFAULT_CONFIG = {
         "hotkey": "<ctrl>+<alt>+w",
         "vad_threshold": 0.5,
-        "model_selection": "base",
+        "model_selection": "distil-large-v3",
+        "use_gpu": True,
+        "language": "auto",
+        "auto_update_enabled": True,
         "dictionary": [],
-        "snippets": {},
+        "snippets": {
+            "insert date": "{date}",
+        },
+        "app_styles": {
+            "code.exe": "technical",
+            "cursor.exe": "technical",
+            "devenv.exe": "technical",
+            "unrealeditor.exe": "technical",
+            "rider64.exe": "technical",
+            "goland64.exe": "technical",
+            "pycharm64.exe": "technical",
+            "windowsterminal.exe": "technical",
+            "obsidian.exe": "technical",
+            "slack.exe": "casual",
+            "discord.exe": "casual",
+            "outlook.exe": "email",
+            "winword.exe": "formal",
+            "excel.exe": "financial",
+            "powerpnt.exe": "formal",
+        },
         "whisper_mode": False,
         "whisper_vad_threshold": 0.2,
         "whisper_trim_db": -55.0,
         "whisper_rms_min": 0.003,
+        "voice_activation": False,
     }
 
     def __init__(self, config_path=None):
@@ -38,7 +64,7 @@ class ConfigManager:
                         data = json.load(f)
                         self.config.update(data)
                 except Exception as e:
-                    print(f"Error loading config: {e}. Backing up corrupted file.")
+                    logger.error(f"Error loading config: {e}. Backing up corrupted file.")
                     import shutil
 
                     try:
@@ -53,11 +79,16 @@ class ConfigManager:
             try:
                 self.config_dir.mkdir(parents=True, exist_ok=True)
                 fd, tmp_path = tempfile.mkstemp(dir=self.config_dir, suffix=".tmp")
-                with os.fdopen(fd, "w") as f:
-                    json.dump(self.config, f, indent=4)
-                os.replace(tmp_path, self.config_path)  # atomic on Windows NTFS
+                try:
+                    with os.fdopen(fd, "w") as f:
+                        json.dump(self.config, f, indent=4)
+                    os.replace(tmp_path, self.config_path)  # atomic on Windows NTFS
+                except Exception:
+                    if os.path.exists(tmp_path):
+                        os.remove(tmp_path)
+                    raise
             except Exception as e:
-                print(f"Error saving config: {e}")
+                logger.error(f"Error saving config: {e}")
 
     def get(self, key, default=None):
         with self._lock:

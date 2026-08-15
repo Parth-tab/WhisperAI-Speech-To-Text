@@ -1,5 +1,8 @@
+import logging
 from src.teams.api_client import team_api
 from src.config.manager import ConfigManager
+
+logger = logging.getLogger("whisperai")
 
 
 class TeamSyncManager:
@@ -14,7 +17,7 @@ class TeamSyncManager:
         if not self.config.get("team_sync_enabled", False):
             return False
 
-        print("[TeamSync] Starting background sync...")
+        logger.info("[TeamSync] Starting background sync...")
 
         # 1. Dictionary Sync
         local_dict = self.config.get("dictionary", [])
@@ -37,5 +40,5 @@ class TeamSyncManager:
         if merged_snippets != local_snippets:
             self.config.set("snippets", merged_snippets)
 
-        print("[TeamSync] Sync complete.")
+        logger.info("[TeamSync] Sync complete.")
         return True

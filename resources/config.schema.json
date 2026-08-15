@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WhisperAI Configuration",
+  "description": "JSON schema for the primary WhisperAI config.json",
+  "type": "object",
+  "properties": {
+    "hotkey": {
+      "type": "string",
+      "description": "The global keyboard shortcut used to toggle dictation (e.g., '<ctrl>+<alt>+w').",
+      "default": "<ctrl>+<alt>+w"
+    },
+    "vad_threshold": {
+      "type": "number",
+      "description": "Voice Activity Detection confidence threshold [0.0 - 1.0]. Higher is stricter.",
+      "default": 0.5
+    },
+    "model_selection": {
+      "type": "string",
+      "description": "The Faster-Whisper model size to load (e.g., 'tiny', 'base', 'small', 'medium').",
+      "default": "base",
+      "enum": ["tiny", "base", "small", "medium", "large-v2", "large-v3"]
+    },
+    "dictionary": {
+      "type": "array",
+      "description": "List of custom vocabulary words to bias the ASR engine towards recognizing.",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "snippets": {
+      "type": "object",
+      "description": "Key-value pairs for voice macros. Keys are spoken triggers, values are the injected text.",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "whisper_mode": {
+      "type": "boolean",
+      "description": "If true, optimizes acoustic parameters for hushed speaking.",
+      "default": false
+    },
+    "whisper_vad_threshold": {
+      "type": "number",
+      "description": "Secondary VAD threshold when whisper_mode is active.",
+      "default": 0.2
+    },
+    "whisper_trim_db": {
+      "type": "number",
+      "description": "Decibel threshold for silence trimming before inference.",
+      "default": -55.0
+    },
+    "whisper_rms_min": {
+      "type": "number",
+      "description": "Minimum Root Mean Square (RMS) audio energy required to trigger transcription.",
+      "default": 0.003
+    }
+  },
+  "required": ["hotkey", "model_selection"]
+}

@@ -54,7 +54,9 @@ def test_app_hotkey_callbacks(
     app.audio_worker.isRunning.return_value = True
 
     app.handle_hotkey_release()
-    app.audio_worker.stop.assert_called_once()
+    app.audio_worker = None  # Reset by _stop_audio_worker_safely
+    MockAudioWorker.return_value.stop.assert_called_once()
+    MockAudioWorker.return_value.quit.assert_called_once()
 
 
 @patch("src.core.app.AudioWorker")
@@ -142,3 +144,91 @@ def test_on_audio_chunk(
 
     # It should not put anything into the queue since it's disabled
     assert app.transcription_queue.empty()
+
+
+@patch("src.core.app.AudioWorker")
+@patch("src.core.app.ASREngine")
+@patch("src.core.app.LLMEngine")
+@patch("src.core.app.make_listener_from_config")
+@patch("src.core.app.WindowDetector")
+@patch("src.core.app.ClipboardInjector")
+def test_app_hibernation(
+    MockInjector,
+    MockWindowDetector,
+    MockMakeListener,
+    MockLLMEngine,
+    MockASREngine,
+    MockAudioWorker,
+):
+    app = WhisperAIApp()
+    app._models_loaded = True
+    app.asr_engine = MagicMock()
+    app.llm_engine = MagicMock()
+
+    # Trigger hibernation (as would happen after 60s idle)
+    app.hibernate_models()
+
+    assert app.is_hibernating is True
+    app.asr_engine.hibernate.assert_called_once()
+    app.llm_engine.hibernate.assert_called_once()
+
+
+@patch("src.core.app.AudioWorker")
+@patch("src.core.app.ASREngine")
+@patch("src.core.app.LLMEngine")
+@patch("src.core.app.make_listener_from_config")
+@patch("src.core.app.WindowDetector")
+@patch("src.core.app.ClipboardInjector")
+def test_app_wakeup_on_toggle(
+    MockInjector,
+    MockWindowDetector,
+    MockMakeListener,
+    MockLLMEngine,
+    MockASREngine,
+    MockAudioWorker,
+):
+    import time
+    app = WhisperAIApp()
+    app._models_loaded = True
+    app.asr_engine = MagicMock()
+    app.llm_engine = MagicMock()
+    app.is_hibernating = True
+
+    app.toggle_recording()
+
+    # Wait for pool background task to execute
+    time.sleep(0.1)
+    app.asr_engine.wake_up.assert_called_once()
+    app.llm_engine.wake_up.assert_called_once()
+    assert app.is_hibernating is False
+
+
+@patch("src.core.app.AudioWorker")
+@patch("src.core.app.ASREngine")
+@patch("src.core.app.LLMEngine")
+@patch("src.core.app.make_listener_from_config")
+@patch("src.core.app.WindowDetector")
+@patch("src.core.app.ClipboardInjector")
+def test_app_wakeup_on_hotkey(
+    MockInjector,
+    MockWindowDetector,
+    MockMakeListener,
+    MockLLMEngine,
+    MockASREngine,
+    MockAudioWorker,
+):
+    import time
+    app = WhisperAIApp()
+    app._models_loaded = True
+    app.asr_engine = MagicMock()
+    app.llm_engine = MagicMock()
+    app.is_hibernating = True
+
+    app.handle_hotkey_press()
+
+    # Wait for pool background task to execute
+    time.sleep(0.1)
+    app.asr_engine.wake_up.assert_called_once()
+    app.llm_engine.wake_up.assert_called_once()
+    assert app.is_hibernating is False
+

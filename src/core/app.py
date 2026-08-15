@@ -3,11 +3,15 @@ import threading
 import queue
 import platform
 import psutil
+import logging
 from concurrent.futures import ThreadPoolExecutor
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtGui import QIcon
 from src.utils.paths import get_asset_path
+
+logger = logging.getLogger("whisperai")
+
 
 from src.asr.engine import ASREngine
 from src.llm.engine import LLMEngine
@@ -37,17 +41,26 @@ class AppSignals(QObject):
 
 class WhisperAIApp:
     def __init__(self):
+        self.hotkey_listener = None
         self.config_manager = ConfigManager()
         self.state_lock = threading.RLock()
         self._models_loaded = False
         self.transcription_queue = queue.Queue()
+        self.preview_pool = ThreadPoolExecutor(max_workers=2)
 
         # Lightweight components — initialise immediately
+        self.is_hibernating = False
         hotkey_str = self.config_manager.get("hotkey", "<ctrl>+<alt>+w")
-        pass
         self.hotkey_listener = make_listener_from_config(hotkey_str)
         self.window_detector = WindowDetector(self.config_manager)
         self.injector = ClipboardInjector()
+
+        # Hibernation Timer (60 seconds idle)
+        from PySide6.QtCore import QTimer
+        self.hibernation_timer = QTimer()
+        self.hibernation_timer.setSingleShot(True)
+        self.hibernation_timer.timeout.connect(self.hibernate_models)
+        self.hibernation_timer.start(60000)
 
         # Heavy AI models — loaded lazily on a background thread
         self.audio_worker = None
@@ -73,8 +86,9 @@ class WhisperAIApp:
         self.bubble.clicked.connect(self.toggle_recording)
         self.signals.audio_level.connect(self.bubble.update_audio_level)
         self.signals.bubble_state.connect(self.bubble.set_state)
-        self.signals.hotkey_pressed.connect(self.handle_hotkey_press)
-        self.signals.hotkey_released.connect(self.handle_hotkey_release)
+        from PySide6.QtCore import Qt
+        self.signals.hotkey_pressed.connect(self.handle_hotkey_press, Qt.QueuedConnection)
+        self.signals.hotkey_released.connect(self.handle_hotkey_release, Qt.QueuedConnection)
         self.bubble.show()
 
         # Tray — visible immediately so user knows app is running
@@ -94,10 +108,14 @@ class WhisperAIApp:
 
         from src.core.telemetry import telemetry
         from src.core.watchdog import watchdog
+        from src.audio.wake_word_worker import WakeWordWorker
 
         self.telemetry = telemetry
         self.watchdog = watchdog
         self.watchdog.on_deadlock = self._on_deadlock
+
+        self.wake_word_worker = WakeWordWorker()
+        self.wake_word_worker.wake_word_detected.connect(self.start_recording_with_preroll)
 
     def on_settings_saved(self, new_settings: dict):
         new_hotkey = new_settings.get("hotkey")
@@ -121,10 +139,12 @@ class WhisperAIApp:
             new_vad = self.config_manager.get("whisper_vad_threshold", 0.2)
         else:
             new_vad = base_vad
-
         with self.state_lock:
             if self.audio_worker and getattr(self.audio_worker, 'vad_engine', None):
                 self.audio_worker.vad_engine.threshold = new_vad
+            if self.asr_engine and "language" in new_settings:
+                lang_val = new_settings["language"]
+                self.asr_engine.language = None if lang_val == "auto" else lang_val
 
     def _check_and_download_models(self):
         from pathlib import Path
@@ -133,7 +153,8 @@ class WhisperAIApp:
         
         llm_path = Path(_MODELS_DIR) / _MODEL_FILENAME
         model_selection = self.config_manager.get("model_selection", "base")
-        model_size = f"{model_selection}.en" if model_selection in ["tiny", "base", "small", "medium"] else model_selection
+        lang_setting = self.config_manager.get("language", "auto")
+        model_size = f"{model_selection}.en" if (model_selection in ["tiny", "base", "small", "medium"] and lang_setting == "en") else model_selection
         
         needs_download = False
         if not llm_path.exists():
@@ -152,12 +173,12 @@ class WhisperAIApp:
                     needs_download = True
                     
         if needs_download:
-            from src.gui.downloader_dialog import DownloaderDialog
-            dialog = DownloaderDialog(self.config_manager)
-            dialog.start_download()
+            from src.gui.download_dialog import ModelDownloadDialog
+            dialog = ModelDownloadDialog(model_size=model_size)
             dialog.exec()
             
     def start(self):
+        """Start the WhisperAI system."""
         self._pin_process_to_p_cores()
         self.hotkey_listener.start()
         self.telemetry.start_background_logging(interval=5.0)
@@ -167,10 +188,11 @@ class WhisperAIApp:
         # Check and download models with UI if missing
         self._check_and_download_models()
 
-        # Start silent auto-update check in background
-        from src.core.updater import AutoUpdater
-        self.updater = AutoUpdater(tray_icon=self.tray)
-        self.updater.start_check()
+        # Start silent auto-update check in background if enabled
+        if self.config_manager.get("auto_update_enabled", True):
+            from src.core.updater import AutoUpdater
+            self.updater = AutoUpdater(tray_icon=self.tray)
+            self.updater.start_check()
 
         # Load heavy models in a background thread so the tray appears instantly
         self.watchdog.wrap_thread(target=self._load_models)
@@ -181,12 +203,16 @@ class WhisperAIApp:
     def _pin_process_to_p_cores(self):
         """
         Heuristic to detect and pin the process to Performance Cores (P-cores) on Windows.
-        On Intel hybrid CPUs, P-cores have Hyper-Threading (2 logical processors per physical core),
-        while E-cores do not (1 logical processor per physical core).
-        P = logical_cores - physical_cores
+        Also throttles process priority to BELOW_NORMAL to keep UI responsive.
         """
         if platform.system() != "Windows":
             return
+
+        try:
+            p = psutil.Process()
+            p.nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+        except Exception:
+            pass
 
         try:
             logical_cores = psutil.cpu_count(logical=True)
@@ -195,36 +221,75 @@ class WhisperAIApp:
             if not logical_cores or not physical_cores:
                 return
 
-            # If symmetric (all HT or no HT), no need to pin
             if logical_cores == physical_cores or logical_cores == physical_cores * 2:
                 return
 
             p_cores = logical_cores - physical_cores
             p_threads = 2 * p_cores
 
-            # Intel typically schedules P-core logical processors first
             if p_threads < logical_cores and p_threads > 0:
                 p_core_indices = list(range(p_threads))
                 p = psutil.Process()
                 p.cpu_affinity(p_core_indices)
-                pass
 
         except Exception:
             pass
 
+    def hibernate_models(self):
+        """Unload ASR and LLM models from RAM after 60s idle."""
+        with self.state_lock:
+            if not self.is_hibernating and (self.audio_worker is None or not getattr(self.audio_worker, "isRunning", lambda: False)()):
+                logger.info("[App] 60s idle reached. Hibernating models to save RAM.")
+                self.is_hibernating = True
+                if self.asr_engine:
+                    self.asr_engine.hibernate()
+                if self.llm_engine:
+                    self.llm_engine.hibernate()
+                if self.config_manager.get("voice_activation", False) and hasattr(self, 'wake_word_worker') and not self.wake_word_worker.isRunning():
+                    self.wake_word_worker.start()
+
+    def start_recording_with_preroll(self, preroll_audio: np.ndarray = None):
+        with self.state_lock:
+            if not self._models_loaded:
+                return
+            if self.audio_worker and self.audio_worker.isRunning():
+                return
+            if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
+                self.wake_word_worker.stop()
+                
+            if self.is_hibernating:
+                if self.asr_engine:
+                    self.asr_engine.wake_up()
+                if self.llm_engine:
+                    self.llm_engine.wake_up()
+                self.is_hibernating = False
+
+            is_whisper = self.config_manager.get("whisper_mode", False)
+            base_vad = self.config_manager.get("vad_threshold", 0.5)
+            new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
+            
+            self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad, preroll_audio=preroll_audio)
+            self.audio_worker.connection_successful.connect(self._on_recording_started)
+            self.audio_worker.recording_failed.connect(self._on_recording_failed)
+            self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
+            self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
+            self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
+            
+            self.signals.bubble_state.emit(BubbleState.PROCESSING)
+            self.audio_worker.start()
+
     def _load_models(self):
         """Load ASR + LLM models on a background thread in parallel."""
         try:
-            pass
-            
             model_selection = self.config_manager.get("model_selection", "base")
-            if model_selection in ["tiny", "base", "small", "medium"]:
+            lang_setting = self.config_manager.get("language", "auto")
+            if model_selection in ["tiny", "base", "small", "medium"] and lang_setting == "en":
                 model_size = f"{model_selection}.en"
             else:
                 model_size = model_selection
                 
             with ThreadPoolExecutor(max_workers=2) as executor:
-                future_asr = executor.submit(ASREngine, model_size)
+                future_asr = executor.submit(ASREngine, model_size, language=lang_setting)
                 future_llm = executor.submit(LLMEngine)
 
             with self.state_lock:
@@ -236,8 +301,8 @@ class WhisperAIApp:
                 )
 
                 self._models_loaded = True
+                self.is_hibernating = False
 
-            pass
             self.signals.models_ready.emit()
         except Exception:
             pass
@@ -247,29 +312,61 @@ class WhisperAIApp:
         self.telemetry.stop_background_logging()
         self.watchdog.stop()
         self.transcription_queue.put(None)
+        if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
+            self.wake_word_worker.stop()
+        if hasattr(self, 'preview_pool') and self.preview_pool:
+            try:
+                self.preview_pool.shutdown(wait=False)
+            except Exception:
+                pass
         with self.state_lock:
             if self.audio_worker and self.audio_worker.isRunning():
                 self.audio_worker.stop()
+                if hasattr(self.audio_worker, "quit"):
+                    self.audio_worker.quit()
 
     def _on_audio_level_changed(self, level: float):
         self.signals.audio_level.emit(level)
 
     def _on_deadlock(self):
-        pass
         self.signals.status_update.emit("Restarting (Deadlock)...")
         with self.state_lock:
             self._models_loaded = False
             if self.audio_worker and self.audio_worker.isRunning():
                 self.audio_worker.stop()
+                if hasattr(self.audio_worker, "quit"):
+                    self.audio_worker.quit()
         self.watchdog.wrap_thread(target=self._load_models)
 
     def toggle_recording(self):
+        if hasattr(self, 'hibernation_timer'):
+            self.hibernation_timer.start(60000)
+
         with self.state_lock:
             if not self._models_loaded:
                 return
 
+            if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
+                self.wake_word_worker.stop()
+
+            if self.is_hibernating:
+                logger.info("[App] Wake up triggered. Loading models...")
+                self.signals.bubble_state.emit(BubbleState.PROCESSING)
+                def _bg_wakeup():
+                    with self.state_lock:
+                        if self.asr_engine:
+                            self.asr_engine.wake_up()
+                        if self.llm_engine:
+                            self.llm_engine.wake_up()
+                        self.is_hibernating = False
+                    self.signals.bubble_state.emit(BubbleState.IDLE)
+                self.preview_pool.submit(_bg_wakeup)
+                return
+
             if self.audio_worker and self.audio_worker.isRunning():
                 self.audio_worker.stop()
+                if hasattr(self.audio_worker, "quit"):
+                    self.audio_worker.quit()
             else:
                 is_whisper = self.config_manager.get("whisper_mode", False)
                 base_vad = self.config_manager.get("vad_threshold", 0.5)
@@ -289,9 +386,30 @@ class WhisperAIApp:
         self.signals.hotkey_pressed.emit()
 
     def handle_hotkey_press(self):
+        if hasattr(self, 'hibernation_timer'):
+            self.hibernation_timer.start(60000)
+
         with self.state_lock:
             if not self._models_loaded:
                 return
+
+            if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
+                self.wake_word_worker.stop()
+
+            if self.is_hibernating:
+                logger.info("[App] Wake up triggered from hotkey. Reloading models...")
+                self.signals.bubble_state.emit(BubbleState.PROCESSING)
+                def _bg_wakeup_hk():
+                    with self.state_lock:
+                        if self.asr_engine:
+                            self.asr_engine.wake_up()
+                        if self.llm_engine:
+                            self.llm_engine.wake_up()
+                        self.is_hibernating = False
+                    self.signals.bubble_state.emit(BubbleState.IDLE)
+                self.preview_pool.submit(_bg_wakeup_hk)
+                return
+
             if not (self.audio_worker and self.audio_worker.isRunning()):
                 is_whisper = self.config_manager.get("whisper_mode", False)
                 base_vad = self.config_manager.get("vad_threshold", 0.5)
@@ -314,6 +432,8 @@ class WhisperAIApp:
         with self.state_lock:
             if self.audio_worker and self.audio_worker.isRunning():
                 self.audio_worker.stop()
+                if hasattr(self.audio_worker, "quit"):
+                    self.audio_worker.quit()
 
 
 

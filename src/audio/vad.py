@@ -7,7 +7,7 @@ class VADEngine:
     def __init__(
         self,
         threshold: float = 0.5,
-        min_silence_duration_ms: int = 4000,
+        min_silence_duration_ms: int = 700,
         sample_rate: int = 16000,
     ):
         self.threshold = threshold

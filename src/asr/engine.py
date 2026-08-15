@@ -1,6 +1,9 @@
+import logging
 import numpy as np
 from pathlib import Path
 from faster_whisper import WhisperModel
+
+logger = logging.getLogger("whisperai")
 
 # faster-whisper downloads models to a cache dir. We point it to ~/.whisperai/models/whisper
 # so models persist across app updates.
@@ -29,21 +32,68 @@ class ASREngine:
         "so",
     }
 
-    def __init__(self, model_size: str = "tiny.en", compute_type: str = "default"):
+    def __init__(self, model_size: str = "tiny.en", compute_type: str = "default", use_gpu: bool = True, language: str | None = None):
         self.model_size = model_size
         self.compute_type = compute_type
-        pass
+        self.use_gpu = use_gpu
+        self.language = language
+        self.previous_text = ""
+        self.model = None
 
-        pass
-        # faster-whisper auto-downloads the model to download_root if not present
-        self.model = WhisperModel(
-            model_size,
-            device="auto",
-            compute_type=compute_type,
-            download_root=_WHISPER_CACHE,
-            cpu_threads=2,
-        )
-        pass
+        import os
+        total_cores = os.cpu_count() or 4
+        self.cpu_threads = max(2, min(total_cores - 2, 4))
+
+        self._load_model()
+
+    def _load_model(self):
+        if self.model_size == "large-v3-turbo":
+            model_name_or_id = "Systran/faster-whisper-large-v3-turbo"
+        elif self.model_size in ("distil-large-v3", "faster-distil-whisper-large-v3"):
+            model_name_or_id = "Systran/faster-distil-whisper-large-v3"
+        else:
+            model_name_or_id = self.model_size
+        
+        if self.use_gpu:
+            try:
+                target_compute = "int8_float16" if self.compute_type in ("default", "auto") else self.compute_type
+                logger.info(f"Initializing WhisperModel ({self.model_size}) on CUDA with compute_type={target_compute}...")
+                self.model = WhisperModel(
+                    model_name_or_id,
+                    device="cuda",
+                    device_index=0,
+                    compute_type=target_compute,
+                    download_root=_WHISPER_CACHE,
+                    cpu_threads=self.cpu_threads,
+                )
+            except Exception as e:
+                logger.warning(f"CUDA initialization for Whisper failed ({e}). Falling back to CPU.")
+
+        if self.model is None:
+            target_compute = "int8" if self.compute_type in ("default", "auto") else self.compute_type
+            logger.info(f"Initializing WhisperModel ({self.model_size}) on CPU with compute_type={target_compute}...")
+            self.model = WhisperModel(
+                model_name_or_id,
+                device="cpu",
+                compute_type=target_compute,
+                download_root=_WHISPER_CACHE,
+                cpu_threads=self.cpu_threads,
+            )
+
+    def hibernate(self):
+        """Unload Whisper model from RAM during idle periods."""
+        if hasattr(self, 'model') and self.model is not None:
+            logger.info("[ASREngine] Hibernating: Unloading Whisper model from RAM.")
+            del self.model
+            self.model = None
+            import gc
+            gc.collect()
+
+    def wake_up(self):
+        """Reload Whisper model into RAM."""
+        if getattr(self, 'model', None) is None:
+            logger.info("[ASREngine] Waking up: Reloading Whisper model.")
+            self._load_model()
 
     @staticmethod
     def _trim_silence(
@@ -87,27 +137,56 @@ class ASREngine:
         cleaned = text.strip().rstrip(".!?,").strip().lower()
         return cleaned in self.HALLUCINATION_PHRASES
 
+    DOMAIN_PROMPTS = {
+        "technical": (
+            "The following is a technical dictation about software development, "
+            "programming, AI, LLMs, Whisper, Qwen, and system architecture. "
+            "It may contain markdown formatting like **bold** and code snippets."
+        ),
+        "medical": (
+            "The following is a clinical medical dictation with patient history, "
+            "physical findings, pharmacotherapy, dosages, lab values, and SOAP notes."
+        ),
+        "legal": (
+            "The following is a formal legal dictation with statutory citations, "
+            "contractual covenants, defined terms, and jurisprudence."
+        ),
+        "financial": (
+            "The following is a financial dictation with earnings reports, valuation metrics, "
+            "percentages, basis points, multiples, and fiscal quarters."
+        ),
+        "academic": (
+            "The following is an academic scientific research dictation with methodology, "
+            "statistical notation, and peer-reviewed literature references."
+        ),
+        "email": (
+            "The following is professional email correspondence, meeting notes, and concise communication."
+        ),
+        "general": (
+            "The following is high-quality, well-punctuated dictation with clear grammar."
+        ),
+    }
+
+    def get_initial_prompt(self, profile_id: str = "general") -> str:
+        return self.DOMAIN_PROMPTS.get(profile_id, self.DOMAIN_PROMPTS["general"])
+
     def transcribe(
         self,
         audio_data: np.ndarray,
-        dictionary: list[str] = None,
-        whisper_mode: bool = False,
-        trim_db: float = -40.0,
-        rms_min: float = 0.01,
+        dictionary: list = None,
+        profile_id: str = "general",
+        language: str | None = None,
+        rms_min: float = 0.005,
+        trim_db: float = -45.0,
     ) -> str:
         """
-        Transcribe the given audio numpy array (16kHz, mono, float32).
-        Returns the full transcription as a string.
+        Transcribe audio with Silero VAD, profile-aware domain prompts, and multilingual support.
         """
         if len(audio_data) == 0:
             return ""
 
         import time
         from src.core.telemetry import telemetry
-
-        initial_prompt = None
-        if dictionary:
-            initial_prompt = ", ".join(dictionary)
 
         audio_data = audio_data.astype(np.float32).flatten()
 
@@ -125,31 +204,107 @@ class ASREngine:
         if len(audio_data) < sr * 0.3:
             return ""
 
+        # Add 200ms silence padding to head and tail to prevent Whisper start/end clipping
+        pad_samples = int(sr * 0.2)
+        silence_pad = np.zeros(pad_samples, dtype=np.float32)
+        audio_data = np.concatenate((silence_pad, audio_data, silence_pad))
+
         start_t = time.time()
 
         kwargs = {
-            "beam_size": 1,
-            "language": "en",
+            "beam_size": 5,
             "condition_on_previous_text": False,
-            "no_speech_threshold": 0.8,
-            "log_prob_threshold": -1.0,
+            "no_speech_threshold": 0.5,
+            "compression_ratio_threshold": 1.8,
             "temperature": 0.0,
             "vad_filter": True,
             "vad_parameters": dict(min_silence_duration_ms=500, speech_pad_ms=400),
+            "hallucination_silence_threshold": 1.0,
+            "repetition_penalty": 1.5,
+            "no_repeat_ngram_size": 3,
+            "suppress_tokens": [-1],
+            "suppress_blank": True,
         }
+
+        # Language selection: if specific language provided, set it; if None or 'auto', Faster-Whisper auto-detects
+        active_lang = language or getattr(self, "language", None)
+        if active_lang and active_lang != "auto":
+            kwargs["language"] = active_lang
+
+        import inspect
+        sig_params = inspect.signature(self.model.transcribe).parameters
+        if "log_prob_threshold" in sig_params:
+            kwargs["log_prob_threshold"] = -0.7
+        elif "logprob_threshold" in sig_params:
+            kwargs["logprob_threshold"] = -0.7
+
+        domain_prompt = self.get_initial_prompt(profile_id)
+
+        if dictionary:
+            initial_prompt = ", ".join(dictionary) + ". " + domain_prompt
+        elif getattr(self, "previous_text", None):
+            seed_words = " ".join(self.previous_text.split()[-4:])
+            initial_prompt = domain_prompt + " " + seed_words
+        else:
+            initial_prompt = domain_prompt
+
         if initial_prompt:
             kwargs["initial_prompt"] = initial_prompt
 
         segments, info = self.model.transcribe(audio_data, **kwargs)
-        text = " ".join([segment.text for segment in segments])
+        unique_segment_texts = []
+        last_clean_text = ""
+        for segment in segments:
+            seg_text = segment.text.strip()
+            if seg_text and seg_text.lower() != last_clean_text:
+                unique_segment_texts.append(seg_text)
+                last_clean_text = seg_text.lower()
+        text = " ".join(unique_segment_texts)
         end_t = time.time()
 
         telemetry.log_transcription_latency(end_t - start_t)
 
-        text = text.strip()
+        from src.utils.text_cleaner import sanitize_symbol_loops
+        import re
+
+        raw_text = text.strip()
+
+        # Early discard: reject raw ASR output containing massive letter repetitions
+        if re.search(r"([a-zA-Z])\1{4,}|0{12,}", raw_text):
+            logger.warning(f"ASR discarded (repetition loop, length={len(raw_text)})")
+            return ""
+
+        text = sanitize_symbol_loops(raw_text)
+
+        # Discard if output contains no valid word characters, numbers, math, or emoji
+        if text and not re.search(r"[\w\$\€\£\¥\+\-\*\/\=\<\>\%\#\@\^\&\|\~\U00010000-\U0010ffff]", text):
+            return ""
 
         # Filter out known hallucination phrases
         if self._is_hallucination(text):
             return ""
 
+        if text:
+            self.previous_text = text
+
         return text
+
+    def transcribe_fast_preview(self, audio: np.ndarray, language: str | None = None) -> str:
+        if len(audio) == 0 or self.model is None:
+            return ""
+        try:
+            from src.utils.text_cleaner import sanitize_symbol_loops
+            kwargs = {
+                "beam_size": 1,
+                "vad_filter": False,
+                "without_timestamps": True,
+            }
+            active_lang = language or getattr(self, "language", None)
+            if active_lang and active_lang != "auto":
+                kwargs["language"] = active_lang
+
+            segments, _ = self.model.transcribe(audio, **kwargs)
+            raw_text = " ".join([segment.text.strip() for segment in segments])
+            return sanitize_symbol_loops(raw_text)
+        except Exception:
+            return ""

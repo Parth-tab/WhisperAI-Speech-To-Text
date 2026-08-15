@@ -1,33 +1,79 @@
-name: Bug Report
-description: File a bug report
+name: "Bug Report"
+description: "File a structured bug report for WhisperAI"
 title: "[Bug]: "
-labels: ["bug"]
+labels: ["bug", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        Thank you for reporting an issue with WhisperAI! Please provide detailed information below to help us diagnose and resolve the issue quickly.
+
   - type: textarea
     id: description
     attributes:
-      label: Description
-      description: A clear and concise description of what the bug is.
+      label: "Problem Description"
+      description: "A clear and concise description of what the unexpected behavior is."
+      placeholder: "Describe the bug symptoms, unexpected outputs, or crashes..."
     validations:
       required: true
+
   - type: textarea
     id: reproduction
     attributes:
-      label: Steps to Reproduce
-      description: How do we reproduce the issue?
+      label: "Steps to Reproduce"
+      description: "Exact step-by-step instructions to reproduce the issue."
+      placeholder: "1. Launch WhisperAI\n2. Focus target window...\n3. Dictate phrase..."
     validations:
       required: true
+
+  - type: dropdown
+    id: windows_version
+    attributes:
+      label: "Windows Operating System"
+      description: "Select your Windows version and build."
+      options:
+        - "Windows 11 (23H2 / 24H2)"
+        - "Windows 11 (22H2 / 21H2)"
+        - "Windows 10 (22H2)"
+        - "Windows Server 2022 / 2025"
+        - "Other"
+    validations:
+      required: true
+
+  - type: input
+    id: cpu_arch
+    attributes:
+      label: "CPU & Architecture"
+      description: "Specify your processor (e.g., Intel Core i7-13700K, AMD Ryzen 7 7800X3D)."
+      placeholder: "e.g., AMD Ryzen 9 5900X (12 cores)"
+    validations:
+      required: true
+
+  - type: input
+    id: app_version
+    attributes:
+      label: "WhisperAI Version"
+      description: "Specify the version or git commit hash you are running."
+      placeholder: "e.g., v1.2.0 or commit abc1234"
+    validations:
+      required: true
+
+  - type: input
+    id: active_window
+    attributes:
+      label: "Active Window & Target Application"
+      description: "What application and title was active when the issue occurred?"
+      placeholder: "e.g., VS Code (main.py), Microsoft Word, Chrome (Jira board)"
+    validations:
+      required: true
+
   - type: textarea
     id: logs
     attributes:
-      label: Application Logs
+      label: "Application Logs"
       description: |
-        Please provide the contents of your log file.
-        You can find it at `%USERPROFILE%\.whisperai\logs\whisperai.log`.
+        Paste relevant log output from: `%USERPROFILE%\.whisperai\logs\whisperai.log`
+        *(Note: WhisperAI logs are sanitized and do not contain transcribed PII).*
       render: text
     validations:
       required: true

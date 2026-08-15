@@ -1,0 +1,29 @@
+{
+    "pack_name": "DevOps / Cloud & Kubernetes",
+    "terms": [
+        "Kubernetes",
+        "kubectl",
+        "ConfigMap",
+        "DaemonSet",
+        "StatefulSet",
+        "ingress-nginx",
+        "Helm",
+        "Terraform",
+        "Prometheus",
+        "Grafana",
+        "OpenTelemetry",
+        "sidecar",
+        "pod",
+        "node",
+        "cluster",
+        "CI/CD",
+        "ArgoCD",
+        "Jaeger",
+        "Envoy",
+        "Istio",
+        "CRD",
+        "AWS",
+        "GCP",
+        "Azure"
+    ]
+}

@@ -47,14 +47,16 @@ class ASRStage(PipelineStage):
         dictionary = config.get("dictionary", [])
         is_whisper = config.get("whisper_mode", False)
         trim_db = config.get("whisper_trim_db", -55.0) if is_whisper else -40.0
-        rms_min = config.get("whisper_rms_min", 0.003) if is_whisper else 0.01
+        rms_min = config.get("whisper_rms_min", 0.003) if is_whisper else 0.005
+        language = config.get("language", "auto")
 
         ctx.text = asr.transcribe(
             ctx.audio_data,
             dictionary=dictionary,
-            whisper_mode=is_whisper,
-            trim_db=trim_db,
+            profile_id=ctx.profile_id,
+            language=language,
             rms_min=rms_min,
+            trim_db=trim_db,
         )
         if not ctx.text or len(ctx.text.strip()) < 2:
             ctx.is_terminal = True
@@ -85,7 +87,19 @@ class SnippetStage(PipelineStage):
         clean_lower = ctx.text.lower().strip()
         match_key = clean_lower.translate(str.maketrans("", "", string.punctuation))
         if match_key in snippets:
-            ctx.text = snippets[match_key]
+            raw_expansion = snippets[match_key]
+            # Support dynamic placeholders in snippets ({date}, {time}, {clipboard})
+            from datetime import datetime
+            now = datetime.now()
+            expanded = raw_expansion.replace("{date}", now.strftime("%Y-%m-%d"))
+            expanded = expanded.replace("{time}", now.strftime("%H:%M"))
+            if "{clipboard}" in expanded:
+                try:
+                    clip = pyperclip.paste() or ""
+                except Exception:
+                    clip = ""
+                expanded = expanded.replace("{clipboard}", clip)
+            ctx.text = expanded
             ctx.is_terminal = True
 
 
@@ -99,26 +113,47 @@ class CommandModeStage(PipelineStage):
     ):
         clean_lower = ctx.text.lower().strip()
         if clean_lower.startswith("command"):
-            import uuid
+            from src.injection.window_detect import WindowDetector, is_terminal_process
 
-            marker = str(uuid.uuid4())
-            pyperclip.copy(marker)
-            pyautogui.hotkey("ctrl", "c")
-
+            title, proc_name, _ = WindowDetector().get_active_window_info()
             selected_text = ""
-            for _ in range(50):
-                try:
-                    selected_text = pyperclip.paste()
-                    if selected_text != marker:
-                        break
-                except Exception:
-                    pass
-                time.sleep(0.01)
 
-            if selected_text == marker:
-                selected_text = ""
+            if not is_terminal_process(proc_name):
+                import uuid
+
+                marker = str(uuid.uuid4())
+                pyperclip.copy(marker)
+                pyautogui.hotkey("ctrl", "c")
+
+                for _ in range(50):
+                    try:
+                        selected_text = pyperclip.paste()
+                        if selected_text != marker:
+                            break
+                    except Exception:
+                        pass
+                    time.sleep(0.01)
+
+                if selected_text == marker:
+                    selected_text = ""
 
             ctx.text = llm.execute_command(ctx.text, selected_text, ctx.context_str)
+            ctx.is_terminal = True
+
+
+class CasingStage(PipelineStage):
+    def process(
+        self,
+        ctx: PipelineContext,
+        config: ConfigManager,
+        asr: ASREngine,
+        llm: LLMEngine,
+    ):
+        from src.utils.casing import apply_casing_transforms
+        cased_text = apply_casing_transforms(ctx.text)
+        if cased_text != ctx.text:
+            ctx.text = cased_text
+            # Fast path: explicit casing command bypasses LLM
             ctx.is_terminal = True
 
 
@@ -159,7 +194,13 @@ class LLMCleanupStage(PipelineStage):
         asr: ASREngine,
         llm: LLMEngine,
     ):
-        ctx.text = llm.clean_text(ctx.text, ctx.context_str, ctx.profile_id)
+        from src.utils.text_cleaner import needs_llm_cleanup
+        from src.utils.list_detector import detect_list_mode
+        if detect_list_mode(ctx.text) != "none" or needs_llm_cleanup(ctx.text):
+            ctx.text = llm.clean_text(ctx.text, ctx.context_str, ctx.profile_id)
+        else:
+            if ctx.text and ctx.profile_id != "technical":
+                ctx.text = ctx.text[0].upper() + ctx.text[1:]
 
 
 class AIPipeline:
@@ -177,6 +218,7 @@ class AIPipeline:
             RegexStage(),
             SnippetStage(),
             CommandModeStage(),
+            CasingStage(),
             CodeModeStage(),
             BacktrackStage(),
             LLMCleanupStage(),
@@ -198,4 +240,12 @@ class AIPipeline:
             if ctx.is_terminal:
                 break
 
-        return ctx.text
+        from src.utils.text_cleaner import sanitize_symbol_loops
+        from src.llm.formatter import Formatter
+
+        try:
+            Formatter().check_repetition(ctx.text)
+        except ValueError:
+            return ""
+
+        return sanitize_symbol_loops(ctx.text)

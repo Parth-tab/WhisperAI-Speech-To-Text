@@ -58,9 +58,9 @@ class SettingsWindow(QWidget):
         self.model_label = QLabel("Model Selection:")
         general_layout.addWidget(self.model_label)
         self.model_input = QComboBox()
-        self.model_input.addItems(["tiny", "base", "small", "medium", "large"])
+        self.model_input.addItems(["tiny", "base", "small", "medium", "large", "large-v3-turbo"])
         current_model = self.config_manager.get("model_selection", "base")
-        if current_model in ["tiny", "base", "small", "medium", "large"]:
+        if current_model in ["tiny", "base", "small", "medium", "large", "large-v3-turbo"]:
             self.model_input.setCurrentText(current_model)
         self.model_input.setAccessibleName("Model Selection Dropdown")
         self.model_input.setAccessibleDescription(
@@ -69,6 +69,21 @@ class SettingsWindow(QWidget):
         general_layout.addWidget(self.model_input)
 
         from PySide6.QtWidgets import QCheckBox
+
+        self.language_label = QLabel("Transcription Language:")
+        general_layout.addWidget(self.language_label)
+        self.language_input = QComboBox()
+        self.language_input.addItems([
+            "auto", "en", "es", "fr", "de", "zh", "ja", "ru", "ar", "pt", "it", "hi", "ko", "nl", "pl", "tr"
+        ])
+        current_lang = self.config_manager.get("language", "auto")
+        if current_lang in [
+            "auto", "en", "es", "fr", "de", "zh", "ja", "ru", "ar", "pt", "it", "hi", "ko", "nl", "pl", "tr"
+        ]:
+            self.language_input.setCurrentText(current_lang)
+        self.language_input.setAccessibleName("Language Selection Dropdown")
+        self.language_input.setAccessibleDescription("Select language or auto-detect")
+        general_layout.addWidget(self.language_input)
 
         self.whisper_mode_label = QLabel("Whisper Mode:")
         general_layout.addWidget(self.whisper_mode_label)
@@ -83,6 +98,18 @@ class SettingsWindow(QWidget):
             "Toggle whisper mode for low-volume dictation"
         )
         general_layout.addWidget(self.whisper_mode_input)
+
+        self.auto_update_input = QCheckBox(
+            "Check for application updates on startup"
+        )
+        self.auto_update_input.setChecked(
+            self.config_manager.get("auto_update_enabled", True)
+        )
+        self.auto_update_input.setAccessibleName("Auto Update Checkbox")
+        self.auto_update_input.setAccessibleDescription(
+            "Toggle automatic update checking on startup"
+        )
+        general_layout.addWidget(self.auto_update_input)
 
         general_layout.addStretch()
         self.general_tab.setLayout(general_layout)
@@ -142,19 +169,25 @@ class SettingsWindow(QWidget):
         new_hotkey = self.hotkey_input.text()
         new_vad = self.vad_input.value()
         new_model = self.model_input.currentText()
+        new_language = self.language_input.currentText()
         new_whisper_mode = self.whisper_mode_input.isChecked()
+        new_auto_update = self.auto_update_input.isChecked()
 
         self.config_manager.set("hotkey", new_hotkey)
         self.config_manager.set("vad_threshold", new_vad)
         self.config_manager.set("model_selection", new_model)
+        self.config_manager.set("language", new_language)
         self.config_manager.set("whisper_mode", new_whisper_mode)
+        self.config_manager.set("auto_update_enabled", new_auto_update)
 
         self.settings_saved.emit(
             {
                 "hotkey": new_hotkey,
                 "vad_threshold": new_vad,
                 "model_selection": new_model,
+                "language": new_language,
                 "whisper_mode": new_whisper_mode,
+                "auto_update_enabled": new_auto_update,
             }
         )
         self.close()

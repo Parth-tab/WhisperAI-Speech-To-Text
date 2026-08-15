@@ -58,3 +58,38 @@ def test_llm_repetition_aborts_pipeline(mock_llama):
     # Should return empty string, NOT the raw text
     assert result == ""
 
+
+@patch("src.llm.engine.Llama")
+def test_clean_text_artifact_stripping(mock_llama):
+    mock_llama_instance = MagicMock()
+    mock_llama.return_value = mock_llama_instance
+    engine = LLMEngine(model_path="dummy/path")
+
+    # Test AI header label & ASCII divider stripping
+    mock_llama_instance.return_value = {"choices": [{"text": "AI ----------------------------------"}]}
+    res1 = engine.clean_text("some text")
+    assert res1 == "some text"  # Fallback to raw input since output was non-alphanumeric junk
+
+    # Test trailing dot loop normalization
+    mock_llama_instance.return_value = {"choices": [{"text": "Plus,......."}]}
+    res2 = engine.clean_text("Plus")
+    assert res2 == "Plus."
+
+
+def test_execute_command_truncates_oversized_payloads():
+    engine = LLMEngine.__new__(LLMEngine)
+    mock_llm_func = MagicMock(return_value={"choices": [{"text": "Truncated Result"}]})
+    engine.llm = mock_llm_func
+
+    massive_text = "A" * 10000
+    massive_context = "B" * 2000
+    res = engine.execute_command("summarize", massive_text, context=massive_context)
+
+    assert res == "Truncated Result"
+    called_prompt = mock_llm_func.call_args[0][0]
+    assert "A" * 4000 in called_prompt
+    assert "A" * 4001 not in called_prompt
+    assert "B" * 500 in called_prompt
+    assert "B" * 501 not in called_prompt
+
+

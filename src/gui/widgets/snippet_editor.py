@@ -3,7 +3,9 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QLineEdit,
+    QPlainTextEdit,
     QPushButton,
+    QLabel,
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
@@ -19,29 +21,32 @@ class SnippetEditor(QWidget):
 
         self.table_widget = QTableWidget(0, 2)
         self.table_widget.setHorizontalHeaderLabels(
-            ["Trigger Phrase", "Expansion Text"]
+            ["Trigger Phrase", "Expansion Text (Multi-Line / Templates)"]
         )
         self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.load_snippets()
         layout.addWidget(self.table_widget)
 
-        input_layout = QHBoxLayout()
         self.trigger_input = QLineEdit()
-        self.trigger_input.setPlaceholderText("Trigger phrase...")
-        input_layout.addWidget(self.trigger_input)
+        self.trigger_input.setPlaceholderText("Trigger phrase (e.g. 'insert template', 'standup update')...")
+        layout.addWidget(self.trigger_input)
 
-        self.expansion_input = QLineEdit()
-        self.expansion_input.setPlaceholderText("Expansion text...")
-        input_layout.addWidget(self.expansion_input)
+        self.expansion_input = QPlainTextEdit()
+        self.expansion_input.setMaximumHeight(90)
+        self.expansion_input.setPlaceholderText(
+            "Expansion template... (Supports {date}, {time}, {clipboard})"
+        )
+        layout.addWidget(self.expansion_input)
 
-        self.add_button = QPushButton("Add / Update")
+        btn_layout = QHBoxLayout()
+        self.add_button = QPushButton("Add / Update Snippet")
         self.add_button.clicked.connect(self.add_snippet)
-        input_layout.addWidget(self.add_button)
-        layout.addLayout(input_layout)
+        btn_layout.addWidget(self.add_button)
 
         self.remove_button = QPushButton("Remove Selected")
         self.remove_button.clicked.connect(self.remove_snippet)
-        layout.addWidget(self.remove_button)
+        btn_layout.addWidget(self.remove_button)
+        layout.addLayout(btn_layout)
 
     def load_snippets(self):
         self.table_widget.setRowCount(0)
@@ -54,7 +59,7 @@ class SnippetEditor(QWidget):
 
     def add_snippet(self):
         trigger = self.trigger_input.text().strip().lower()
-        expansion = self.expansion_input.text().strip()
+        expansion = self.expansion_input.toPlainText().strip()
         if trigger and expansion:
             snippets = self.config_manager.get("snippets", {})
             snippets[trigger] = expansion

@@ -2,7 +2,8 @@ import time
 import psutil
 import logging
 import threading
-from typing import Dict, List
+import collections
+from typing import Dict, Any
 
 
 def setup_telemetry_logger():
@@ -23,10 +24,10 @@ telemetry_logger = setup_telemetry_logger()
 
 class TelemetryTracker:
     def __init__(self):
-        self.metrics: Dict[str, List[float]] = {
-            "transcription_latency": [],
-            "token_generation_speed": [],
-            "memory_usage_mb": [],
+        self.metrics: Dict[str, Any] = {
+            "transcription_latency": collections.deque(maxlen=1000),
+            "token_generation_speed": collections.deque(maxlen=1000),
+            "memory_usage_mb": collections.deque(maxlen=1000),
         }
         self.lock = threading.Lock()
         self.is_running = False

@@ -1,21 +1,65 @@
-name: Feature Request
-description: Suggest an idea for this project
+name: "Feature Request"
+description: "Suggest an architectural enhancement, syntax mapping, or domain capability"
 title: "[Feature]: "
-labels: ["enhancement"]
+labels: ["enhancement", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this feature request!
+        Thank you for suggesting a feature for WhisperAI! We welcome ideas for new voice commands, casing transformations, style profiles, and hardware optimizations.
+
   - type: textarea
-    id: description
+    id: feature_summary
     attributes:
-      label: Description
-      description: A clear and concise description of what the feature is.
+      label: "Feature Summary"
+      description: "A clear and concise summary of the proposed enhancement."
+      placeholder: "e.g., Add Gherkin syntax formatting mode (Given-When-Then)..."
     validations:
       required: true
+
+  - type: dropdown
+    id: industry_domain
+    attributes:
+      label: "Target Industry & Vertical"
+      description: "Which domain does this feature primarily benefit?"
+      options:
+        - "Software Engineering & Game Dev"
+        - "DevOps, SRE & Cloud Infrastructure"
+        - "Data Science & Machine Learning"
+        - "Medical, EHR & Clinical Notes"
+        - "Corporate Legal & Compliance"
+        - "Financial Modeling & Valuation"
+        - "Academic Research & Scientific Writing"
+        - "Creative Copywriting & Content Creation"
+        - "Business Ops & Executive Correspondence"
+        - "Accessibility, Motor Impairments & RSI"
+        - "International & Polyglot / Multilingual"
+        - "General Desktop Productivity"
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: "Use Case & Problem Statement"
+      description: "Describe the current friction or limitation in your dictation workflow."
+      placeholder: "When dictating test specs in Jira, the model formats acceptance criteria as regular paragraphs instead of Gherkin steps..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: "Proposed Solution & Voice Trigger Syntax"
+      description: "Describe how the feature should behave and any desired spoken macros or regex patterns."
+      placeholder: "Spoken command 'scenario user login' produces 'Scenario: User login\n  Given ...'"
+    validations:
+      required: true
+
   - type: textarea
     id: alternatives
     attributes:
-      label: Describe alternatives you've considered
-      description: A clear and concise description of any alternative solutions or features you've considered.
+      label: "Alternatives Considered"
+      description: "Any alternative approaches, third-party workarounds, or snippets you've considered."
+    validations:
+      required: false
