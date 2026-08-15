@@ -1,7 +1,6 @@
 import gc
 import os
 import time
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -56,22 +55,9 @@ def test_profiling_and_split_pass():
 
     pipeline = AIPipeline(asr_engine=mock_asr, llm_engine=llm)
 
-    # Load the adversarial audio file
-    audio_path = Path(__file__).parent / "data" / "sample_dictation.wav"
-    assert audio_path.exists(), f"Audio file not found: {audio_path}"
-
-    import wave
-
-    with wave.open(str(audio_path), "rb") as w:
-        frames = w.readframes(w.getnframes())
-        if w.getsampwidth() == 2:
-            audio_data = (
-                np.frombuffer(frames, dtype=np.int16).astype(np.float32) / 32768.0
-            )
-        elif w.getsampwidth() == 4:
-            audio_data = np.frombuffer(frames, dtype=np.float32)
-        else:
-            audio_data = np.zeros(16000, dtype=np.float32)
+    # Generate a 3-second silent audio array (16000 Hz * 3 sec)
+    # This replaces the need for a physical .wav file in Git
+    audio_data = np.zeros(16000 * 3, dtype=np.float32)
 
     # 3. Process through pipeline
     start_time = time.time()

@@ -15,7 +15,20 @@ def test_ai_pipeline():
     mock_llm = MagicMock(spec=LLMEngine)
     mock_llm.clean_text.return_value = "Hello world."
 
-    pipeline = AIPipeline(asr_engine=mock_asr, llm_engine=mock_llm)
+    mock_config = MagicMock()
+    mock_config.get.side_effect = lambda key, default=None: {
+        "dictionary": [],
+        "whisper_mode": False,
+        "whisper_trim_db": -55.0,
+        "whisper_rms_min": 0.003,
+        "language": "auto",
+        "snippets": {},
+        "code_mode": False,
+    }.get(key, default)
+
+    pipeline = AIPipeline(
+        asr_engine=mock_asr, llm_engine=mock_llm, config_manager=mock_config
+    )
 
     audio_data = np.zeros(16000, dtype=np.float32)
     result = pipeline.process_audio(audio_data, context="context")
@@ -24,7 +37,7 @@ def test_ai_pipeline():
     from unittest.mock import ANY
 
     mock_asr.transcribe.assert_called_once_with(
-        audio_data, dictionary=ANY, profile_id="general", language=ANY, rms_min=0.003, trim_db=-55.0
+        audio_data, dictionary=ANY, profile_id="general", language=ANY, rms_min=0.005, trim_db=-40.0
     )
 
     # pre_filter_text should have removed "uh" and "um"
