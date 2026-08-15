@@ -1,9 +1,9 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from src.teams.auth import AuthManager
-from src.teams.api_client import TeamAPIClient
-from src.teams.sync import TeamSyncManager
+from unittest.mock import patch
+
 from src.config.manager import ConfigManager
+from src.teams.api_client import TeamAPIClient
+from src.teams.auth import AuthManager
+from src.teams.sync import TeamSyncManager
 
 
 def test_auth_manager_login_logout():

@@ -1,11 +1,9 @@
-import pytest
-from src.utils.caret_tracker import (
-    get_win32_caret_coords,
-    get_workarea_fallback_coords,
-    get_active_caret_coordinates,
-)
-from src.utils.theme_compiler import compile_qss, THEME_TOKENS
 from src.injection.window_detect import is_terminal_process
+from src.utils.caret_tracker import (
+    get_active_caret_coordinates,
+    get_workarea_fallback_coords,
+)
+from src.utils.theme_compiler import THEME_TOKENS, compile_qss
 
 
 def test_theme_compiler():

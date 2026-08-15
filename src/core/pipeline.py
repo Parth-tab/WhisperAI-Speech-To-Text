@@ -1,14 +1,15 @@
-import numpy as np
+import string
 import time
+from dataclasses import dataclass
+
+import numpy as np
 import pyautogui
 import pyperclip
-import string
+
 from src.asr.engine import ASREngine
+from src.config.manager import ConfigManager
 from src.llm.engine import LLMEngine
 from src.utils.text_cleaner import pre_filter_text
-from src.config.manager import ConfigManager
-
-from dataclasses import dataclass
 
 
 @dataclass
@@ -115,7 +116,7 @@ class CommandModeStage(PipelineStage):
         if clean_lower.startswith("command"):
             from src.injection.window_detect import WindowDetector, is_terminal_process
 
-            title, proc_name, _ = WindowDetector().get_active_window_info()
+            _, proc_name, _ = WindowDetector().get_active_window_info()
             selected_text = ""
 
             if not is_terminal_process(proc_name):
@@ -166,8 +167,8 @@ class CodeModeStage(PipelineStage):
         llm: LLMEngine,
     ):
         if ctx.profile_id == "technical":
-            from src.utils.syntax_map import apply_syntax_map
             from src.injection.ide_bridge import ide_bridge
+            from src.utils.syntax_map import apply_syntax_map
 
             ctx.text = apply_syntax_map(ctx.text)
             ctx.text = ide_bridge.process_file_tags(ctx.text, ctx.pid)
@@ -194,8 +195,8 @@ class LLMCleanupStage(PipelineStage):
         asr: ASREngine,
         llm: LLMEngine,
     ):
-        from src.utils.text_cleaner import needs_llm_cleanup
         from src.utils.list_detector import detect_list_mode
+        from src.utils.text_cleaner import needs_llm_cleanup
         if detect_list_mode(ctx.text) != "none" or needs_llm_cleanup(ctx.text):
             ctx.text = llm.clean_text(ctx.text, ctx.context_str, ctx.profile_id)
         else:
@@ -240,8 +241,8 @@ class AIPipeline:
             if ctx.is_terminal:
                 break
 
-        from src.utils.text_cleaner import sanitize_symbol_loops
         from src.llm.formatter import Formatter
+        from src.utils.text_cleaner import sanitize_symbol_loops
 
         try:
             Formatter().check_repetition(ctx.text)

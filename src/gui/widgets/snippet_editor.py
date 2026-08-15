@@ -1,14 +1,13 @@
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
     QHBoxLayout,
+    QHeaderView,
     QLineEdit,
     QPlainTextEdit,
     QPushButton,
-    QLabel,
     QTableWidget,
     QTableWidgetItem,
-    QHeaderView,
+    QVBoxLayout,
+    QWidget,
 )
 
 

@@ -1,6 +1,6 @@
-import pytest
 from unittest.mock import patch
-from src.injection.ide_bridge import IDEBridge, ide_bridge
+
+from src.injection.ide_bridge import IDEBridge
 
 
 @patch("src.injection.ide_bridge.file_indexer")

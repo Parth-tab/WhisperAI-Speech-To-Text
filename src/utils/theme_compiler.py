@@ -1,7 +1,6 @@
 import re
-from typing import Dict
 
-THEME_TOKENS: Dict[str, Dict[str, str]] = {
+THEME_TOKENS: dict[str, dict[str, str]] = {
     "dark": {
         "bg_primary": "#0F172A",
         "bg_secondary": "#1E293B",

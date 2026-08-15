@@ -1,8 +1,10 @@
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from PySide6.QtWidgets import QApplication
-from src.gui.flow_bubble import FlowBubble, BubbleState, WaveformWidget, SpinnerWidget
+
 from src.config.manager import ConfigManager
+from src.gui.flow_bubble import BubbleState, FlowBubble, SpinnerWidget, WaveformWidget
 
 
 @pytest.fixture(scope="session")
@@ -28,24 +30,24 @@ def test_spinner_widget_animation(qapp):
     assert spinner.timer.isActive()
 
 
-@patch("src.gui.flow_bubble.get_active_caret_coordinates", return_value=(200, 300))
+@patch("src.utils.caret_tracker.get_win32_caret_coords", return_value=(200, 300))
 def test_flow_bubble_state_transitions(mock_caret, qapp):
     cfg = ConfigManager()
     bubble = FlowBubble(cfg)
-    
+
     # Initial state
     assert bubble.state == BubbleState.IDLE
-    
+
     # Transition to RECORDING
     bubble.set_state(BubbleState.RECORDING)
     assert bubble.state == BubbleState.RECORDING
     assert bubble.waveform.isVisible()
-    
+
     # Transition to PROCESSING
     bubble.set_state(BubbleState.PROCESSING)
     assert bubble.state == BubbleState.PROCESSING
     assert bubble.spinner.isVisible()
-    
+
     # Back to IDLE
     bubble.set_state(BubbleState.IDLE)
     assert bubble.state == BubbleState.IDLE

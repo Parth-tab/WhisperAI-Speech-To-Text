@@ -1,6 +1,7 @@
 import logging
-from src.teams.api_client import team_api
+
 from src.config.manager import ConfigManager
+from src.teams.api_client import team_api
 
 logger = logging.getLogger("whisperai")
 

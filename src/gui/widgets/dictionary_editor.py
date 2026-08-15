@@ -1,16 +1,17 @@
 import json
 import logging
 from pathlib import Path
+
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QComboBox,
     QHBoxLayout,
     QLineEdit,
-    QPushButton,
     QListWidget,
-    QComboBox,
-    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
+
 from src.utils.paths import get_asset_path
 
 logger = logging.getLogger("whisperai")
@@ -84,7 +85,7 @@ class DictionaryEditor(QWidget):
             pack_file = Path(__file__).resolve().parent.parent.parent.parent / "resources" / "industry_packs" / f"{pack_name}.json"
 
         try:
-            with open(pack_file, "r", encoding="utf-8") as f:
+            with open(pack_file, encoding="utf-8") as f:
                 data = json.load(f)
 
             pack_terms = data.get("terms", [])

@@ -1,7 +1,8 @@
-import numpy as np
-import sounddevice as sd
 import logging
 from collections import deque
+
+import numpy as np
+import sounddevice as sd
 from PySide6.QtCore import QThread, Signal
 
 logger = logging.getLogger("whisperai")

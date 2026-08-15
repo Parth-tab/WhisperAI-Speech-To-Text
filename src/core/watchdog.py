@@ -1,7 +1,7 @@
-import time
-import threading
 import logging
-from typing import Callable, Dict
+import threading
+import time
+from collections.abc import Callable
 
 logger = logging.getLogger("Watchdog")
 
@@ -9,7 +9,7 @@ logger = logging.getLogger("Watchdog")
 class ThreadWatchdog:
     def __init__(self, timeout_sec: float = 60.0):
         self.timeout_sec = timeout_sec
-        self.active_tasks: Dict[int, float] = {}
+        self.active_tasks: dict[int, float] = {}
         self.lock = threading.Lock()
         self.is_running = False
         self._bg_thread = None

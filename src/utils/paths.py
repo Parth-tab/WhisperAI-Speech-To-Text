@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 
 def get_asset_path(relative_path: str) -> str:
     """Get the absolute path to an asset, handling PyInstaller's _MEIPASS."""

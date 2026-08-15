@@ -1,5 +1,6 @@
-import time
 import logging
+import time
+
 from src.teams.api_client import team_api
 
 logger = logging.getLogger("whisperai")

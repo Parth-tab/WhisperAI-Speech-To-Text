@@ -1,30 +1,30 @@
-import sys
 import ctypes
+import sys
 from ctypes import wintypes
 from enum import Enum
 
-from PySide6.QtWidgets import (
-    QApplication,
-    QWidget,
-    QFrame,
-    QHBoxLayout,
-    QLabel,
-    QGraphicsDropShadowEffect,
-)
 from PySide6.QtCore import (
-    Qt,
+    QEasingCurve,
+    QPoint,
     QPropertyAnimation,
     QRect,
-    QEasingCurve,
+    QSize,
+    Qt,
     QTimer,
     Signal,
-    QSize,
-    QPoint,
 )
-from PySide6.QtGui import QPainter, QColor, QPen, QPixmap
+from PySide6.QtGui import QColor, QPainter, QPen, QPixmap
+from PySide6.QtWidgets import (
+    QApplication,
+    QFrame,
+    QGraphicsDropShadowEffect,
+    QHBoxLayout,
+    QLabel,
+    QWidget,
+)
+
 from src.utils.paths import get_asset_path
 from src.utils.theme_compiler import compile_qss
-from src.utils.caret_tracker import get_active_caret_coordinates
 
 
 def set_no_activate(hwnd):
@@ -221,7 +221,7 @@ class FlowBubble(QWidget):
             if pos and len(pos) == 2 and pos[0] > 0 and pos[1] > 0:
                 self.move(pos[0], pos[1])
                 return
-        
+
         self.update_position_near_caret(force=True)
 
     def update_position_near_caret(self, force: bool = False):
@@ -230,7 +230,7 @@ class FlowBubble(QWidget):
         coords = get_win32_caret_coords()
         if coords is None:
             return  # Stay anchored in current position; do NOT jump to workarea fallbacks!
-            
+
         x, y = coords
         target_x = max(10, x + 10)
         target_y = max(10, y + 20)
@@ -348,6 +348,7 @@ class FlowBubble(QWidget):
     def update_preview_text(self, text: str):
         if self.state == BubbleState.RECORDING and text:
             import re
+
             from src.utils.text_cleaner import sanitize_symbol_loops
             text = sanitize_symbol_loops(text)
             if not text or not re.search(r"[a-zA-Z0-9]", text):

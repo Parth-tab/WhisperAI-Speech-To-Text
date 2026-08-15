@@ -1,10 +1,11 @@
 import ctypes
+import logging
 import struct
 import time
-import logging
-import pyperclip
-import pyautogui
 from ctypes import wintypes
+
+import pyautogui
+import pyperclip
 
 logger = logging.getLogger("whisperai")
 
@@ -127,8 +128,8 @@ class ClipboardInjector:
         return bool(re.search(r"[\u0600-\u06FF\u0590-\u05FF\u0900-\u097F\u0700-\u074F\u0780-\u07BF\uFB50-\uFDFF\uFE70-\uFEFF]", text))
 
     def inject_text(self, text: str, process_name: str = ""):
-        from src.utils.text_cleaner import sanitize_symbol_loops
         from src.llm.formatter import Formatter
+        from src.utils.text_cleaner import sanitize_symbol_loops
 
         try:
             Formatter().check_repetition(text)

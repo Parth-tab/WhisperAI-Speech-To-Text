@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QGuiApplication, QPainter, QColor
+from PySide6.QtGui import QColor, QGuiApplication, QPainter
+from PySide6.QtWidgets import QWidget
 
 
 class RecordingOverlay(QWidget):

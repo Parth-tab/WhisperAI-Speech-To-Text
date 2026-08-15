@@ -1,7 +1,9 @@
-import numpy as np
-import onnxruntime
 import urllib.request
 from pathlib import Path
+
+import numpy as np
+import onnxruntime
+
 
 class VADEngine:
     def __init__(
@@ -89,9 +91,7 @@ class VADEngine:
         # Only trigger silence timeout if speech was actually detected at some point
         if not self._speech_detected:
             # Safety limit: force timeout after 5 minutes if no speech is detected
-            if total_duration_ms > 300000:
-                return True
-            return False
+            return total_duration_ms > 300000
 
         silence_duration_ms = self._silence_frames / self._frames_per_ms
         return silence_duration_ms >= self.min_silence_duration_ms

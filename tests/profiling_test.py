@@ -1,13 +1,14 @@
-import os
 import gc
-import psutil
+import os
 import time
-import numpy as np
-from unittest.mock import MagicMock
 from pathlib import Path
+from unittest.mock import MagicMock
 
-from src.core.pipeline import AIPipeline
+import numpy as np
+import psutil
+
 from src.asr.engine import ASREngine
+from src.core.pipeline import AIPipeline
 from src.llm.engine import LLMEngine
 from src.utils.list_detector import detect_list_mode
 

@@ -1,7 +1,9 @@
 import logging
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock, patch
 from PySide6.QtWidgets import QApplication
+
 from src.config.manager import ConfigManager
 from src.gui.tray import SystemTrayApp
 from src.utils.logger import setup_logger

@@ -2,25 +2,24 @@ def _get_windows_default_communications_device_name():
     ole32 = None
     try:
         import ctypes
-        from ctypes import wintypes
-        from ctypes.wintypes import DWORD, WORD, BYTE
-        
+        from ctypes.wintypes import BYTE, DWORD, WORD
+
         class GUID(ctypes.Structure):
             _fields_ = [("Data1", DWORD), ("Data2", WORD), ("Data3", WORD), ("Data4", BYTE * 8)]
-        
+
         class PROPVARIANT(ctypes.Structure):
             class _U(ctypes.Union):
                 _fields_ = [("pwszVal", ctypes.c_wchar_p), ("ulVal", ctypes.c_ulong), ("boolVal", ctypes.c_short)]
             _fields_ = [("vt", ctypes.c_ushort), ("wReserved1", ctypes.c_ushort), ("wReserved2", ctypes.c_ushort), ("wReserved3", ctypes.c_ushort), ("u", _U)]
-        
+
         CLSID_MMDeviceEnumerator = GUID(0xbcde0395, 0xe52f, 0x467c, (BYTE*8)(0x8e,0x3d,0xc4,0x57,0x92,0x91,0x69,0x2e))
         IID_IMMDeviceEnumerator = GUID(0xa95664d2, 0x9614, 0x4f35, (BYTE*8)(0xa7,0x46,0xde,0x8d,0xb6,0x36,0x17,0xe6))
         PKEY_Device_FriendlyName = type("PROPERTYKEY", (ctypes.Structure,), {"_fields_": [("fmtid", GUID), ("pid", DWORD)]})(GUID(0xa45c254e, 0xdf1c, 0x4efd, (BYTE*8)(0x80,0x20,0x67,0xd1,0x46,0xa8,0x50,0xe0)), 14)
-        
+
         ole32 = ctypes.windll.ole32
         co_init_res = ole32.CoInitialize(None)
         com_initialized_by_us = (co_init_res == 0)  # S_OK = 0, S_FALSE = 1 (already initialized)
-        
+
         class IPropertyStoreVtbl(ctypes.Structure):
             _fields_ = [("QueryInterface", ctypes.c_void_p), ("AddRef", ctypes.c_void_p), ("Release", ctypes.c_void_p), ("GetCount", ctypes.c_void_p), ("GetAt", ctypes.c_void_p), ("GetValue", ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.POINTER(type(PKEY_Device_FriendlyName)), ctypes.POINTER(PROPVARIANT)))]
         class IPropertyStore(ctypes.Structure):
@@ -33,7 +32,7 @@ def _get_windows_default_communications_device_name():
             _fields_ = [("QueryInterface", ctypes.c_void_p), ("AddRef", ctypes.c_void_p), ("Release", ctypes.c_void_p), ("EnumAudioEndpoints", ctypes.c_void_p), ("GetDefaultAudioEndpoint", ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.POINTER(IMMDevice))))]
         class IMMDeviceEnumerator(ctypes.Structure):
             _fields_ = [("lpVtbl", ctypes.POINTER(IMMDeviceEnumeratorVtbl))]
-        
+
         enum_ptr = ctypes.POINTER(IMMDeviceEnumerator)()
         if ole32.CoCreateInstance(ctypes.byref(CLSID_MMDeviceEnumerator), None, 1, ctypes.byref(IID_IMMDeviceEnumerator), ctypes.byref(enum_ptr)) == 0:
             try:

@@ -1,7 +1,6 @@
 import ctypes
 import logging
 from ctypes import wintypes
-from typing import Optional, Tuple
 
 logger = logging.getLogger("whisperai")
 
@@ -29,7 +28,7 @@ class RECT(ctypes.Structure):
     ]
 
 
-def get_win32_caret_coords() -> Optional[Tuple[int, int]]:
+def get_win32_caret_coords() -> tuple[int, int] | None:
     """Tier 1: Win32 USER32 GetGUIThreadInfo caret tracking for native Win32/Edit/RichEdit controls."""
     try:
         user32 = ctypes.windll.user32
@@ -39,15 +38,14 @@ def get_win32_caret_coords() -> Optional[Tuple[int, int]]:
             hwnd = gui_info.hwndFocus
             if hwnd and (gui_info.rcCaret.left > 10 or gui_info.rcCaret.bottom > 10):
                 pt = wintypes.POINT(gui_info.rcCaret.left, gui_info.rcCaret.bottom)
-                if user32.ClientToScreen(hwnd, ctypes.byref(pt)):
-                    if pt.x > 100 and pt.y > 100:
-                        return pt.x, pt.y
+                if user32.ClientToScreen(hwnd, ctypes.byref(pt)) and pt.x > 100 and pt.y > 100:
+                    return pt.x, pt.y
     except Exception:
         pass
     return None
 
 
-def get_workarea_fallback_coords() -> Tuple[int, int]:
+def get_workarea_fallback_coords() -> tuple[int, int]:
     """Tier 3: Active Display SPI_GETWORKAREA fallback position."""
     try:
         user32 = ctypes.windll.user32
@@ -61,7 +59,7 @@ def get_workarea_fallback_coords() -> Tuple[int, int]:
     return 1000, 700
 
 
-def get_active_caret_coordinates() -> Tuple[int, int]:
+def get_active_caret_coordinates() -> tuple[int, int]:
     """3-Tier Caret Detection Engine Chain (Win32 -> UIA -> WorkArea)."""
     # Tier 1: Win32 GetGUIThreadInfo
     coords = get_win32_caret_coords()

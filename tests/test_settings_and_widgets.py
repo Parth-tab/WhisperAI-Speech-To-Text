@@ -1,12 +1,14 @@
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from PySide6.QtWidgets import QApplication
+
 from src.config.manager import ConfigManager
+from src.gui.settings import SettingsWindow
 from src.gui.widgets.dictionary_editor import DictionaryEditor
 from src.gui.widgets.snippet_editor import SnippetEditor
-from src.gui.widgets.style_editor import StyleEditor
 from src.gui.widgets.stats_dialog import StatsDialog
-from src.gui.settings import SettingsWindow
+from src.gui.widgets.style_editor import StyleEditor
 
 
 @pytest.fixture(scope="session")
@@ -20,10 +22,10 @@ def qapp():
 def test_dictionary_editor_crud(qapp):
     cfg = ConfigManager()
     cfg.set("dictionary", ["existing_term"])
-    
+
     editor = DictionaryEditor(cfg)
     assert editor.list_widget.count() == 1
-    
+
     # Add new word
     editor.word_input.setText("kubernetes")
     editor.add_word()
@@ -57,15 +59,15 @@ def test_dictionary_editor_load_industry_pack(qapp):
 def test_snippet_editor_crud(qapp):
     cfg = ConfigManager()
     cfg.set("snippets", {"sig": "best regards"})
-    
+
     editor = SnippetEditor(cfg)
     assert editor.table_widget.rowCount() == 1
-    
+
     # Add snippet
     editor.trigger_input.setText("addr")
     editor.expansion_input.setPlainText("123 Main St")
     editor.add_snippet()
-    
+
     snippets = cfg.get("snippets")
     assert snippets["addr"] == "123 Main St"
     assert editor.table_widget.rowCount() == 2
@@ -80,15 +82,15 @@ def test_snippet_editor_crud(qapp):
 def test_style_editor_crud(qapp):
     cfg = ConfigManager()
     cfg.set("app_styles", {"slack.exe": "casual"})
-    
+
     editor = StyleEditor(cfg)
     assert editor.table_widget.rowCount() == 1
-    
+
     # Add style mapping
     editor.process_input.setText("code.exe")
     editor.profile_combo.setCurrentText("technical")
     editor.add_style_mapping()
-    
+
     styles = cfg.get("app_styles")
     assert styles["code.exe"] == "technical"
     assert editor.table_widget.rowCount() == 2
@@ -117,17 +119,17 @@ def test_stats_dialog(mock_totals, qapp):
 def test_settings_window_save(qapp):
     cfg = ConfigManager()
     settings = SettingsWindow(cfg)
-    
+
     saved_payload = []
     settings.settings_saved.connect(lambda d: saved_payload.append(d))
-    
+
     settings.hotkey_input.setText("<ctrl>+<shift>+d")
     settings.vad_input.setValue(0.7)
     settings.model_input.setCurrentText("small")
     settings.whisper_mode_input.setChecked(True)
-    
+
     settings.save_settings()
-    
+
     assert cfg.get("hotkey") == "<ctrl>+<shift>+d"
     assert cfg.get("vad_threshold") == 0.7
     assert cfg.get("model_selection") == "small"

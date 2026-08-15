@@ -1,9 +1,10 @@
+import re
+
+import psutil
 import win32gui
 import win32process
-import psutil
-from typing import Dict
 
-APP_CONTEXT_MAP: Dict[str, str] = {
+APP_CONTEXT_MAP: dict[str, str] = {
     "slack.exe": "Slack instant messaging — casual, concise tone",
     "discord.exe": "Discord chat — casual, concise, conversational",
     "teams.exe": "Microsoft Teams chat — professional but conversational",
@@ -49,9 +50,6 @@ def is_terminal_process(process_name: str) -> bool:
 
 
 DEFAULT_CONTEXT = "General text input — use clean, well-formatted prose"
-
-
-import re
 
 
 def _sanitize_window_title(title: str) -> str:

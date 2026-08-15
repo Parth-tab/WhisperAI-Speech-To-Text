@@ -59,9 +59,10 @@ def apply_casing_transforms(text: str) -> str:
     ]
 
     for pattern, transformer in patterns:
-        def repl(match):
+        def repl(match, fn=transformer):
             inner_text = match.group(1).strip()
-            return transformer(inner_text)
+            return fn(inner_text)
+
         text = re.sub(pattern, repl, text)
 
     return text

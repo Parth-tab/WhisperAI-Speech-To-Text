@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QSystemTrayIcon, QMenu
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QMenu, QSystemTrayIcon
+
 from src.gui.settings import SettingsWindow
 from src.utils.paths import get_asset_path
 

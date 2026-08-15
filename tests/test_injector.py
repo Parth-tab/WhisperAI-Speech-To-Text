@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from src.injection.injector import ClipboardInjector, send_unicode_text
 
 

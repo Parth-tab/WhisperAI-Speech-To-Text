@@ -1,5 +1,5 @@
-import wave
 import os
+import wave
 
 
 def generate_float32_wav(filepath, duration_sec=1.0, sample_rate=16000):
@@ -16,12 +16,11 @@ def generate_float32_wav(filepath, duration_sec=1.0, sample_rate=16000):
         # We can also just use soundfile if it's installed (it is, because PyInstaller test uses it?
         # No, wait, `import soundfile as sf` was used in `profiling_test.py`.
         # If soundfile is available in profiling_test, maybe we can use it here too!
-        pass
 
 
 try:
-    import soundfile as sf
     import numpy as np
+    import soundfile as sf
 
     def generate(filepath, duration=1.0, sr=16000):
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -32,9 +31,9 @@ except ImportError:
 
     def generate(filepath, duration=1.0, sr=16000):
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        import wave
-        import struct
         import math
+        import struct
+        import wave
 
         with wave.open(filepath, "wb") as w:
             w.setnchannels(1)

@@ -1,7 +1,9 @@
+from unittest.mock import MagicMock, patch
+
 import numpy as np
+
 from src.audio.capture import AudioWorker
-import time
-from unittest.mock import patch, MagicMock
+
 
 @patch("src.audio.capture.sd.InputStream")
 @patch("src.audio.capture.sd.query_devices")
@@ -11,7 +13,7 @@ def test_audio_capture(mock_ctypes, mock_hostapis, mock_devices, mock_input_stre
     def mock_query_hostapis(index=None):
         info = {"name": "Windows WASAPI", "default_input_device": 1, "devices": [1]}
         return [info] if index is None else info
-        
+
     mock_hostapis.side_effect = mock_query_hostapis
     mock_devices.return_value = {"default_samplerate": 48000, "max_input_channels": 1, "name": "Test Mic"}
     mock_stream_instance = MagicMock()
@@ -19,9 +21,9 @@ def test_audio_capture(mock_ctypes, mock_hostapis, mock_devices, mock_input_stre
     mock_stream_instance.__enter__ = MagicMock(return_value=mock_stream_instance)
     mock_stream_instance.__exit__ = MagicMock(return_value=None)
     mock_input_stream.return_value = mock_stream_instance
-    
+
     worker = AudioWorker(use_vad=False)
-    
+
     captured_audio = None
     started = False
 

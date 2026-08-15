@@ -1,7 +1,9 @@
 import json
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from PySide6.QtWidgets import QApplication
+
 from src.core.updater import AutoUpdater, UpdateCheckWorker, UpdateDownloadWorker
 
 
@@ -24,7 +26,7 @@ def test_update_check_worker_available(mock_urlopen, qapp):
             }
         ]
     }
-    
+
     mock_resp = MagicMock()
     mock_resp.read.return_value = json.dumps(fake_release).encode("utf-8")
     mock_resp.__enter__.return_value = mock_resp
@@ -50,7 +52,7 @@ def test_update_download_worker_run(mock_retrieve, tmp_path, qapp):
     worker = UpdateDownloadWorker("https://fake.url/setup.exe")
     progress_vals = []
     worker.progress.connect(lambda p: progress_vals.append(p))
-    
+
     finished_paths = []
     worker.finished.connect(lambda p: finished_paths.append(p))
 
@@ -63,7 +65,7 @@ def test_update_download_worker_run(mock_retrieve, tmp_path, qapp):
 def test_auto_updater_tray_notification(qapp):
     mock_tray = MagicMock()
     updater = AutoUpdater(tray_icon=mock_tray)
-    
+
     updater.on_update_available("v2.0.0", "https://download.url/setup.exe")
     assert updater._pending_download_url == "https://download.url/setup.exe"
     mock_tray.showMessage.assert_called_once()

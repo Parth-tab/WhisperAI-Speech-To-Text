@@ -1,6 +1,7 @@
+from unittest.mock import MagicMock, patch
+
 import numpy as np
-import pytest
-from unittest.mock import patch, MagicMock
+
 from src.audio.vad import VADEngine
 
 
@@ -23,7 +24,7 @@ def test_vad_chunk_padding_and_truncation(mock_exists, mock_session):
     mock_session.return_value.run = mock_run
 
     engine = VADEngine()
-    
+
     # Chunk < 512 samples
     short_chunk = np.ones(256, dtype=np.float32)
     engine.process_chunk(short_chunk)
@@ -39,13 +40,13 @@ def test_vad_chunk_padding_and_truncation(mock_exists, mock_session):
 @patch("src.audio.vad.Path.exists", return_value=True)
 def test_vad_speech_detection_and_silence_timeout(mock_exists, mock_session):
     engine = VADEngine(threshold=0.5, min_silence_duration_ms=500, sample_rate=16000)
-    
+
     # 1. Feed speech chunks (prob = 0.9)
     mock_session.return_value.run.return_value = (
         np.array([[0.9]], dtype=np.float32),
         np.zeros((2, 1, 128), dtype=np.float32)
     )
-    
+
     # Need >= 3 chunks for speech confirmation
     for _ in range(3):
         engine.process_chunk(np.zeros(512, dtype=np.float32))
@@ -60,14 +61,14 @@ def test_vad_speech_detection_and_silence_timeout(mock_exists, mock_session):
         np.array([[0.1]], dtype=np.float32),
         np.zeros((2, 1, 128), dtype=np.float32)
     )
-    
+
     # 500ms silence = 8,000 samples = ~16 chunks of 512
     triggered = False
     for _ in range(16):
         if engine.process_chunk(np.zeros(512, dtype=np.float32)):
             triggered = True
             break
-            
+
     assert triggered is True
 
 
@@ -75,13 +76,13 @@ def test_vad_speech_detection_and_silence_timeout(mock_exists, mock_session):
 @patch("src.audio.vad.Path.exists", return_value=True)
 def test_vad_grace_period_prevents_early_cutoff(mock_exists, mock_session):
     engine = VADEngine(threshold=0.5, min_silence_duration_ms=200, sample_rate=16000)
-    
+
     # Pure silence right from the start
     mock_session.return_value.run.return_value = (
         np.array([[0.1]], dtype=np.float32),
         np.zeros((2, 1, 128), dtype=np.float32)
     )
-    
+
     # Under 2000ms duration (e.g. 10 chunks = 5120 samples = 320ms), must return False
     for _ in range(10):
         result = engine.process_chunk(np.zeros(512, dtype=np.float32))
@@ -96,11 +97,11 @@ def test_vad_safety_timeout_after_5_minutes(mock_exists, mock_session):
         np.array([[0.1]], dtype=np.float32),
         np.zeros((2, 1, 128), dtype=np.float32)
     )
-    
+
     # Set total frames to > 5 minutes (5 * 60 * 16000 = 4,800,000 samples)
     engine._total_frames = 5_000_000
     engine._speech_detected = False
-    
+
     result = engine.process_chunk(np.zeros(512, dtype=np.float32))
     assert result is True
 
@@ -113,7 +114,7 @@ def test_vad_reset_state(mock_exists, mock_session):
     engine._total_frames = 500
     engine._speech_detected = True
     engine._consecutive_speech_chunks = 5
-    
+
     engine.reset_state()
     assert engine._silence_frames == 0
     assert engine._total_frames == 0

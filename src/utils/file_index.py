@@ -1,17 +1,17 @@
-import os
-import psutil
-import logging
-from typing import Dict, List
 import difflib
+import logging
+import os
 import time
+
+import psutil
 
 logger = logging.getLogger("whisperai")
 
 
 class FileIndexer:
     def __init__(self):
-        self.workspace_cache: Dict[str, List[str]] = {}
-        self.last_scanned: Dict[str, float] = {}
+        self.workspace_cache: dict[str, list[str]] = {}
+        self.last_scanned: dict[str, float] = {}
 
     def get_workspace_for_pid(self, pid: int) -> str:
         try:
@@ -22,7 +22,7 @@ class FileIndexer:
             logger.warning(f"[FileIndexer] Error getting cwd for pid {pid}: {e}")
             return ""
 
-    def scan_workspace(self, workspace_path: str) -> List[str]:
+    def scan_workspace(self, workspace_path: str) -> list[str]:
         if not workspace_path or not os.path.exists(workspace_path):
             return []
 

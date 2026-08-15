@@ -136,8 +136,4 @@ def needs_llm_cleanup(text: str) -> bool:
 
     # 5. Check for excessive uppercase (shouting / ASR artifact)
     words = stripped.split()
-    if len(words) > 3 and sum(1 for w in words if w.isupper()) > len(words) * 0.5:
-        return True
-
-    # Text is clean! Bypass LLM.
-    return False
+    return len(words) > 3 and sum(1 for w in words if w.isupper()) > len(words) * 0.5

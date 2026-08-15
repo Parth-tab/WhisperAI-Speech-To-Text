@@ -1,5 +1,5 @@
-import time
 import threading
+import time
 from unittest.mock import patch
 
 from src.core.watchdog import ThreadWatchdog
@@ -30,10 +30,12 @@ def test_watchdog_timeout():
         wd.is_running = False
 
     real_time = time.time()
-    with patch("src.core.watchdog.time.sleep", side_effect=side_effect):
-        with patch("src.core.watchdog.time.time", return_value=real_time + 10.0):
-            wd.is_running = True
-            wd._monitor_loop()
+    with (
+        patch("src.core.watchdog.time.sleep", side_effect=side_effect),
+        patch("src.core.watchdog.time.time", return_value=real_time + 10.0),
+    ):
+        wd.is_running = True
+        wd._monitor_loop()
 
     assert len(called) == 1
     assert 123 not in wd.active_tasks

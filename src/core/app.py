@@ -1,30 +1,32 @@
+import logging
+import platform
+import queue
 import sys
 import threading
-import queue
-import platform
-import psutil
-import logging
 from concurrent.futures import ThreadPoolExecutor
-from PySide6.QtWidgets import QApplication, QMessageBox
+
+import numpy as np
+import psutil
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication
+
 from src.utils.paths import get_asset_path
 
 logger = logging.getLogger("whisperai")
 
 
 from src.asr.engine import ASREngine
-from src.llm.engine import LLMEngine
-from src.core.pipeline import AIPipeline
-
 from src.audio.capture import AudioWorker
-from src.hotkey.listener import make_listener_from_config
-from src.injection.window_detect import WindowDetector
-from src.injection.injector import ClipboardInjector
 from src.config.manager import ConfigManager
-from src.gui.tray import SystemTrayApp
+from src.core.pipeline import AIPipeline
+from src.gui.flow_bubble import BubbleState, FlowBubble
 from src.gui.overlay import RecordingOverlay
-from src.gui.flow_bubble import FlowBubble, BubbleState
+from src.gui.tray import SystemTrayApp
+from src.hotkey.listener import make_listener_from_config
+from src.injection.injector import ClipboardInjector
+from src.injection.window_detect import WindowDetector
+from src.llm.engine import LLMEngine
 
 
 class AppSignals(QObject):
@@ -106,9 +108,9 @@ class WhisperAIApp:
             on_release=self.on_hotkey_release,
         )
 
+        from src.audio.wake_word_worker import WakeWordWorker
         from src.core.telemetry import telemetry
         from src.core.watchdog import watchdog
-        from src.audio.wake_word_worker import WakeWordWorker
 
         self.telemetry = telemetry
         self.watchdog = watchdog
@@ -127,7 +129,6 @@ class WhisperAIApp:
                 on_release=self.on_hotkey_release,
             )
             self.hotkey_listener.start()
-            pass
 
         is_whisper = new_settings.get(
             "whisper_mode", self.config_manager.get("whisper_mode", False)
@@ -148,14 +149,15 @@ class WhisperAIApp:
 
     def _check_and_download_models(self):
         from pathlib import Path
-        from src.llm.engine import _MODELS_DIR, _MODEL_FILENAME
+
         from src.asr.engine import _WHISPER_CACHE
-        
+        from src.llm.engine import _MODEL_FILENAME, _MODELS_DIR
+
         llm_path = Path(_MODELS_DIR) / _MODEL_FILENAME
         model_selection = self.config_manager.get("model_selection", "base")
         lang_setting = self.config_manager.get("language", "auto")
         model_size = f"{model_selection}.en" if (model_selection in ["tiny", "base", "small", "medium"] and lang_setting == "en") else model_selection
-        
+
         needs_download = False
         if not llm_path.exists():
             needs_download = True
@@ -171,12 +173,12 @@ class WhisperAIApp:
                         break
                 if not found:
                     needs_download = True
-                    
+
         if needs_download:
             from src.gui.download_dialog import ModelDownloadDialog
             dialog = ModelDownloadDialog(model_size=model_size)
             dialog.exec()
-            
+
     def start(self):
         """Start the WhisperAI system."""
         self._pin_process_to_p_cores()
@@ -256,7 +258,7 @@ class WhisperAIApp:
                 return
             if hasattr(self, 'wake_word_worker') and self.wake_word_worker.isRunning():
                 self.wake_word_worker.stop()
-                
+
             if self.is_hibernating:
                 if self.asr_engine:
                     self.asr_engine.wake_up()
@@ -267,14 +269,14 @@ class WhisperAIApp:
             is_whisper = self.config_manager.get("whisper_mode", False)
             base_vad = self.config_manager.get("vad_threshold", 0.5)
             new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
-            
+
             self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad, preroll_audio=preroll_audio)
             self.audio_worker.connection_successful.connect(self._on_recording_started)
             self.audio_worker.recording_failed.connect(self._on_recording_failed)
             self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
             self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
             self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
-            
+
             self.signals.bubble_state.emit(BubbleState.PROCESSING)
             self.audio_worker.start()
 
@@ -287,7 +289,7 @@ class WhisperAIApp:
                 model_size = f"{model_selection}.en"
             else:
                 model_size = model_selection
-                
+
             with ThreadPoolExecutor(max_workers=2) as executor:
                 future_asr = executor.submit(ASREngine, model_size, language=lang_setting)
                 future_llm = executor.submit(LLMEngine)
@@ -371,14 +373,14 @@ class WhisperAIApp:
                 is_whisper = self.config_manager.get("whisper_mode", False)
                 base_vad = self.config_manager.get("vad_threshold", 0.5)
                 new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
-                
+
                 self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad)
                 self.audio_worker.connection_successful.connect(self._on_recording_started)
                 self.audio_worker.recording_failed.connect(self._on_recording_failed)
                 self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
                 self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
                 self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
-                
+
                 self.signals.bubble_state.emit(BubbleState.PROCESSING)
                 self.audio_worker.start()
 
@@ -414,14 +416,14 @@ class WhisperAIApp:
                 is_whisper = self.config_manager.get("whisper_mode", False)
                 base_vad = self.config_manager.get("vad_threshold", 0.5)
                 new_vad = self.config_manager.get("whisper_vad_threshold", 0.2) if is_whisper else base_vad
-                
+
                 self.audio_worker = AudioWorker(use_vad=True, vad_threshold=new_vad)
                 self.audio_worker.connection_successful.connect(self._on_recording_started)
                 self.audio_worker.recording_failed.connect(self._on_recording_failed)
                 self.audio_worker.audio_chunk_ready.connect(self._on_audio_chunk)
                 self.audio_worker.audio_level_changed.connect(self._on_audio_level_changed)
                 self.audio_worker.recording_stopped.connect(self._on_recording_stopped)
-                
+
                 self.signals.bubble_state.emit(BubbleState.PROCESSING)
                 self.audio_worker.start()
 
@@ -473,7 +475,6 @@ class WhisperAIApp:
             pipeline_ref = self.pipeline
 
         context_tuple = self.window_detector.get_context()
-        pass
         self.transcription_queue.put((audio_data, context_tuple, pipeline_ref))
 
     def _transcription_worker(self):

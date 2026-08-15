@@ -1,8 +1,7 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from src.utils.list_detector import detect_list_intent, detect_list_mode
 from src.llm.engine import _ensure_list_newlines
-
+from src.utils.list_detector import detect_list_intent, detect_list_mode
 
 # --- Group 1: detect_list_intent (legacy wrapper) ---
 

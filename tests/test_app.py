@@ -1,5 +1,7 @@
+from unittest.mock import MagicMock, patch
+
 import numpy as np
-from unittest.mock import patch, MagicMock
+
 from src.core.app import WhisperAIApp
 
 
@@ -49,7 +51,7 @@ def test_app_hotkey_callbacks(
     app.handle_hotkey_press()
     MockAudioWorker.assert_called_once()
     MockAudioWorker.return_value.start.assert_called_once()
-    
+
     app.audio_worker = MockAudioWorker.return_value
     app.audio_worker.isRunning.return_value = True
 

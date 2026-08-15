@@ -2,6 +2,7 @@ import sys
 from unittest.mock import patch
 
 from PySide6.QtWidgets import QApplication
+
 from src.gui.overlay import RecordingOverlay
 
 # Ensure QApplication exists for tests

@@ -1,16 +1,16 @@
-import pytest
 import datetime
-import numpy as np
 from unittest.mock import MagicMock, patch
 
-from src.utils.text_cleaner import sanitize_symbol_loops
+import numpy as np
+
+from src.asr.engine import ASREngine
+from src.core.pipeline import PipelineContext, SnippetStage
+from src.injection.injector import ClipboardInjector
+from src.injection.window_detect import WindowDetector
+from src.llm.style_profiles import get_style_prompt
 from src.utils.casing import apply_casing_transforms
 from src.utils.syntax_map import apply_syntax_map
-from src.injection.window_detect import WindowDetector, APP_CONTEXT_MAP
-from src.injection.injector import ClipboardInjector
-from src.llm.style_profiles import STYLE_PROFILES, get_style_prompt
-from src.asr.engine import ASREngine
-from src.core.pipeline import AIPipeline, SnippetStage, CasingStage, PipelineContext
+from src.utils.text_cleaner import sanitize_symbol_loops
 
 
 # --- 1. Financial Domain Tests ---
@@ -96,22 +96,22 @@ def test_browser_tab_context_recognition():
     detector = WindowDetector()
 
     with patch.object(detector, "get_active_window_info", return_value=("PROJ-1024 Fix auth deadlock - Jira - Google Chrome", "chrome.exe", 100)):
-        ctx_str, profile_id, pid = detector.get_context()
+        ctx_str, profile_id, _ = detector.get_context()
         assert profile_id == "prd"
         assert "Jira/Linear" in ctx_str
 
     with patch.object(detector, "get_active_window_info", return_value=("Sprint Planning 2026 - Notion - Microsoft Edge", "msedge.exe", 101)):
-        ctx_str, profile_id, pid = detector.get_context()
+        ctx_str, profile_id, _ = detector.get_context()
         assert profile_id == "prd"
         assert "Notion" in ctx_str
 
     with patch.object(detector, "get_active_window_info", return_value=("Quantum_State_Tomography.tex - Overleaf - Google Chrome", "chrome.exe", 102)):
-        ctx_str, profile_id, pid = detector.get_context()
+        ctx_str, profile_id, _ = detector.get_context()
         assert profile_id == "academic"
         assert "Overleaf" in ctx_str
 
     with patch.object(detector, "get_active_window_info", return_value=("Inbox (3) - user@company.com - Gmail - Brave", "brave.exe", 103)):
-        ctx_str, profile_id, pid = detector.get_context()
+        ctx_str, profile_id, _ = detector.get_context()
         assert profile_id == "email"
         assert "Gmail" in ctx_str
 
@@ -119,9 +119,9 @@ def test_browser_tab_context_recognition():
 # --- 9. Dynamic Snippet Placeholders ({date}, {time}, {clipboard}) ---
 def test_dynamic_snippet_placeholders():
     stage = SnippetStage()
-    
+
     ctx = PipelineContext(audio_data=np.zeros(10), context_str="", profile_id="general", pid=0, text="insert date stamp")
-    
+
     class DummyConfig:
         def get(self, key, default=None):
             if key == "snippets":

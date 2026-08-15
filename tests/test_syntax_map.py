@@ -1,4 +1,3 @@
-import pytest
 from src.utils.syntax_map import apply_syntax_map
 
 

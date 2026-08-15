@@ -1,5 +1,7 @@
+from unittest.mock import MagicMock, patch
+
 import numpy as np
-from unittest.mock import patch, MagicMock
+
 from src.asr.engine import ASREngine
 
 
@@ -31,7 +33,7 @@ def test_asr_engine_dsp_logic(mock_whisper_model):
     mock_whisper_model.return_value = mock_model_instance
 
     engine = ASREngine()
-    
+
     # 1 second of audio at 16000 sr.
     audio_data = np.zeros(16000, dtype=np.float32)
     # Feed a low-amplitude raw audio pulse (e.g., peak at 0.005)
@@ -39,8 +41,8 @@ def test_asr_engine_dsp_logic(mock_whisper_model):
 
     # With rms_min=0.01, if normalization doesn't happen before,
     # RMS will be very low (e.g., ~0.0003), and it will return ""
-    # With our fix, it normalizes first, max value becomes 1.0, 
+    # With our fix, it normalizes first, max value becomes 1.0,
     # RMS becomes high enough, and it shouldn't be treated as silence.
     result = engine.transcribe(audio_data, rms_min=0.01)
-    
+
     assert result == "Testing logic."

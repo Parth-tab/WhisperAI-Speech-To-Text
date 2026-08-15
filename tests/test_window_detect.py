@@ -9,7 +9,7 @@ def test_window_detector():
     assert isinstance(process, str)
     assert isinstance(pid, int)
 
-    context, style, pid2 = detector.get_context()
+    context, style, _ = detector.get_context()
     assert isinstance(context, str) and len(context) > 0
     assert isinstance(style, str)
 

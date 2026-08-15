@@ -1,9 +1,9 @@
-import os
+import copy
 import json
+import logging
+import os
 import tempfile
 import threading
-import copy
-import logging
 from pathlib import Path
 
 logger = logging.getLogger("whisperai")
@@ -60,7 +60,7 @@ class ConfigManager:
         with self._lock:
             if self.config_path.exists():
                 try:
-                    with open(self.config_path, "r") as f:
+                    with open(self.config_path) as f:
                         data = json.load(f)
                         self.config.update(data)
                 except Exception as e:

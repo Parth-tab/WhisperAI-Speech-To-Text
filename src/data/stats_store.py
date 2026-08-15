@@ -1,11 +1,11 @@
 import sqlite3
-from pathlib import Path
-from datetime import datetime, timedelta
 from contextlib import closing
+from datetime import datetime, timedelta
+from pathlib import Path
 
 
 class StatsStore:
-    def __init__(self, db_path: str = None):
+    def __init__(self, db_path: str | None = None):
         if db_path is None:
             self.db_path = Path.home() / ".whisperai" / "stats.db"
         else:
@@ -15,10 +15,9 @@ class StatsStore:
         self._init_db()
 
     def _init_db(self):
-        with closing(sqlite3.connect(self.db_path)) as conn:
-            with conn:
-                cursor = conn.cursor()
-                cursor.execute("""
+        with closing(sqlite3.connect(self.db_path)) as conn, conn:
+            cursor = conn.cursor()
+            cursor.execute("""
                     CREATE TABLE IF NOT EXISTS sessions (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         start_time TEXT,
@@ -40,36 +39,34 @@ class StatsStore:
         start_time_str = (now - timedelta(seconds=duration_sec)).isoformat()
         end_time_str = now.isoformat()
 
-        with closing(sqlite3.connect(self.db_path)) as conn:
-            with conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    """
-                    INSERT INTO sessions (start_time, end_time, word_count, char_count, duration_sec)
-                    VALUES (?, ?, ?, ?, ?)
-                """,
-                    (
-                        start_time_str,
-                        end_time_str,
-                        word_count,
-                        char_count,
-                        duration_sec,
-                    ),
-                )
+        with closing(sqlite3.connect(self.db_path)) as conn, conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO sessions (start_time, end_time, word_count, char_count, duration_sec)
+                VALUES (?, ?, ?, ?, ?)
+            """,
+                (
+                    start_time_str,
+                    end_time_str,
+                    word_count,
+                    char_count,
+                    duration_sec,
+                ),
+            )
 
     def get_totals(self) -> dict:
-        with closing(sqlite3.connect(self.db_path)) as conn:
-            with conn:
-                cursor = conn.cursor()
-                cursor.execute("""
-                    SELECT 
+        with closing(sqlite3.connect(self.db_path)) as conn, conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                    SELECT
                         COUNT(id),
                         SUM(word_count),
                         SUM(char_count),
                         SUM(duration_sec)
                     FROM sessions
                 """)
-                row = cursor.fetchone()
+            row = cursor.fetchone()
 
         total_sessions = row[0] or 0
         total_words = row[1] or 0

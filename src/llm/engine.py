@@ -1,6 +1,7 @@
 import logging
 import re
 from pathlib import Path
+
 from llama_cpp import Llama, LlamaRAMCache
 
 logger = logging.getLogger("whisperai")
@@ -20,8 +21,6 @@ def _ensure_model(model_dir: Path, filename: str) -> Path:
         return model_path
 
     model_dir.mkdir(parents=True, exist_ok=True)
-    pass
-    pass
 
     try:
         from huggingface_hub import hf_hub_download
@@ -87,7 +86,7 @@ class LLMEngine:
         self.model_path = str(resolved)
         self.use_gpu = use_gpu
         self.n_ctx = n_ctx
-        
+
         import os
         total_cores = os.cpu_count() or 4
         self.n_threads = n_threads or max(2, min(total_cores - 2, 4))
@@ -98,7 +97,7 @@ class LLMEngine:
     def _load_model(self):
         if self.use_gpu:
             try:
-                logger.info(f"Initializing LLMEngine on GPU (n_gpu_layers=-1)...")
+                logger.info("Initializing LLMEngine on GPU (n_gpu_layers=-1)...")
                 self.llm = Llama(
                     model_path=self.model_path,
                     n_ctx=self.n_ctx,
@@ -149,11 +148,10 @@ class LLMEngine:
         Clean the provided transcript using the LLM.
         Removes filler words, fixes grammar, and formats for the target context.
         """
+        from src.llm.formatter import Formatter
         from src.llm.prompts import PromptBuilder
         from src.llm.style_profiles import get_style_prompt
-        from src.llm.formatter import Formatter
         from src.utils.list_detector import detect_list_mode
-
         from src.utils.text_cleaner import sanitize_symbol_loops
 
         if not text or len(text.strip()) < 3:
@@ -202,6 +200,7 @@ class LLMEngine:
         )
 
         import time
+
         from src.core.telemetry import telemetry
 
         start_t = time.time()
@@ -259,11 +258,11 @@ class LLMEngine:
             # Word-count guard: Prevents the LLM from rewriting or truncating
             orig_words = len(text.split())
             new_words = len(result.split())
-            
+
             if new_words > orig_words + 15 and orig_words > 3:
                 logger.warning(f"[LLM] Discarded output: added too many words ({new_words} > {orig_words}+15)")
                 return sanitize_symbol_loops(text)
-                
+
             if new_words < orig_words * 0.6 and orig_words > 5:
                 logger.warning(f"[LLM] Discarded output: truncated too many words ({new_words} < {orig_words}*0.6)")
                 return sanitize_symbol_loops(text)
@@ -334,7 +333,7 @@ class LLMEngine:
 
     def execute_command(self, command: str, text: str, context: str = "") -> str:
         from src.utils.text_cleaner import sanitize_symbol_loops
-        
+
         # Enforce maximum text and context length truncation guards to prevent prompt KV cache overflow
         if text and len(text) > 4000:
             text = text[:4000]

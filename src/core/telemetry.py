@@ -1,9 +1,10 @@
-import time
-import psutil
+import collections
 import logging
 import threading
-import collections
-from typing import Dict, Any
+import time
+from typing import Any
+
+import psutil
 
 
 def setup_telemetry_logger():
@@ -24,7 +25,7 @@ telemetry_logger = setup_telemetry_logger()
 
 class TelemetryTracker:
     def __init__(self):
-        self.metrics: Dict[str, Any] = {
+        self.metrics: dict[str, Any] = {
             "transcription_latency": collections.deque(maxlen=1000),
             "token_generation_speed": collections.deque(maxlen=1000),
             "memory_usage_mb": collections.deque(maxlen=1000),

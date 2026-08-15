@@ -1,14 +1,16 @@
 import os
 from pathlib import Path
-os.environ["HF_HOME"] = str(Path.home() / ".whisperai" / "models")
 
-import sys
+os.environ["HF_HOME"] = str(Path.home() / ".whisperai" / "models")
 
 # ---------------------------------------------------------------------------
 # Failsafes: AVX2 Pre-Flight Checker
 # ---------------------------------------------------------------------------
 import ctypes
+import sys
+
 import cpufeature
+
 if not cpufeature.CPUFeature["AVX2"]:
     ctypes.windll.user32.MessageBoxW(0, "Fatal Error: AVX2 instruction set not detected. WhisperAI requires an AVX2 capable CPU.", "Hardware Error", 0)
     sys.exit(1)
@@ -51,8 +53,9 @@ if getattr(sys, "frozen", False):
 
     os.add_dll_directory = _safe_add_dll_directory
 
-import multiprocessing
 import logging
+import multiprocessing
+
 from src.core.app import WhisperAIApp
 
 if __name__ == "__main__":
@@ -83,10 +86,10 @@ if __name__ == "__main__":
             pass
 
     from src.utils.paths import get_asset_path
-    
+
     logo_png_path = get_asset_path("src/assets/branding/logo.png")
     logo_ico_path = get_asset_path("src/assets/branding/logo.ico")
-    
+
     if not os.path.exists(logo_png_path) or os.path.getsize(logo_png_path) == 0:
         raise RuntimeError(f"Missing or empty branding asset: {logo_png_path}")
     if not os.path.exists(logo_ico_path) or os.path.getsize(logo_ico_path) == 0:

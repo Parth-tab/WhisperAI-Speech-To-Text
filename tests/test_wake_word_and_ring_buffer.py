@@ -1,8 +1,7 @@
-import pytest
 import numpy as np
-from unittest.mock import patch, MagicMock
-from src.audio.wake_word_worker import WakeWordWorker
+
 from src.audio.capture import AudioWorker
+from src.audio.wake_word_worker import WakeWordWorker
 
 
 def test_wake_word_worker_circular_buffer_and_detection():

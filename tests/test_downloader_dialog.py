@@ -1,8 +1,10 @@
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from PySide6.QtWidgets import QApplication
-from src.gui.downloader_dialog import DownloaderDialog, DownloadWorker
+
 from src.config.manager import ConfigManager
+from src.gui.downloader_dialog import DownloaderDialog, DownloadWorker
 
 
 @pytest.fixture(scope="session")
@@ -16,7 +18,7 @@ def qapp():
 def test_downloader_dialog_ui_and_progress(qapp):
     cfg = ConfigManager()
     dialog = DownloaderDialog(cfg)
-    
+
     assert dialog.progress_bar.value() == 0
     assert "Starting download" in dialog.status_label.text()
 
@@ -36,10 +38,10 @@ def test_downloader_dialog_ui_and_progress(qapp):
 def test_download_worker_run(mock_asr, mock_llm, qapp):
     cfg = ConfigManager()
     worker = DownloadWorker(cfg)
-    
+
     progress_updates = []
     worker.progress.connect(lambda pct, msg: progress_updates.append((pct, msg)))
-    
+
     finished_called = False
     def on_finished():
         nonlocal finished_called

@@ -1,15 +1,16 @@
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QComboBox,
+    QDoubleSpinBox,
     QLabel,
     QLineEdit,
-    QComboBox,
     QPushButton,
-    QDoubleSpinBox,
     QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtGui import QPixmap
+
 from src.gui.widgets.dictionary_editor import DictionaryEditor
 from src.gui.widgets.snippet_editor import SnippetEditor
 from src.utils.paths import get_asset_path

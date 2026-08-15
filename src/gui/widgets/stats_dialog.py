@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QFormLayout
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDialog, QFormLayout, QLabel, QPushButton, QVBoxLayout
+
 from src.data.stats_store import stats_store
 
 

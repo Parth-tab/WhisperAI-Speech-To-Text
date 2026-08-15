@@ -1,13 +1,13 @@
 from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QComboBox,
     QHBoxLayout,
+    QHeaderView,
     QLineEdit,
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QHeaderView,
-    QComboBox,
+    QVBoxLayout,
+    QWidget,
 )
 
 from src.llm.style_profiles import STYLE_PROFILES

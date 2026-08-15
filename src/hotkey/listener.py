@@ -1,7 +1,8 @@
-from pynput import keyboard
-from typing import Callable, Optional
-import time
 import logging
+import time
+from collections.abc import Callable
+
+from pynput import keyboard
 
 logger = logging.getLogger("whisperai")
 
@@ -13,7 +14,7 @@ class HotkeyListener:
     Can also be configured as a combo like Ctrl+Alt+W.
     """
 
-    def __init__(self, trigger_key=keyboard.Key.ctrl_r, modifier_keys: set = None):
+    def __init__(self, trigger_key=keyboard.Key.ctrl_r, modifier_keys: set | None = None):
         """
         Args:
             trigger_key: The primary key that triggers recording (e.g. ctrl_r, or KeyCode for 'w').
@@ -22,10 +23,10 @@ class HotkeyListener:
         self.trigger_key = trigger_key
         self.modifier_keys: set = modifier_keys or set()
 
-        self.on_press_callback: Optional[Callable[[], None]] = None
-        self.on_release_callback: Optional[Callable[[], None]] = None
+        self.on_press_callback: Callable[[], None] | None = None
+        self.on_release_callback: Callable[[], None] | None = None
 
-        self._listener: Optional[keyboard.Listener] = None
+        self._listener: keyboard.Listener | None = None
         self._currently_held: set = set()
         self._is_recording = False
         self._last_release_time = 0.0

@@ -1,4 +1,5 @@
 from pynput import keyboard
+
 from src.hotkey.listener import HotkeyListener
 
 

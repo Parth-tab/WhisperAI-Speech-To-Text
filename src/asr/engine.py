@@ -1,6 +1,7 @@
 import logging
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 from faster_whisper import WhisperModel
 
 logger = logging.getLogger("whisperai")
@@ -53,7 +54,7 @@ class ASREngine:
             model_name_or_id = "Systran/faster-distil-whisper-large-v3"
         else:
             model_name_or_id = self.model_size
-        
+
         if self.use_gpu:
             try:
                 target_compute = "int8_float16" if self.compute_type in ("default", "auto") else self.compute_type
@@ -173,7 +174,7 @@ class ASREngine:
     def transcribe(
         self,
         audio_data: np.ndarray,
-        dictionary: list = None,
+        dictionary: list | None = None,
         profile_id: str = "general",
         language: str | None = None,
         rms_min: float = 0.005,
@@ -186,6 +187,7 @@ class ASREngine:
             return ""
 
         import time
+
         from src.core.telemetry import telemetry
 
         audio_data = audio_data.astype(np.float32).flatten()
@@ -251,7 +253,7 @@ class ASREngine:
         if initial_prompt:
             kwargs["initial_prompt"] = initial_prompt
 
-        segments, info = self.model.transcribe(audio_data, **kwargs)
+        segments, _ = self.model.transcribe(audio_data, **kwargs)
         unique_segment_texts = []
         last_clean_text = ""
         for segment in segments:
@@ -264,8 +266,9 @@ class ASREngine:
 
         telemetry.log_transcription_latency(end_t - start_t)
 
-        from src.utils.text_cleaner import sanitize_symbol_loops
         import re
+
+        from src.utils.text_cleaner import sanitize_symbol_loops
 
         raw_text = text.strip()
 
