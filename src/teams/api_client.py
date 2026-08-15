@@ -7,7 +7,7 @@ logger = logging.getLogger("whisperai")
 class TeamAPIClient:
     def __init__(self, base_url: str = "https://api.whisperai.example.com"):
         self.base_url = base_url
-        self.auth_token = None
+        self.auth_token: str | None = None
 
     def set_token(self, token: str):
         self.auth_token = token

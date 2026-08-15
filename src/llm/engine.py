@@ -204,6 +204,7 @@ class LLMEngine:
         from src.core.telemetry import telemetry
 
         start_t = time.time()
+        assert self.llm is not None, "LLM is not loaded"
         try:
             response = self.llm(
                 prompt,
@@ -356,6 +357,7 @@ class LLMEngine:
             f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
             f"<|im_start|>assistant\n"
         )
+        assert self.llm is not None, "LLM is not loaded"
         try:
             response = self.llm(
                 prompt,

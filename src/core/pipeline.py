@@ -209,7 +209,7 @@ class AIPipeline:
         self,
         asr_engine: ASREngine,
         llm_engine: LLMEngine,
-        config_manager: ConfigManager = None,
+        config_manager: ConfigManager | None = None,
     ):
         self.asr_engine = asr_engine
         self.llm_engine = llm_engine

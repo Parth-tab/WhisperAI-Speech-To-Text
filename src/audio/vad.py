@@ -55,6 +55,7 @@ class VADEngine:
         elif len(audio_chunk) < 512:
             audio_chunk = np.pad(audio_chunk, (0, 512 - len(audio_chunk)))
 
+        assert self._session is not None, "VAD Session is not loaded"
         try:
             inputs = {
                 "input": audio_chunk.reshape(1, -1).astype(np.float32),

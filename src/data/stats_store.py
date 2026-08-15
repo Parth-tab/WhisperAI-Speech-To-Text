@@ -73,7 +73,7 @@ class StatsStore:
         total_chars = row[2] or 0
         total_duration = row[3] or 0.0
 
-        avg_wpm = 0
+        avg_wpm: float = 0.0
         if total_duration > 0:
             avg_wpm = (total_words / total_duration) * 60.0
 

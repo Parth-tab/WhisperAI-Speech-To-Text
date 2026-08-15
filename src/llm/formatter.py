@@ -23,7 +23,7 @@ class Formatter:
 
             # 2. Check for long-range block repetitions (10+ word sequences appearing multiple times)
             min_ngram = 10
-            seen = {}
+            seen: dict[str, int] = {}
             for i in range(n - min_ngram + 1):
                 ngram = " ".join(words[i : i + min_ngram]).lower()
                 if ngram in seen:

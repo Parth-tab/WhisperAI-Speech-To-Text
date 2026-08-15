@@ -17,7 +17,7 @@ class WakeWordWorker(QThread):
         self.energy_threshold = energy_threshold
         self.running = False
         # 1-second circular pre-roll buffer
-        self.buffer = deque(maxlen=sample_rate)
+        self.buffer: deque[float] = deque(maxlen=sample_rate)
 
     def run(self):
         self.running = True

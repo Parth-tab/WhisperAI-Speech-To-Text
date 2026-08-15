@@ -12,8 +12,8 @@ class ThreadWatchdog:
         self.active_tasks: dict[int, float] = {}
         self.lock = threading.Lock()
         self.is_running = False
-        self._bg_thread = None
-        self.on_deadlock: Callable[[], None] = None
+        self._bg_thread: threading.Thread | None = None
+        self.on_deadlock: Callable[[], None] | None = None
 
     def start(self):
         if self.is_running:

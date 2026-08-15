@@ -234,6 +234,7 @@ class ASREngine:
             kwargs["language"] = active_lang
 
         import inspect
+        assert self.model is not None, "ASR Model is not loaded"
         sig_params = inspect.signature(self.model.transcribe).parameters
         if "log_prob_threshold" in sig_params:
             kwargs["log_prob_threshold"] = -0.7

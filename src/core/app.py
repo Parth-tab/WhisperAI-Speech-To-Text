@@ -250,7 +250,7 @@ class WhisperAIApp:
                 if self.config_manager.get("voice_activation", False) and hasattr(self, 'wake_word_worker') and not self.wake_word_worker.isRunning():
                     self.wake_word_worker.start()
 
-    def start_recording_with_preroll(self, preroll_audio: np.ndarray = None):
+    def start_recording_with_preroll(self, preroll_audio: np.ndarray | None = None):
         with self.state_lock:
             if not self._models_loaded:
                 return
@@ -326,9 +326,6 @@ class WhisperAIApp:
                 self.audio_worker.stop()
                 if hasattr(self.audio_worker, "quit"):
                     self.audio_worker.quit()
-
-    def _on_audio_level_changed(self, level: float):
-        self.signals.audio_level.emit(level)
 
     def _on_deadlock(self):
         self.signals.status_update.emit("Restarting (Deadlock)...")

@@ -19,13 +19,13 @@ class AudioWorker(QThread):
     recording_stopped = Signal(object) # np.ndarray
     partial_audio_ready = Signal(object) # np.ndarray
 
-    def __init__(self, use_vad=True, vad_threshold=0.5, preroll_audio: np.ndarray = None):
+    def __init__(self, use_vad: bool = True, vad_threshold: float = 0.5, preroll_audio: np.ndarray | None = None):
         super().__init__()
         self.use_vad = use_vad
         self.vad_threshold = vad_threshold
         self.is_recording = False
         self._stop_requested = False
-        self.audio_queue = queue.Queue()
+        self.audio_queue: queue.Queue = queue.Queue()
 
         # Pre-allocated 5-minute audio buffer (up to 48kHz: 5 * 60 * 48000 = 14,400,000 samples)
         self.max_samples = 14400000

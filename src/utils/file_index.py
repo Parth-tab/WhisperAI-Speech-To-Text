@@ -74,7 +74,7 @@ class FileIndexer:
 
         # Evict oldest cache entries if limit reached (>20 workspaces)
         if len(self.workspace_cache) > 20:
-            oldest_ws = min(self.last_scanned, key=self.last_scanned.get, default=None)
+            oldest_ws = min(self.last_scanned, key=lambda k: self.last_scanned.get(k, 0.0), default=None)
             if oldest_ws and oldest_ws in self.workspace_cache:
                 del self.workspace_cache[oldest_ws]
                 del self.last_scanned[oldest_ws]
