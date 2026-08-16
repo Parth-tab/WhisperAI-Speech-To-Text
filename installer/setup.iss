@@ -1,6 +1,6 @@
 [Setup]
 AppName=WhisperAI
-AppVersion=2.1.1
+AppVersion=2.1.2
 AppMutex=WhisperAI_App_Mutex
 CloseApplications=yes
 DefaultDirName={localappdata}\Programs\WhisperAI

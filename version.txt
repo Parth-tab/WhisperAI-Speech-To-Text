@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(2, 1, 1, 0),
-    prodvers=(2, 1, 1, 0),
+    filevers=(2, 1, 2, 0),
+    prodvers=(2, 1, 2, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -16,12 +16,12 @@ VSVersionInfo(
         '040904B0',
         [StringStruct('CompanyName', 'WhisperAI'),
         StringStruct('FileDescription', 'WhisperAI'),
-        StringStruct('FileVersion', '2.1.1'),
+        StringStruct('FileVersion', '2.1.2'),
         StringStruct('InternalName', 'WhisperAI'),
         StringStruct('LegalCopyright', ''),
         StringStruct('OriginalFilename', 'WhisperAI.exe'),
         StringStruct('ProductName', 'WhisperAI'),
-        StringStruct('ProductVersion', '2.1.1')])
+        StringStruct('ProductVersion', '2.1.2')])
       ]), 
     VarFileInfo([VarStruct('Translation', [1033, 1200])])
   ]

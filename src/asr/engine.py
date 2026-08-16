@@ -48,7 +48,10 @@ class ASREngine:
         self._load_model()
 
     def _load_model(self):
-        if self.model_size == "large-v3-turbo":
+        local_dir = Path(_WHISPER_CACHE) / self.model_size
+        if (local_dir / "model.bin").exists():
+            model_name_or_id = str(local_dir)
+        elif self.model_size == "large-v3-turbo":
             model_name_or_id = "Systran/faster-whisper-large-v3-turbo"
         elif self.model_size in ("distil-large-v3", "faster-distil-whisper-large-v3"):
             model_name_or_id = "Systran/faster-distil-whisper-large-v3"
