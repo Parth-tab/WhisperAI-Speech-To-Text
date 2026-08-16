@@ -181,8 +181,9 @@ class WhisperAIApp:
                     needs_download = True
 
         if needs_download:
-            from src.gui.download_dialog import ModelDownloadDialog
-            dialog = ModelDownloadDialog(model_size=model_size)
+            from src.gui.downloader_dialog import DownloaderDialog
+            dialog = DownloaderDialog(self.config_manager)
+            dialog.start_download()
             dialog.exec()
 
     def start(self):

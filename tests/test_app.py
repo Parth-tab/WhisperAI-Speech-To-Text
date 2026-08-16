@@ -319,3 +319,30 @@ def test_app_wakeup_race_condition_ignored(
     app.handle_hotkey_press()
     MockAudioWorker.assert_not_called()
 
+
+@patch("src.gui.downloader_dialog.DownloaderDialog")
+@patch("pathlib.Path.exists", return_value=False)
+@patch("src.core.app.AudioWorker")
+@patch("src.core.app.ASREngine")
+@patch("src.core.app.LLMEngine")
+@patch("src.core.app.make_listener_from_config")
+@patch("src.core.app.WindowDetector")
+@patch("src.core.app.ClipboardInjector")
+def test_app_check_and_download_models(
+    MockInjector,
+    MockWindowDetector,
+    MockMakeListener,
+    MockLLMEngine,
+    MockASREngine,
+    MockAudioWorker,
+    MockPathExists,
+    MockDownloaderDialog,
+):
+    app = WhisperAIApp()
+    app._check_and_download_models()
+
+    MockDownloaderDialog.assert_called_once_with(app.config_manager)
+    MockDownloaderDialog.return_value.start_download.assert_called_once()
+    MockDownloaderDialog.return_value.exec.assert_called_once()
+
+

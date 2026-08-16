@@ -1,6 +1,6 @@
 [project]
 name = "whisperai"
-version = "2.0.0"
+version = "2.1.1"
 description = "Fast, context-aware, 100% local voice dictation application for Windows"
 readme = "README.md"
 requires-python = ">=3.10"

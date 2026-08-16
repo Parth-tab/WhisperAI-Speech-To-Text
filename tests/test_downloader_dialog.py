@@ -33,9 +33,11 @@ def test_downloader_dialog_ui_and_progress(qapp):
     dialog.close()
 
 
+@patch("urllib.request.urlretrieve")
+@patch("pathlib.Path.exists", return_value=True)
 @patch("src.llm.engine._ensure_model")
 @patch("src.asr.engine.ASREngine")
-def test_download_worker_run(mock_asr, mock_llm, qapp):
+def test_download_worker_run(mock_asr, mock_llm, mock_exists, mock_urlretrieve, qapp):
     cfg = ConfigManager()
     worker = DownloadWorker(cfg)
 

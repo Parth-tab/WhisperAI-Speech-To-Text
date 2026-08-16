@@ -15,7 +15,14 @@ class VADEngine:
         self.threshold = threshold
         self.min_silence_duration_ms = min_silence_duration_ms
         self.sample_rate = sample_rate
-        self.model_path = Path.home() / ".whisperai" / "models" / "silero_vad.onnx"
+        vad_nested = Path.home() / ".whisperai" / "models" / "vad" / "silero_vad.onnx"
+        vad_flat = Path.home() / ".whisperai" / "models" / "silero_vad.onnx"
+        if vad_nested.exists():
+            self.model_path = vad_nested
+        elif vad_flat.exists():
+            self.model_path = vad_flat
+        else:
+            self.model_path = vad_nested
         self._session = None
         self._silence_frames = 0
         self._frames_per_ms = sample_rate / 1000.0

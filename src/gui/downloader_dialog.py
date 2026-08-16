@@ -15,23 +15,47 @@ class DownloadWorker(QThread):
         try:
             self._patch_tqdm()
 
-            # 1. Download LLM
-            self.progress.emit(0, "Downloading LLM (Qwen 1.5B)...")
+            # 1. Download Silero VAD
+            self.progress.emit(0, "Downloading VAD Model...")
+            from pathlib import Path
+            import urllib.request
+            vad_dir = Path.home() / ".whisperai" / "models" / "vad"
+            vad_dir.mkdir(parents=True, exist_ok=True)
+            vad_path = vad_dir / "silero_vad.onnx"
+            vad_legacy_path = Path.home() / ".whisperai" / "models" / "silero_vad.onnx"
+
+            if not vad_path.exists() and not vad_legacy_path.exists():
+                url = "https://github.com/snakers4/silero-vad/raw/master/src/silero_vad/data/silero_vad.onnx"
+                tmp_path = vad_path.with_suffix(".tmp")
+                try:
+                    urllib.request.urlretrieve(url, tmp_path)
+                    if tmp_path.stat().st_size > 100000:
+                        tmp_path.rename(vad_path)
+                    else:
+                        raise Exception("Downloaded VAD model file is too small.")
+                except Exception as e:
+                    if tmp_path.exists():
+                        tmp_path.unlink()
+                    raise e
+
+            # 2. Download LLM
+            self.progress.emit(25, "Downloading LLM (Qwen 1.5B)...")
             from src.llm.engine import _MODEL_FILENAME, _MODELS_DIR, _ensure_model
             _ensure_model(_MODELS_DIR, _MODEL_FILENAME)
 
-            # 2. Download ASR (Whisper)
-            self.progress.emit(0, "Downloading ASR Model...")
+            # 3. Download ASR (Whisper)
+            self.progress.emit(60, "Downloading ASR Model...")
             from src.asr.engine import ASREngine
             model_selection = self.config_manager.get("model_selection", "base")
-            if model_selection in ["tiny", "base", "small", "medium"]:
+            lang_setting = self.config_manager.get("language", "auto")
+            if model_selection in ["tiny", "base", "small", "medium"] and lang_setting == "en":
                 model_size = f"{model_selection}.en"
             else:
                 model_size = model_selection
 
             # By instantiating ASREngine, it will trigger the faster-whisper download
             # We don't need to keep the instance, we just want the download to happen
-            ASREngine(model_size=model_size)
+            ASREngine(model_size=model_size, language=lang_setting)
 
             self.progress.emit(100, "Download Complete!")
             self.finished.emit()
@@ -132,7 +156,12 @@ class DownloaderDialog(QDialog):
         self.worker.error.connect(self.handle_error)
 
     def start_download(self):
-        self.worker.start()
+        if not self.worker.isRunning():
+            self.worker.start()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.start_download()
 
     def update_progress(self, percent, message):
         self.progress_bar.setValue(percent)

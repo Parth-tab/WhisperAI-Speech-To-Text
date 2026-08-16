@@ -19,8 +19,8 @@ def qapp():
     return app
 
 
-def test_dictionary_editor_crud(qapp):
-    cfg = ConfigManager()
+def test_dictionary_editor_crud(tmp_path, qapp):
+    cfg = ConfigManager(config_path=tmp_path / "config.json")
     cfg.set("dictionary", ["existing_term"])
 
     editor = DictionaryEditor(cfg)
@@ -41,8 +41,8 @@ def test_dictionary_editor_crud(qapp):
     editor.close()
 
 
-def test_dictionary_editor_load_industry_pack(qapp):
-    cfg = ConfigManager()
+def test_dictionary_editor_load_industry_pack(tmp_path, qapp):
+    cfg = ConfigManager(config_path=tmp_path / "config.json")
     cfg.set("dictionary", [])
 
     editor = DictionaryEditor(cfg)
@@ -56,8 +56,8 @@ def test_dictionary_editor_load_industry_pack(qapp):
     editor.close()
 
 
-def test_snippet_editor_crud(qapp):
-    cfg = ConfigManager()
+def test_snippet_editor_crud(tmp_path, qapp):
+    cfg = ConfigManager(config_path=tmp_path / "config.json")
     cfg.set("snippets", {"sig": "best regards"})
 
     editor = SnippetEditor(cfg)
@@ -79,8 +79,8 @@ def test_snippet_editor_crud(qapp):
     editor.close()
 
 
-def test_style_editor_crud(qapp):
-    cfg = ConfigManager()
+def test_style_editor_crud(tmp_path, qapp):
+    cfg = ConfigManager(config_path=tmp_path / "config.json")
     cfg.set("app_styles", {"slack.exe": "casual"})
 
     editor = StyleEditor(cfg)
@@ -116,8 +116,8 @@ def test_stats_dialog(mock_totals, qapp):
     dialog.close()
 
 
-def test_settings_window_save(qapp):
-    cfg = ConfigManager()
+def test_settings_window_save(tmp_path, qapp):
+    cfg = ConfigManager(config_path=tmp_path / "config.json")
     settings = SettingsWindow(cfg)
 
     saved_payload = []
@@ -142,8 +142,8 @@ def test_settings_window_save(qapp):
     settings.close()
 
 
-def test_settings_window_hibernation_toggled(qapp):
-    cfg = ConfigManager()
+def test_settings_window_hibernation_toggled(tmp_path, qapp):
+    cfg = ConfigManager(config_path=tmp_path / "config.json")
     settings = SettingsWindow(cfg)
 
     settings.hibernation_checkbox.setChecked(False)
